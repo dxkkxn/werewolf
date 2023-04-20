@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
-export function InscriptionForm() {
-  // const [inputValueUsername, setInputValueUsername] = useState("");
+export function ConnectionForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const handleUsername = (usernameInput) => {
     setUsername(usernameInput);
     console.log(username);
@@ -16,21 +16,21 @@ export function InscriptionForm() {
   return (
     <>
       <View style={styles.flexContainer}>
-        <Text style={styles.label}>nom d'utilisateur</Text>
+        <Text style={styles.label}>nom d utilisateur</Text>
         <TextInput
           style={styles.input}
           onChangeText={handleUsername}
           value={username}
-          placeholder="Nom d'utilisateur"
+          placeholder="Entrez nom d utilisateur"
         />
         <Text style={styles.label}>mot de passe</Text>
         <TextInput
           style={styles.input}
           onChangeText={handlePassword}
           value={password}
-          placeholder="Mot de Passe"
+          placeholder="Entrez mot de passe"
         />
-        <Button title="S'inscrire" />
+        <Button title="Connexion" />
       </View>
     </>
   );

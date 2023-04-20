@@ -2,7 +2,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { StyleSheet, View, Pressable, Text } from 'react-native';
 
-export function Button({label, theme, onPress}){
+export function BigButton({label, theme, onPress}){
 	if (theme === "primary"){
 		return (
       <View style={[styles.buttonContainer, 

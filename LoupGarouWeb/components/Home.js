@@ -1,14 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import {useState} from 'react';
-import { Button } from './Button.js';
+import { BigButton } from './BigButton.js';
 import {InscriptionForm} from './InscriptionForm.js';
+import {ConnectionForm} from './ConnectionForm.js';
 
 
-export function Home(){
+function Home(){
   const [showCoForm, setShowCoForm] = useState(false);
   const [showSignUpForm, setShowSignUpForm] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
+  const retour=()=>{
+    setShowCoForm(false);
+    setShowSignUpForm(false);
+    setShowButtons(true);
+  }
   const onPressSU=()=>{
     setShowCoForm(false);
     setShowSignUpForm(true);
@@ -22,21 +28,30 @@ export function Home(){
   if(showButtons){
     return (
       <View style={styles.container}>
-        <Button label='Connexion' onPress={onPressCo}/>
-        <Button label='Inscription' onPress={onPressSU}/>
+        <BigButton label='Connexion' onPress={onPressCo}/>
+        <BigButton label='Inscription' onPress={onPressSU}/>
       </View>
     );
   }
-  else if(showCoForm){}
+  else if(showCoForm){
+    return(
+      <View style={styles.container}>
+        <ConnectionForm/>
+        <Button title='retour' onPress={retour} />
+      </View>
+    );
+  }
   else if(showSignUpForm){
     return(
       <View style={styles.container}>
         <InscriptionForm/>
+        <Button title='retour' onPress={retour} />
       </View>
     );
   }
 }
 
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
