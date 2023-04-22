@@ -9,7 +9,7 @@ export const InputField = (props) => {
       value={props.value}
       placeholder={props.placeholder}
       secureTextEntry={props.secureTextEntry}
-      placeholderTextColor="#fff"
+      placeholderTextColor="rgba(255, 255, 255, 0.5)"
     />
   );
 };

@@ -18,6 +18,10 @@ function Home(){
   }
   const onPressCreerCompte=()=>{}
   
+  const handlePassword = (passwordInput) => {
+    setUsername(passwordInput);
+    console.log(password);
+  }
   const handleUsername = (usernameInput) => {
     setUsername(usernameInput);
     console.log(username);
@@ -29,6 +33,11 @@ function Home(){
         placeholder="Identifiant"
         secureTextEntry={false}
         onChangeText={handleUsername}
+        />
+      <InputField 
+        placeholder="Mot De Passe"
+        secureTextEntry={true}
+        onChangeText={handlePassword}
         />
     </View>
     );
