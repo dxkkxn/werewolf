@@ -3,8 +3,6 @@ import { StyleSheet, Text, View, Button, Pressable } from 'react-native';
 import {Banner} from './Banner.js';
 import {useState} from 'react';
 import { MyButton } from './MyButton.js';
-import {InscriptionForm} from './InscriptionForm.js';
-import {ConnectionForm} from './ConnectionForm.js';
 import {InputField} from './InputField.js';
 
 function Home(){
@@ -72,22 +70,6 @@ function Home(){
     </View>
     );
 
-  if(Connect){
-    return(
-      <View style={styles.container}>
-        <ConnectionForm/>
-        <Button title='retour' onPress={retour} />
-      </View>
-    );
-  }
-  else if(showSignUpForm){
-    return(
-      <View style={styles.container}>
-        <InscriptionForm/>
-        <Button title='retour' onPress={retour} />
-      </View>
-    );
-  }
 }
 
 export default Home;
