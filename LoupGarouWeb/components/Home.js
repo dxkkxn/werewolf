@@ -1,39 +1,39 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import {useState} from 'react';
-import { BigButton } from './BigButton.js';
+import { MyButton } from './MyButton.js';
 import {InscriptionForm} from './InscriptionForm.js';
 import {ConnectionForm} from './ConnectionForm.js';
-
+import {InputField} from './InputField.js';
 
 function Home(){
-  const [showCoForm, setShowCoForm] = useState(false);
-  const [showSignUpForm, setShowSignUpForm] = useState(false);
-  const [showButtons, setShowButtons] = useState(true);
-  const retour=()=>{
-    setShowCoForm(false);
-    setShowSignUpForm(false);
-    setShowButtons(true);
-  }
-  const onPressSU=()=>{
-    setShowCoForm(false);
-    setShowSignUpForm(true);
-    setShowButtons(false);
+  const [connect, setConnect] = useState(true);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConf, setPasswordConf] = useState("");
+  const onPressDejainscrit=()=>{
+    setConnect(true);
   }
   const onPressCo=()=>{
-    setShowCoForm(true);
-    setShowSignUpForm(false);
-    setShowButtons(false);
   }
-  if(showButtons){
-    return (
-      <View style={styles.container}>
-        <BigButton label='Connexion' onPress={onPressCo}/>
-        <BigButton label='Inscription' onPress={onPressSU}/>
-      </View>
+  const onPressCreerCompte=()=>{}
+  
+  const handleUsername = (usernameInput) => {
+    setUsername(usernameInput);
+    console.log(username);
+  }
+
+  return(
+    <View style={styles.container}>
+      <InputField 
+        placeholder="Identifiant"
+        secureTextEntry={false}
+        onChangeText={handleUsername}
+        />
+    </View>
     );
-  }
-  else if(showCoForm){
+
+  if(Connect){
     return(
       <View style={styles.container}>
         <ConnectionForm/>
@@ -58,7 +58,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
