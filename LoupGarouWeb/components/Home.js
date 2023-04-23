@@ -4,6 +4,7 @@ import {Banner} from './Banner.js';
 import {useState} from 'react';
 import { MyButton } from './MyButton.js';
 import {InputField} from './InputField.js';
+import { useFonts } from 'expo-font';
 
 function Home(){
   const [connect, setConnect] = useState(false);
@@ -30,10 +31,18 @@ function Home(){
   //variables pour l'affichage conditionnel de certains InputField et Pressables
   let pwdOublie, pwdConfirm, ConnexionButton, dejaInscrit, onPressCreate = null;
 
+  const [loaded] = useFonts({
+    'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
+  });
+
+  if (!loaded) {
+    return null;
+  }
+
   if(!connect){
     onPressCreate =()=>{}//actual account creation process
     pwdConfirm = <InputField
-    placeholder="Confirmer le mot de passe"
+    placeholder="Confirmer mot de passe"
     secureTextEntry={true}
     onChangeText={handlePassword}
     />;
@@ -52,6 +61,7 @@ function Home(){
   return(
     <View style={styles.container}>
       <Banner />
+    <View>
       <InputField 
         placeholder="Identifiant"
         secureTextEntry={false}
@@ -63,8 +73,9 @@ function Home(){
         onChangeText={handlePassword}
         />
       {pwdConfirm}
+    </View>
       {ConnexionButton}
-      <MyButton label = "Creer un compte" bg='#7858a6' onPress={onPressCreate}/>
+      <MyButton label = "Créer un compte" bg='#7858a6' onPress={onPressCreate}/>
       {dejaInscrit}
       {pwdOublie}
     </View>
@@ -76,19 +87,15 @@ export default Home;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
+    height: '70%',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
+    top: 64,
   },
   textPressable: {
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: 400,
     fontSize: 18,
     textDecorationLine: 'underline',
-
     color: '#7858a6',
+    fontFamily: 'Poppins',
   },
 });

@@ -1,7 +1,15 @@
 import { StyleSheet, View, Text} from 'react-native';
+import { useFonts } from 'expo-font';
 
 
 export const Banner = () =>{
+  const [loaded] = useFonts({
+    'Righteous': require('../assets/fonts/Righteous-Regular.ttf'),
+  });
+
+  if (!loaded) {
+    return null;
+  }
   return(
     <View> 
       <Text style={styles.banner}>Loup-Garou </Text>
@@ -12,13 +20,10 @@ export const Banner = () =>{
 
 const styles = StyleSheet.create({
   banner: {
-    fontFamily: 'Righteous',
-    fontStyle: 'normal',
-    fontWeight: 400,
     fontSize: 40,
     lineHeight: 50,
     textAlign: 'center',
-
+    fontFamily: 'Righteous',
     color: 'white',
   },
 });
