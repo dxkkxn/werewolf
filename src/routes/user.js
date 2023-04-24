@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const user = require("../controllers/user.js");
-
+const { getUsers, addUser } = require("../controllers/user.js");
+const { validateAddUser } = require("../middlewares/validateUser.js");
+router.get("/users", getUsers);
+router.post("/users", validateAddUser, addUser);
 // router.get("/users", user.getUsers);
 // router.post("/users", user.newUser);
 // router.delete("/users", user.deleteAll);

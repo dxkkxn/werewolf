@@ -2,10 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "backend of loupgaroup game",
-  "main": "src/app.js",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/app.js"
+    "dev": "nodemon src/server.js",
+    "updatedb": "node src/util/updatedb.js"
   },
   "keywords": [],
   "author": "",
@@ -28,7 +29,8 @@
     "sequelize": "^6.31.0",
     "sqlite3": "^5.1.6",
     "swagger-autogen": "^2.23.1",
-    "swagger-ui-express": "^4.6.2"
+    "swagger-ui-express": "^4.6.2",
+    "validator": "^13.9.0"
   },
   "devDependencies": {
     "eslint": "^8.38.0",
