@@ -55,7 +55,7 @@ function Home(){
     pwdOublie=<Pressable >
       <Text style={styles.textPressable}>Mot de passe oublié ?</Text>
     </Pressable>;
-    ConnexionButton=<MyButton label = "Connexion" bg='#371b58'/>
+    ConnexionButton=<MyButton label = "Connexion" primary={false}/>
   }
 
   return(
@@ -74,10 +74,12 @@ function Home(){
         />
       {pwdConfirm}
     </View>
+    <View>
       {ConnexionButton}
-      <MyButton label = "Créer un compte" bg='#7858a6' onPress={onPressCreate}/>
+      <MyButton label = "Créer un compte" primary={true} onPress={onPressCreate}/>
+    </View>
       {dejaInscrit}
-      {pwdOublie}
+      {pwdOublie} 
     </View>
     );
 
