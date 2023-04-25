@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, Dimensions, StyleSheet } from 'react-native';
 
-const SquareButton = ({ onPress, title, size}) => {
+const SquareButton = ({ icon, iconAlt, onPress, title, size}) => {
   const screenHeight = Dimensions.get('screen').height;
   const buttonSize = (screenHeight * size);
-  console.log(buttonSize);
   return (
     <View style={styles.container}>
       <TouchableOpacity style={[styles.button, {width: buttonSize, height: buttonSize}]} onPress={onPress}>
+        <img src={icon} alt={iconAlt} />
         <Text style={styles.title}>{title}</Text>
       </TouchableOpacity>
     </View>
