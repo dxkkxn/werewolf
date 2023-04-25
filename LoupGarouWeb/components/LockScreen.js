@@ -6,7 +6,7 @@ import { MyButton } from './MyButton.js';
 import {InputField} from './InputField.js';
 import { useFonts } from 'expo-font';
 
-function LockScreen(){
+export function LockScreen(){
   const [connect, setConnect] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -83,7 +83,6 @@ function LockScreen(){
 
 }
 
-export default LockScreen;
 
 const styles = StyleSheet.create({
   container: {
