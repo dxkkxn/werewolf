@@ -23,24 +23,20 @@ export function MyButton({label, bg, onPress}){ //takes background color as para
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    // width: 320,
-    // height: 68,
-    // marginHorizontal: 20,
-    // alignItems: 'center',
-    // justifyContent: 'center',
+    width: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
     //  padding: 3,
     // height: '10%',
   },
   button: {
     borderRadius: 20,
-    // borderStyle: 'solid',
-    // borderColor: '#7858a6',
-    // borderWidth: 2,
-    // width: '100%',
-    // height: '100%',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // flexDirection: 'row',
+    flex: 1,
+    borderStyle: 'solid',
+    borderColor: '#7858a6',
+    borderWidth: 2,
+    alignItems: 'safe-center',
+    justifyContent: 'center',
   },
   buttonLabel: {
     fontSize: 18,
