@@ -3,8 +3,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { StyleSheet, View, Pressable, Text } from 'react-native';
 import { useFonts } from 'expo-font';
 
-export function MyButton({label, bg, onPress}){ //takes background color as parameter
-  const bgStyle = {backgroundColor: bg};
+export function MyButton({label, primary, onPress}){ //takes background color as parameter
+  const bgStyle = primary ? {backgroundColor: '#7858a6'} : {backgroundColor: '#371b58', border: "2px solid #7858A6"};
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
@@ -26,6 +26,12 @@ const styles = StyleSheet.create({
     width: 200,
     alignItems: 'center',
     justifyContent: 'center',
+    marginVertical: 5,
+    // width: 320,
+    // height: 68,
+    // marginHorizontal: 20,
+    alignItems: 'center',
+    // justifyContent: 'center',
     //  padding: 3,
     // height: '10%',
   },
@@ -37,6 +43,17 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'safe-center',
     justifyContent: 'center',
+    // textAlign: "center",
+    width: "fit-content",
+    // alignItems: "center",
+    // borderStyle: 'solid',
+    // borderColor: '#7858a6',
+    // borderWidth: 2,
+    // width: '100%',
+    // height: '100%',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // flexDirection: 'row',
   },
   buttonLabel: {
     fontSize: 18,
@@ -45,5 +62,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     color: '#ffffff',
     fontFamily: 'Poppins',
+    width: "fit-content",
   },
 });

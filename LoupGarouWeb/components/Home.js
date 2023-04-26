@@ -14,13 +14,41 @@ export const Home = ({pseudo}) => {
     return null;
   }
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}> Bonjour {pseudo} ! </Text>
-      <SquareButton icon={CreerPartie} onPress={() => alert('Button 1 pressed')} size={0.3} title="Créer une partie" />
-      <SquareButton icon={RejoindrePartie} onPress={() => alert('Button 2 pressed')} size={0.3} title="Rejoindre une partie" />
-    </View>
-  );
+
+  if(!connect){
+    onPressCreate =()=>{}//actual account creation process
+    pwdConfirm = <InputField
+    placeholder="Confirmer mot de passe"
+    secureTextEntry={true}
+    onChangeText={handlePassword}
+    />;
+    dejaInscrit = <Pressable onPress={()=>setConnect(true)} >
+      <Text style={styles.textPressable}>Déjà inscrit ? Se connecter</Text>
+    </Pressable>;
+  }
+  else{
+    onPressCreate = ()=>{setConnect(false)}
+    pwdOublie=<Pressable >
+      <Text style={styles.textPressable}>Mot de passe oublié ?</Text>
+    </Pressable>;
+    ConnexionButton=<MyButton label = "Connexion" primary={false}/>
+  }
+
 };
+=======
+    <View>
+      {ConnexionButton}
+      <MyButton label = "Créer un compte" primary={true} onPress={onPressCreate}/>
+    </View>
+      {dejaInscrit}
+      {pwdOublie} 
+    </View>
+    );
+
+}
+
+export default Home;
+>>>>>>> 1c56cb5649af1c6983be36f120730e29942b48d0
 
 const styles = StyleSheet.create({
   container: {
