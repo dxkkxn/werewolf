@@ -1,72 +1,38 @@
-const Sequelize = require("sequelize");
-const db = require("./database.js");
+const Sequelize = require('sequelize');
+const db = require('./database.js');
 
-const game = db.define(
-  "game",
+const games = db.define(
+  'games',
   {
     idGame: {
       primaryKey: true,
       type: Sequelize.INTEGER,
-      autoIncrement: true,
+      autoIncrement: true
     },
     minPlayers: {
       type: Sequelize.INTEGER,
       allowNull: false,
-      defaultValue: 5,
+      defaultValue: 5
     },
     maxPlayers: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        defaultValue: 20,
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      defaultValue: 20
     },
-    durationDay: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
+    dayDuration: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    nightDuration: {
+      type: Sequelize.INTEGER,
+      allowNull: false
     },
     werewolfProbability: {
-        type: Sequelize.DECIMAL,
-        allowNull: true,
-        defaultValue: 0.33,
-    },
-    infectionProbability: {
-        type: Sequelize.DECIMAL,
-        allowNull: true,
-        defaultValue: 0.0,
-        validate: {
-            min: 0, 
-            max: 1 
-        }
-    },
-    sleeplessnessProbability: {
-        type: Sequelize.DECIMAL,
-        allowNull: true,
-        defaultValue: 0.0,
-        validate: {
-            min: 0, 
-            max: 1 
-        }
-    },
-    clairvoyanceProbability: {
-        type: Sequelize.DECIMAL,
-        allowNull: true,
-        defaultValue: 0.0,
-        validate: {
-            min: 0, 
-            max: 1 
-        }
-    },
-    spiritismProbability: {
-        type: Sequelize.DECIMAL,
-        allowNull: true,
-        defaultValue: 0.0,
-        validate: {
-            min: 0, 
-            max: 1 
-        }
-    },
-
-    
+      type: Sequelize.DECIMAL,
+      allowNull: true,
+      defaultValue: 0.33
+    }
   },
   { timestamps: false }
 );
-module.exports = game;
+module.exports = games;
