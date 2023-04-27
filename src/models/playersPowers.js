@@ -1,14 +1,15 @@
-const Sequelize = require("sequelize");
-const db = require("./database.js");
-const playersInGame = require("./playersInGame.js");
-const powers = require("./powers.js");
+const Sequelize = require('sequelize');
+const db = require('./database.js');
+const playersInGame = require('./playersInGame.js');
+const powers = require('./powers.js');
 
 const playersPowers = db.define(
+  'playersPowers',
+  {},
+  { timestamps: false }
 );
-playersPowers.hasMany(players, {foreignKey: 'idGame'});
 
-powers.belongsToMany(playersInGame, { through: 'playersPowers' });
-playersInGame.belongsToMany(powers, { through: 'playersPowers' });
-// TODO: add validation of powers at server level
+powers.belongsToMany(playersInGame, { foreignKey: 'power',  primaryKey: true, through: 'playersPowers' });
+playersInGame.belongsToMany(powers, { foreignKey: 'idPlayer', primaryKey: true, through: 'playersPowers' });
 
 module.exports = playersPowers;
