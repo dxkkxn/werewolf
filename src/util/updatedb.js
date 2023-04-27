@@ -1,24 +1,33 @@
-const userModel = require("../models/users.js");
-const validator = require("validator");
-const bcrypt = require("bcrypt");
-// const tagsModel = require("../models/tags.js");
+const userModel = require('../models/users.js');
+const powerModel = require('../models/powers.js');
+const playerModel = require('../models/players.js');
+const powersProbabilityModel = require('../models/powersProbabilities.js');
+const playerInGameModel = require('../models/playersInGame.js');
+const playersPowers = require('../models/playersPowers.js');
+const messages = require('../models/messages.js');
+const votingMessages = require('../models/votingMessages.js');
+const voters = require('../models/voters.js');
+// const playersPowersModel = require('../models/playersPowers.js');
+const validator = require('validator');
+const bcrypt = require('bcrypt');
+// const tagsModel = require('../models/tags.js');
 // const bcrypt = require('bcrypt');
 // Ajouter ici les nouveaux require des nouveaux modèles
 
 // eslint-disable-next-line no-unexpected-multiline
 (async () => {
   // Regénère la base de données
-  await require("../models/database.js").sync({ force: true });
-  console.log("Base de données créée.");
+  await require('../models/database.js').sync({ force: true });
+  console.log('Base de données créée.');
   // Initialise la base avec quelques données
   // console.log(passhash)
   // await userModel.create({
   //   name: 'Sebastien Viardot', email: 'Sebastien.Viardot@grenoble-inp.fr', passhash
   // })
   // // Ajouter ici le code permettant d'initialiser par défaut la base de donnée
-  // const essalihn = await userModel.create({ username: "essalihn" });
-  // await userModel.create({ username: "pradamej" });
-  // await tagsModel.create({ name: "Javascript", userId: essalihn.id });
+  // const essalihn = await userModel.create({ username: 'essalihn' });
+  // await userModel.create({ username: 'pradamej' });
+  // await tagsModel.create({ name: 'Javascript', userId: essalihn.id });
   //
 
   try {
@@ -40,14 +49,14 @@ const bcrypt = require("bcrypt");
       //   symbols: 1, // Points for containing special characters
       // },
     };
-    const password = "Robin777@";
+    const password = 'Robin777@';
     const isValidPassword = validator.isStrongPassword(password, options);
     console.log(isValidPassword);
     if (isValidPassword) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       await userModel.create({
-        username: "Imad",
+        username: 'Imad',
         password: hashedPassword,
       });
     }
@@ -55,4 +64,8 @@ const bcrypt = require("bcrypt");
   } catch (error) {
     console.log(error);
   }
+  const powers = ['infection', 'sleeplessness', 'clairvoyance', 'spiritism'];
+  powers.forEach(async (power) => await powerModel.create({ name: power }));
+  // const data = await powerModel.findAll();
+  // console.log(data);
 })();
