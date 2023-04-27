@@ -6,7 +6,7 @@ import { MyButton } from "./MyButton.js";
 import { InputField } from "./InputField.js";
 import { useFonts } from "expo-font";
 
-export default function LockScreen() {
+function LockScreen(){
   const [connect, setConnect] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -88,8 +88,12 @@ export default function LockScreen() {
       {dejaInscrit}
       {pwdOublie}
     </View>
-  );
-}
+
+    );
+
+};
+
+export default LockScreen; 
 
 const styles = StyleSheet.create({
   container: {
