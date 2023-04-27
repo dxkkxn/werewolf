@@ -1,15 +1,13 @@
-const Sequelize = require("sequelize");
-const db = require("./database.js");
-const games  = require("./games.js")
-const users  = require("./users.js")
+const db = require('./database.js');
+const games = require('./games.js')
+const users = require('./users.js')
 
 const players = db.define(
-  "players",
-    { timestamps: false }
+  'players',
+  {},
+  { timestamps: false }
 );
-players.hasOne(games, {foreignKey: 'idGame'});
-games.belongsTo(players);
-players.hasOne(users, {foreignKey: 'userName'});
-users.belongsTo(players);
+games.belongsToMany(users, { foreignKey: 'idGame', primary_key: true, through: 'players' });
+users.belongsToMany(games, { foreignKey: 'userName', primary_key: true, through: 'players' });
 
 module.exports = players;
