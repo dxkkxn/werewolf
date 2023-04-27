@@ -1,6 +1,6 @@
 const db = require('./database.js');
-const games = require('./games.js')
-const users = require('./users.js')
+const games = require('./games.js');
+const users = require('./users.js');
 
 const players = db.define(
   'players',
