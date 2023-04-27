@@ -5,11 +5,6 @@ const db = require("./database.js");
 const users = db.define(
   "users",
   {
-    id: {
-      // primaryKey: true,
-      type: Sequelize.INTEGER,
-      autoIncrement: true,
-    },
     username: {
       primaryKey: true,
       type: Sequelize.STRING(16),
