@@ -6,7 +6,7 @@ const messages = require('./messages.js');
 const votingMessages = db.define(
   'votingMessages',
   {
-    accuserIdMessage: {
+    idMessage: {
       type: Sequelize.INTEGER,
       primaryKey: true
     }
@@ -14,7 +14,7 @@ const votingMessages = db.define(
   { timestamps: false }
 );
 
-messages.hasOne(votingMessages, { foreignKey: 'accuserIdMessage', primaryKey: true });
+messages.hasOne(votingMessages, { foreignKey: 'idMessage', primaryKey: true });
 playersInGame.hasOne(votingMessages, { foreignKey: 'accusedIdPlayer' });
 
 module.exports = votingMessages;
