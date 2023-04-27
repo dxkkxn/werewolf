@@ -1,4 +1,4 @@
-import { StyleSheet, Image, View, Text} from 'react-native';
+import { StyleSheet, Image, TouchableOpacity, View, Text} from 'react-native';
 import { useFonts } from 'expo-font';
 
 function importAll(r) {
@@ -32,7 +32,7 @@ export function AvailableGame ({avatarId, gameParams, creatorPseudo}) {
     return null;
   }
   const icon = require('../assets/images/avatar1.png');
-  console.log(icon);
+  const arrow = require('../assets/images/rightArrow.png');
   return(
     <View style={styles.rectangle}>
       <View style={styles.leftPart}>
@@ -46,6 +46,9 @@ export function AvailableGame ({avatarId, gameParams, creatorPseudo}) {
           <li> C: {gameParams.probasC}, I:{gameParams.probaI}, V:{gameParams.probaV}, S:{gameParams.probaS} </li>
           <li> {gameParams.nbWolves} loups </li>
         </ul>
+        <TouchableOpacity style={styles.arrowBox}>
+          <Image style={styles.arrowStyle} source={arrow}/>
+        </TouchableOpacity>
       </View>
     </View>
   ); 
@@ -53,8 +56,25 @@ export function AvailableGame ({avatarId, gameParams, creatorPseudo}) {
 
 
 const styles = StyleSheet.create({
+  arrowBox: {
+    height: '60px',
+    width: '60px',
+    backgroundColor: '#7858a6',
+    borderTopLeftRadius: 10, 
+    borderBottomLeftRadius: 0, 
+    borderTopRightRadius: 0, 
+    borderBottomRightRadius: 10,
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+  },
+  arrowStyle: {
+    width:'28px', 
+    height:'20px',
+    alignSelf: 'center',
+  },
   rectangle: {
-    display:'flex',
     flexDirection:'row',
     height: '30%',
     width: '30%',
@@ -63,6 +83,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   rightPart:{
+    display: 'flex',
     flex:3,
     backgrounfColor: 'white',
     alignItems: 'left',
