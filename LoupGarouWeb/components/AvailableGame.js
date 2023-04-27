@@ -9,9 +9,8 @@ function importAll(r) {
 
 
  
-export function AvailableGame ({avatarId, gameParams, creatorPseudo}) {
-  //avatarId is a number corresonding to an image
-  //gameParams conatains the different params : 
+export function AvailableGame ({gameProps}) {
+  //  avatarId is a number corresonding to an image
   //  nbPlayersMin
   //  nbPlayersMax(facultatif: si null, pas de fourchette)
   //  dayStart : heure de début du jour
@@ -23,6 +22,7 @@ export function AvailableGame ({avatarId, gameParams, creatorPseudo}) {
   //  probaV
   //  probaS
   //  nbWolves
+  //  hoursToStart : nb of hours before start of game
   //pseudo is a string
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
@@ -31,20 +31,21 @@ export function AvailableGame ({avatarId, gameParams, creatorPseudo}) {
   if (!loaded) {
     return null;
   }
-  const icon = require('../assets/images/avatar1.png');
+  const icon = require(`../assets/images/avatar${gameProps.avatarId}.png`);
   const arrow = require('../assets/images/rightArrow.png');
   return(
     <View style={styles.rectangle}>
       <View style={styles.leftPart}>
         <Image source={icon} style={styles.image}/>
-        <Text style={styles.text}> {creatorPseudo} </Text>
+        <Text style={styles.text}> {gameProps.creatorPseudo} </Text>
       </View>
       <View style={styles.rightPart}>
         <ul style={styles.paramList}>
-          <li> {gameParams.nbPlayersMin} joueurs </li>
-          <li> Jour de {gameParams.dayStart}h à {gameParams.dayEnd}h </li>
-          <li> C: {gameParams.probasC}, I:{gameParams.probaI}, V:{gameParams.probaV}, S:{gameParams.probaS} </li>
-          <li> {gameParams.nbWolves} loups </li>
+          <li> Debut dans {gameProps.hoursToStart}h </li>
+          <li> {gameProps.nbPlayersMin} joueurs </li>
+          <li> Jour de {gameProps.dayStart}h à {gameProps.dayEnd}h </li>
+          <li> C: {gameProps.probaC}, I:{gameProps.probaI}, V:{gameProps.probaV}, S:{gameProps.probaS} </li>
+          <li> {gameProps.nbWolves} loups </li>
         </ul>
         <TouchableOpacity style={styles.arrowBox}>
           <Image style={styles.arrowStyle} source={arrow}/>
@@ -57,8 +58,8 @@ export function AvailableGame ({avatarId, gameParams, creatorPseudo}) {
 
 const styles = StyleSheet.create({
   arrowBox: {
-    height: '60px',
-    width: '60px',
+    height: '40px',
+    width: '50px',
     backgroundColor: '#7858a6',
     borderTopLeftRadius: 10, 
     borderBottomLeftRadius: 0, 
@@ -76,9 +77,9 @@ const styles = StyleSheet.create({
   },
   rectangle: {
     flexDirection:'row',
-    height: '30%',
-    width: '30%',
-    top: 64,
+    height: '150px',
+    marginBottom: 15,
+    width: '320px',
     backgroundColor: 'rgba(120, 88, 166, 0.3)',
     borderRadius: 10,
   },
@@ -94,8 +95,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: '130px',
-    height: '130px',
+    width: '100px',
+    height: '100px',
     alignSelf: 'center',
     top:9,
   },
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontFamily: 'Poppins',
-    marginTop: 9,
+    marginTop: 13,
     fontWeight: 800,
   },
   paramList: {
@@ -111,7 +112,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: 700,
-    fontSize: 18,
+    fontSize: 14,
+    paddingLeft:20,
   },
 });
 
