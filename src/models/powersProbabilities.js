@@ -14,6 +14,6 @@ const powersProbabilities = db.define(
   { timestamps: false }
 );
 
-games.belongsToMany(powers, { foreignKey: 'idGame', primary_key: true, through: 'powersProbabilities' });
-powers.belongsToMany(games, { foreignKey: 'power', primary_key: true, through: 'powersProbabilities' });
+games.belongsToMany(powers, { foreignKey: 'idGame', primaryKey: true, through: 'powersProbabilities' });
+powers.belongsToMany(games, { foreignKey: 'power', primaryKey: true, through: 'powersProbabilities' });
 module.exports = powersProbabilities;
