@@ -1,18 +1,23 @@
-const Sequelize = require("sequelize");
-const db = require("./database.js");
-const players = require("./players.js");
+const Sequelize = require('sequelize');
+const db = require('./database.js');
+const players = require('./players.js');
 
 const playersInGame = db.define(
-  "playersInGame",
+  'playersInGame',
   {
+    idPlayer: {
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      unique: true
+    },
     role: {
-      // primaryKey: true,
       type: Sequelize.STRING,
       allowNull: false,
       validate: {
         isIn: {
           args: [['werewolf', 'human']],
-          msg: "role can only be werewolf or human"
+          msg: 'role can only be werewolf or human'
         }
       }
     },
@@ -22,13 +27,18 @@ const playersInGame = db.define(
       validate: {
         isIn: {
           args: [['alive', 'dead']],
-          msg: "state can only be alive or dead"
+          msg: 'state can only be alive or dead'
         }
       }
     }
   },
   { timestamps: false }
 );
-playersInGame.hasOne(players, {foreignKey: 'idGame'});
+
+players.hasOne(playersInGame, {
+  foreignKey: 'idPlayer',
+  primaryKey: true,
+  unique: true
+});
 
 module.exports = playersInGame;
