@@ -51,7 +51,7 @@ export default function NavBarPartie({ time }) {
 const styles = StyleSheet.create({
   flexContainer: {
     height: "60px",
-    width: "360px",
+    width: "100%",
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",

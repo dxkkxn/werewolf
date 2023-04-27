@@ -7,46 +7,15 @@ export default function Partie({ time }) {
     <View style={styles.container}>
       <NavBarPartie time={time} />
       <BodyPartie time={time} />
-      <FooterPartie time={time} type={"message"} />
+      <FooterPartie time={time} />
     </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    // with: "100vw",
-    // height: "100vh",
-    // backgroundColor: "red",
-    // width: "100%",
-    // height: "100%",
-    // backgroundColor: "#371b58",
-    // height: "70%",
-    height: "800px",
-    width: "360px",
-    backgroundColor: "yellow",
-    // alignItems: "center",
+    height: "100%",
+    width: "100%",
+    // backgroundColor: "yellow",
     justifyContent: "space-around",
-    // top: 14,
-  },
-  middleBox: {
-    width: "360px",
-    height: "575px",
-    backgroundColor: "orange",
-    display: "grid",
-    gridTemplateColumns: "repeat(3,1fr)",
-    padding: "15px",
-    gap: "15px",
-  },
-  middleBoxItem: {
-    backgroundColor: "red",
-    width: "100px",
-    height: "100px",
-    borderRadius: "20px",
-    // display: "block",
-    // padding: "15px",
-  },
-  bottomBox: {
-    width: "360px",
-    height: "225px",
-    backgroundColor: "green",
   },
 });

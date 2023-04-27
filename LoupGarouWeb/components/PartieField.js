@@ -47,14 +47,16 @@ export const PartieField = ({ text, time, type }) => {
     return (
       <View style={styles.boxSend}>
         <TextInput
+          placeholder="      Entrez votre message"
           style={[
             styles.boxText,
             {
               width: "300px",
               height: "40px",
               justifyContent: "flex-start",
-              placeholder: "Entrez votre message",
+              // placeholder: "Entrez votre message",
               placeholderTextColor: "#000",
+              paddingLeft: "20px",
             },
           ]}
         ></TextInput>
@@ -80,19 +82,11 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // borderWidth: 2,
-    // borderStyle: "solid",
-    // borderColor: "#7858A6",
-    // fontSize: 18,
-    // color: "rgba(255, 255, 255, 0.5)",
-    // padding: 10,
-    // fontFamily: "Poppins",
   },
   boxSend: {
     boxSizing: "border-box",
-    width: "323px",
+    width: "83%",
     height: "40px",
-    // margin: 5,
     backgroundColor: "#FFF",
     borderRadius: "20px",
     display: "flex",
@@ -100,15 +94,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     marginBottom: "20px",
-    // alignSelf: "flex-end",
-
-    // borderWidth: 2,
-    // borderStyle: "solid",
-    // borderColor: "#7858A6",
-    // fontSize: 18,
-    // color: "rgba(255, 255, 255, 0.5)",
-    // padding: 10,
-    // fontFamily: "Poppins",
   },
   boxSendItem: {
     width: "23px",
@@ -118,6 +103,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFF",
     borderRadius: "20px",
+    marginRight: "10px",
   },
   boxText: {
     width: "169px",

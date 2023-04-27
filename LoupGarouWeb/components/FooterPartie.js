@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native-web";
 import PartieField from "./PartieField";
+import FooterMessageField from "./FooterMessageField";
 
 export default function FooterPartie({ time }) {
   return (
@@ -16,14 +17,14 @@ export default function FooterPartie({ time }) {
       }
       time={time}
     >
-      <View style={styles.bottomBoxMiddleBox}></View>
+      <FooterMessageField />
       <PartieField type={"message"} />
     </View>
   );
 }
 const styles = StyleSheet.create({
   bottomBox: {
-    width: "360px",
+    width: "100%",
     height: "225px",
     backgroundColor: "#7858A6",
     display: "flex",
