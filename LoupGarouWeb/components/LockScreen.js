@@ -5,8 +5,9 @@ import { useState } from "react";
 import { MyButton } from "./MyButton.js";
 import { InputField } from "./InputField.js";
 import { useFonts } from "expo-font";
+import Partie from "../components/Partie.js";
 
-function LockScreen(){
+function LockScreen() {
   const [connect, setConnect] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -66,6 +67,9 @@ function LockScreen(){
     );
     ConnexionButton = <MyButton label="Connexion" bg="#371b58" />;
   }
+  // if (true) {
+  //   return <Partie time={"day"} />;
+  // }
 
   return (
     <View style={styles.container}>
@@ -88,12 +92,10 @@ function LockScreen(){
       {dejaInscrit}
       {pwdOublie}
     </View>
+  );
+}
 
-    );
-
-};
-
-export default LockScreen; 
+export default LockScreen;
 
 const styles = StyleSheet.create({
   container: {
