@@ -4,7 +4,7 @@ module.exports = {
     commonjs: true,
     es2021: true,
   },
-  extends: ["standard", "plugin:cypress/recommended"],
+  extends: ["semistandard", "plugin:cypress/recommended"],
   parserOptions: {
     ecmaVersion: "latest",
   },
