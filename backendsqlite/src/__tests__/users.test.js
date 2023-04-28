@@ -32,19 +32,22 @@ describe('Log In', () => {
     expect(response.statusCode).toBe(status.BAD_REQUEST);
   });
 
-  test('login test user', async () => {
-    const response = await request(app)
-      .post('/login')
-      .send({ data: '{"username": "test", "password": "1234"}' });
-    expect(response.statusCode).toBe(status.OK);
-    expect(response.body.message).toBe('logged succesfully');
-  });
   test('failed login test user', async () => {
     const response = await request(app)
       .post('/login')
       .send({ data: '{"username": "test", "password": "4321"}' });
     expect(response.statusCode).toBe(status.UNAUTHORIZED);
     expect(response.body.message).toBe('passwords dont match');
+  });
+
+  test('login test user', async () => {
+    const response = await request(app)
+      .post('/login')
+      .send({ data: '{"username": "test", "password": "1234"}' });
+    let { token } = response.body;
+    expect(response.statusCode).toBe(status.OK);
+    expect(response.body.message).toBe('logged succesfully');
+    expect(token).toBeDefined();
   });
 });
 
