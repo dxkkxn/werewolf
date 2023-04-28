@@ -1,20 +1,20 @@
-//Validation is done in the controller files
-const Sequelize = require("sequelize");
-const db = require("./database.js");
+// Validation is done in the controller files
+const Sequelize = require('sequelize');
+const db = require('./database.js');
 
 const users = db.define(
-  "users",
+  'users',
   {
     username: {
       primaryKey: true,
       type: Sequelize.STRING(16),
       allowNull: false,
-      unique: true,
+      unique: true
     },
     password: {
       type: Sequelize.STRING,
-      allowNull: false,
-    },
+      allowNull: false
+    }
   },
   { timestamps: false }
 );
