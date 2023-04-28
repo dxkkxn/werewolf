@@ -1,9 +1,9 @@
 const users = require('../models/users.js');
 const status = require('http-status');
-// const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
 const bcrypt = require('bcrypt');
-// const jws = require('jws');
+const { SECRET } = process.env;
+const jws = require('jws');
 // const validator = require('validator');
 
 // const getUsers = async (req, res) => {
@@ -44,7 +44,12 @@ const checkUser = async (req, res) => {
   if (!result) {
     throw new CodeError('passwords dont match', status.UNAUTHORIZED);
   }
-  res.status(status.OK).json({ message: 'logged succesfully', token: 'abcd' });
+  const token = jws.sign({
+    header: { alg: 'HS256' },
+    payload: username,
+    secret: SECRET
+  });
+  res.status(status.OK).json({ message: 'logged succesfully', token });
 };
 
 module.exports = {
