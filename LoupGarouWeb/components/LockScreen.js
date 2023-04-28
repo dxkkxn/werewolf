@@ -7,6 +7,47 @@ import { InputField } from "./InputField.js";
 import { useFonts } from "expo-font";
 import Partie from "../components/Partie.js";
 
+const url = 'localhost:3000';
+
+function LoginReq(username, password){
+  console.log(`${url}/login?username=${username}&password=${password}`);
+  if(password === '' || username === ''){
+    alert("renseignez tous les champs");
+    return -1;
+  }
+  fetch(`${url}/login?username=${username}&password=${password}`)
+  .then(data => {
+     // Do something with the data
+     console.log(data);
+     return 0;
+    })
+    .catch(error => console.error(error)); 
+}
+
+
+function SignInReq(username, password, passwordConf){
+  if(password === '' || username === '' || passwordConf === ''){
+    alert("renseignez tous les champs");
+    return -1;
+  }
+  if(password !== passwordConf){
+    alert("mots de passe différents")
+  return -1;
+  }
+  if(password.length < 8){
+    alert("mot de passe trop court");
+    return -1;
+  }
+   fetch(`${url}/signin?username=${username}&password=${password}`)
+  .then(response => response.json())
+  .then(data => {
+    // Do something with the data
+    console.log(data);
+    return 0;
+  })
+  .catch(error => console.error(error));
+}
+
 function LockScreen() {
   const [connect, setConnect] = useState(false);
   const [username, setUsername] = useState("");
@@ -15,16 +56,17 @@ function LockScreen() {
   const onPressDejainscrit = () => {
     setConnect(true);
   };
-  const onPressCo = () => {};
+  let onPressCo = () => {};
   const onPressCreerCompte = () => {};
 
+  const handlePasswordConfirm = (passwordInput) => {
+    setPasswordConf(passwordInput);
+  };
   const handlePassword = (passwordInput) => {
-    setUsername(passwordInput);
-    console.log(password);
+    setPassword(passwordInput);
   };
   const handleUsername = (usernameInput) => {
     setUsername(usernameInput);
-    console.log(username);
   };
 
   //variables pour l'affichage conditionnel de certains InputField et Pressables
@@ -43,12 +85,14 @@ function LockScreen() {
   }
 
   if (!connect) {
-    onPressCreate = () => {}; //actual account creation process
+    onPressCreate = () => {
+      SignInReq(username, password, passwordConf);
+    }; //actual account creation process
     pwdConfirm = (
       <InputField
         placeholder="Confirmer mot de passe"
         secureTextEntry={true}
-        onChangeText={handlePassword}
+        onChangeText={handlePasswordConfirm}
       />
     );
     dejaInscrit = (
@@ -60,12 +104,13 @@ function LockScreen() {
     onPressCreate = () => {
       setConnect(false);
     };
+    onPressCo = LoginReq;
     pwdOublie = (
       <Pressable>
         <Text style={styles.textPressable}>Mot de passe oublié ?</Text>
       </Pressable>
     );
-    ConnexionButton = <MyButton label="Connexion" bg="#371b58" />;
+    ConnexionButton = <MyButton onPress={()=>onPressCo(username, password)} label="Connexion" bg="#371b58" />;
   }
   // if (true) {
   //   return <Partie time={"day"} />;
@@ -81,7 +126,7 @@ function LockScreen() {
           onChangeText={handleUsername}
         />
         <InputField
-          placeholder="Mot De Passe"
+          placeholder= "Mot De Passe"
           secureTextEntry={true}
           onChangeText={handlePassword}
         />
