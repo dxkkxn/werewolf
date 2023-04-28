@@ -9,7 +9,22 @@ const getGames = async (req, res) => {
   throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
 };
 
+const getStateGame = async (req, res) => {
+  throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
+};
+
+const joinGame = async (req, res) => {
+  throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
+};
+
+const addMessage = async (req, res) => {
+  throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
+};
+
 module.exports = {
   createGame,
-  getGames
+  getGames,
+  getStateGame,
+  joinGame,
+  addMessage
 };
