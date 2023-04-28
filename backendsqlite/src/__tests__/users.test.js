@@ -1,17 +1,52 @@
 const app = require('../app');
 const request = require('supertest');
-const status = require("http-status");
+const status = require('http-status');
 
-describe('', () => {
-  test('create users', async () => {
+describe('Sign In', () => {
+  test('no body', async () => {
     const response = await request(app)
       .post('/signin');
-    expect(response.statusCode).toBe(status.BAD_REQUEST)
-  })
-})
+    expect(response.statusCode).toBe(status.BAD_REQUEST);
+  });
 
+  test('create test user', async () => {
+    const response = await request(app)
+      .post('/signin')
+      .send({ data: '{"username": "test", "password": "1234"}' });
+    expect(response.statusCode).toBe(status.CREATED);
+    expect(response.body.message).toBe('user added');
+  });
+});
 
+describe('Log In', () => {
+  test('no body', async () => {
+    const response = await request(app)
+      .post('/login');
+    expect(response.statusCode).toBe(status.BAD_REQUEST);
+  });
 
+  test('not exising user', async () => {
+    const response = await request(app)
+      .post('/login')
+      .send({ data: '{"username": "faketest", "password": "4321"}' });
+    expect(response.statusCode).toBe(status.BAD_REQUEST);
+  });
+
+  test('login test user', async () => {
+    const response = await request(app)
+      .post('/login')
+      .send({ data: '{"username": "test", "password": "1234"}' });
+    expect(response.statusCode).toBe(status.OK);
+    expect(response.body.message).toBe('logged succesfully');
+  });
+  test('failed login test user', async () => {
+    const response = await request(app)
+      .post('/login')
+      .send({ data: '{"username": "test", "password": "4321"}' });
+    expect(response.statusCode).toBe(status.UNAUTHORIZED);
+    expect(response.body.message).toBe('passwords dont match');
+  });
+});
 
 // let token
 // // getToken of test user by default in the db
@@ -27,7 +62,6 @@ describe('', () => {
 //   })
 // })
 
-
 // // token of test user by default in the database
 // describe('GET /bmt/test/tags', () => {
 //   test('Test get tags of user test', async () => {
@@ -39,7 +73,6 @@ describe('', () => {
 //     expect(response.body.data.length).toBe(1)
 //   })
 // })
-
 
 // // get with a not existing user
 // describe('GET /bmt/test0/tags', () => {
@@ -90,7 +123,6 @@ describe('', () => {
 //     expect(response.statusCode).toBe(status.METHOD_NOT_ALLOWED)
 //   })
 // })
-
 
 // // get tag info
 // describe('GET /bmt/test/tags/1', () => {
