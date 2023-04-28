@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { checkUser, addUser } = require('../controllers/user.js');
-const { validateAddUser, verifBody } = require('../middlewares/validateUser.js');
+const { validateAddUser, validateBody } = require('../middlewares/validators.js');
 
-router.post('/signin', verifBody, validateAddUser, addUser);
-router.post('/login', verifBody, checkUser);
+router.post('/signin', validateBody, validateAddUser, addUser);
+router.post('/login', validateBody, checkUser);
 
 module.exports = router;

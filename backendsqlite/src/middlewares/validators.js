@@ -2,7 +2,8 @@ const users = require('../models/users.js');
 const status = require('http-status');
 const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
-const bcrypt = require('bcrypt');
+const jws = require('jws');
+const { SECRET } = process.env;
 
 const validateAddUser = async (req, res, next) => {
   const { username } = req;
@@ -20,7 +21,7 @@ const validateAddUser = async (req, res, next) => {
   next();
 };
 
-const verifBody = async (req, res, next) => {
+const validateBody = async (req, res, next) => {
   if (!has(req.body, ['data'])) {
     throw new CodeError('You must include a request body', status.BAD_REQUEST);
   }
@@ -35,7 +36,18 @@ const verifBody = async (req, res, next) => {
   next();
 };
 
+const validateToken = async (req, res, next) => {
+  if (!has(req, ['x-access-token'])) {
+    throw new CodeError('You must pass a token in a x-access-token header', status.BAD_REQUEST);
+  }
+  const token = req.get('x-access-token');
+  if (!jws.verify(token, 'HS256', SECRET)) {
+    throw new CodeError('Invalid token', status.FORBIDDEN);
+  }
+  next();
+};
 module.exports = {
   validateAddUser,
-  verifBody
+  validateBody,
+  validateToken
 };
