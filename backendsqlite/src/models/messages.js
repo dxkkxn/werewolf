@@ -8,20 +8,22 @@ const messages = db.define(
     idMessage: {
       primaryKey: true,
       type: Sequelize.INTEGER,
+      autoIncrement: true,
       allowNull: false,
       unique: true
     },
     time: {
       type: Sequelize.DATE,
-      allowNull: false,
+      allowNull: false
     },
     body: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: false
     },
     current: {
       type: Sequelize.BOOLEAN,
-      allowNull: false
+      allowNull: false,
+      defaultValue: true
     },
     gameTime: {
       type: Sequelize.STRING,
