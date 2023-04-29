@@ -26,14 +26,14 @@ describe('create test user for this module', () => {
 describe('create game', () => {
   test('no body', async () => {
     const response = await request(app)
-      .post('/testGame/game')
+      .post('/game')
       .set({ 'x-access-token': token });
     expect(response.statusCode).toBe(status.BAD_REQUEST);
     expect(response.body.message).toBe('You must include a data property in the request body');
   });
   test('not passed required properties', async () => {
     const response = await request(app)
-      .post('/testGame/game')
+      .post('/game')
       .set({ 'x-access-token': token })
       .send({ data: '{}' });
     expect(response.statusCode).toBe(status.BAD_REQUEST);
@@ -43,7 +43,7 @@ describe('create game', () => {
   test('creating a normal game', async () => {
     const data = {creatorUsername: 'testGame', dayDuration: 3, nightDuration: 2};
     const response = await request(app)
-      .post('/testGame/game')
+      .post('/game')
       .set({ 'x-access-token': token })
       .send({ data: JSON.stringify(data) });
     expect(response.statusCode).toBe(status.CREATED);
@@ -55,10 +55,42 @@ describe('create game', () => {
 describe('get games', () => {
   test('getting all existing games', async () => {
     const response = await request(app)
-      .get('/testGame/game')
+      .get('/game')
       .set({ 'x-access-token': token });
-    expect(response.statusCode).toBe(status.OK);
     expect(response.body.message).toBe('returning games in the data property');
     expect(response.body.data).toBe('[{"idGame":1,"minPlayers":5,"maxPlayers":20,"dayDuration":3,"nightDuration":2,"werewolfProbability":0.33,"creatorUsername":"testGame"}]');
+    expect(response.statusCode).toBe(status.OK);
   });
+});
+
+
+let token2;
+describe('create test user 2 for this module', () => {
+  test('create testGame2 user', async () => {
+    const response = await request(app)
+      .post('/signin')
+      .send({ data: '{"username": "testGame2", "password": "1234"}' });
+    expect(response.statusCode).toBe(status.CREATED);
+    expect(response.body.message).toBe('user added');
+  });
+  test('login test user', async () => {
+    const response = await request(app)
+      .post('/login')
+      .send({ data: '{"username": "testGame2", "password": "1234"}' });
+    token2 = response.body.token;
+    expect(response.body.message).toBe('logged succesfully');
+    expect(token).toBeDefined();
+    expect(response.statusCode).toBe(status.OK);
+  });
+});
+
+describe('join game', () => {
+  test('testGame2 joins game 1 created by testgame', async () => {
+    const response = await request(app)
+      .post('/game/1')
+      .set({'x-access-token': token2})
+    expect(response.body.message).toBe('user: testGame2 joined game with id: 1');
+    expect(response.statusCode).toBe(status.OK);
+  });
+
 });
