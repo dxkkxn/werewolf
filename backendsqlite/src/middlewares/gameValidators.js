@@ -1,6 +1,7 @@
 const status = require('http-status');
 const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
+const games = require('../models/games.js');
 
 const validateBodyCreateGame = async (req, res, next) => {
   if (!has(req.body, ['data'])) {
@@ -21,6 +22,14 @@ const validateBodyCreateGame = async (req, res, next) => {
   next();
 };
 
+const validateIdGame = async (req, res, next) => {
+  const idGame = req.params.idGame;
+  const gameFound = games.findOne({ where: { idGame } });
+  if (!gameFound) throw new CodeError(`Game ${idGame} was not found`, status.BAD_REQUEST);
+  next();
+};
+
 module.exports = {
-  validateBodyCreateGame
+  validateBodyCreateGame,
+  validateIdGame
 };
