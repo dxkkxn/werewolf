@@ -37,10 +37,11 @@ const playersInGame = db.define(
   { timestamps: false }
 );
 
-players.hasOne(playersInGame, {
+playersInGame.belongsTo(players, {
   foreignKey: 'idPlayer',
   primaryKey: true,
   unique: true
 });
+// players.hasOne(playersInGame);
 
 module.exports = playersInGame;
