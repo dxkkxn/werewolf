@@ -70,7 +70,10 @@ const startGame = async (req, res) => {
   res.status(status.CREATED).json({ message: 'game started' });
 };
 const getStateOfGame = async (req, res) => {
-  res.status(status.NOT_IMPLEMENTED).json({ message: 'not implemented yet' });
+  const idGame = req.params.idGame;
+  console.assert(idGame !== undefined);
+  const playersInGame = await PlayersInGame.findAll({ include: [{model: Players, where: {idGame} }]}); //, where: { idGame } });
+  res.status(status.OK).json({ message: 'returning players states', data: JSON.stringify(playersInGame) });
 };
 module.exports = {
   createGame,
