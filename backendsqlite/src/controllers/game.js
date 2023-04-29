@@ -28,6 +28,10 @@ const getStateGame = async (req, res) => {
 const joinGame = async (req, res) => {
   const username = req.username;
   const idGame = req.params.idGame;
+  // check if user already in game
+  const userAlreadyInGame = await Players.findOne({ username, idGame });
+  if (userAlreadyInGame)
+    throw new CodeError(`user: ${username} already in game with id: ${idGame}`, status.FORBIDDEN);
   await Players.create({ username, idGame });
   res.status(status.OK).json({ message: `user: ${username} joined game with id: ${idGame}` });
 };
