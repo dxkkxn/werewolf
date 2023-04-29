@@ -44,10 +44,20 @@ const addMessage = async (req, res) => {
   throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
 };
 
+const getGameWithId = async (req, res) => {
+  const { idGame } = req.params;
+  const game = await Games.findOne({ where: { idGame } });
+  let players = await Players.findAll({ attributes: ['username'], where: { idGame } });
+  players = players.map(player => player.username);
+  const gameWithPlayers = { ...game.toJSON(), players };
+  res.status(status.OK).json({ message: 'returning game in the data property', data: JSON.stringify(gameWithPlayers) });
+};
+
+
 module.exports = {
   createGame,
   getGames,
-  getStateGame,
+  getGameWithId,
   joinGame,
   addMessage
 };
