@@ -24,9 +24,6 @@ const getGames = async (req, res) => {
   res.status(status.OK).json({ message: 'returning games in the data property', data: JSON.stringify(gamesWithPlayers) });
 };
 
-const getStateGame = async (req, res) => {
-  throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
-};
 
 const joinGame = async (req, res) => {
   const username = req.username;
@@ -53,11 +50,15 @@ const getGameWithId = async (req, res) => {
   res.status(status.OK).json({ message: 'returning game in the data property', data: JSON.stringify(gameWithPlayers) });
 };
 
+const startGame = async (req, res) => {
+  throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
+};
 
 module.exports = {
   createGame,
   getGames,
   getGameWithId,
+  startGame,
   joinGame,
   addMessage
 };

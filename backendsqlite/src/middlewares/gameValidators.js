@@ -37,8 +37,21 @@ const validateUserInGame = async (req, res, next) => {
   next();
 };
 
+const validateUserIsCreator = async (req, res, next) => {
+  const idGame = req.params.idGame;
+  const username = req.username;
+  console.assert(username !== undefined);
+  console.assert(idGame !== undefined);
+  const creator = await games.findOne({ attributes: ['creatorUsername'], where: { idGame } });
+  if (creator.creatorUsername !== username) {
+    throw new CodeError('You can\'t start the game because you are not the creator', status.BAD_REQUEST);
+  }
+  next();
+};
+
 module.exports = {
   validateBodyCreateGame,
   validateIdGame,
-  validateUserInGame
+  validateUserInGame,
+  validateUserIsCreator
 };
