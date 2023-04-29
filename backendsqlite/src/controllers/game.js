@@ -24,7 +24,6 @@ const getGames = async (req, res) => {
   res.status(status.OK).json({ message: 'returning games in the data property', data: JSON.stringify(gamesWithPlayers) });
 };
 
-
 const joinGame = async (req, res) => {
   const username = req.username;
   const idGame = req.params.idGame;
@@ -51,7 +50,24 @@ const getGameWithId = async (req, res) => {
 };
 
 const startGame = async (req, res) => {
-  throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
+  const idGame = req.params.idGame;
+  const username = req.username;
+  console.assert(username !== undefined);
+  console.assert(idGame !== undefined);
+  // change started to true
+  const game = await Games.findOne({ where: { idGame } });
+  game.started = true;
+  game.save(); // REVIEW: maybe await?
+  // create playersInGame
+  const players = await Players.findAll({ attributes: ['idPlayer'], where: { idGame } });
+  for (const player of players) {
+    // player will be a werewolf?
+    let role = 'human';
+    if (Math.random() < game.werewolfProbability) role = 'werewolf';
+    const idPlayer = player.idPlayer;
+    PlayersInGame.create({ role, idPlayer });
+  }
+  res.status(status.CREATED).json({ message: 'game started' });
 };
 
 module.exports = {
