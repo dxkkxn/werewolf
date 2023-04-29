@@ -167,6 +167,7 @@ describe('starting game', () => {
     const response = await request(app)
       .post('/game/1/play')
       .set({ 'x-access-token': token });
-    expect(response.statusCode).toBe(status.NOT_IMPLEMENTED);
+    expect(response.body.message).toBe('game started');
+    expect(response.statusCode).toBe(status.CREATED);
   });
 });
