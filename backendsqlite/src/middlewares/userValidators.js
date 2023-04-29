@@ -23,7 +23,7 @@ const validateAddUser = async (req, res, next) => {
 
 const validateBody = async (req, res, next) => {
   if (!has(req.body, ['data'])) {
-    throw new CodeError('You must include a request body', status.BAD_REQUEST);
+    throw new CodeError('You must include a data in the request body', status.BAD_REQUEST);
   }
   const { username, password } = JSON.parse(req.body.data);
   if (!username) {
@@ -37,10 +37,10 @@ const validateBody = async (req, res, next) => {
 };
 
 const validateToken = async (req, res, next) => {
-  if (!has(req, ['x-access-token'])) {
+  const token = req.get('x-access-token');
+  if (!token) {
     throw new CodeError('You must pass a token in a x-access-token header', status.BAD_REQUEST);
   }
-  const token = req.get('x-access-token');
   if (!jws.verify(token, 'HS256', SECRET)) {
     throw new CodeError('Invalid token', status.FORBIDDEN);
   }
