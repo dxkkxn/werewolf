@@ -19,12 +19,12 @@ const players = db.define(
     indexes: [
       {
         unique: true,
-        fields: ['idGame', 'userName']
+        fields: ['idGame', 'username']
       }
     ]
   }
 );
 games.belongsToMany(users, { foreignKey: 'idGame', primaryKey: true, through: 'players' });
-users.belongsToMany(games, { foreignKey: 'userName', primaryKey: true, through: 'players' });
+users.belongsToMany(games, { foreignKey: 'username', primaryKey: true, through: 'players' });
 
 module.exports = players;
