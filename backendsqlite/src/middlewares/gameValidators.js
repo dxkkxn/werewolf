@@ -49,9 +49,22 @@ const validateUserIsCreator = async (req, res, next) => {
   next();
 };
 
+const validateGameStarted = async (req, res, next) => {
+  const idGame = req.params.idGame;
+  const username = req.username;
+  console.assert(username !== undefined);
+  console.assert(idGame !== undefined);
+  const started = await games.findOne({ attributes: ['started'], where: { idGame } });
+  if (started.started !== true) {
+    throw new CodeError('You can\'t get game state because the game didn\'t start', status.BAD_REQUEST);
+  }
+  next();
+};
+
 module.exports = {
   validateBodyCreateGame,
   validateIdGame,
   validateUserInGame,
-  validateUserIsCreator
+  validateUserIsCreator,
+  validateGameStarted
 };
