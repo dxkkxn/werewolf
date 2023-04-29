@@ -4,11 +4,15 @@ const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
 
 const createGame = async (req, res) => {
-  throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
+  const creatorUsername = req.params.username;
+  const { minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability } = JSON.parse(req.body.data);
+  await games.create({ creatorUsername, minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability });
+  res.status(status.CREATED).json({ message: 'game created' });
 };
 
 const getGames = async (req, res) => {
-  throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
+  const x = await games.findAll();
+  res.status(status.OK).json({ message: 'returning games in the data property', data: JSON.stringify(x) });
 };
 
 const getStateGame = async (req, res) => {
