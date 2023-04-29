@@ -69,12 +69,15 @@ const startGame = async (req, res) => {
   }
   res.status(status.CREATED).json({ message: 'game started' });
 };
-
+const getStateOfGame = async (req, res) => {
+  res.status(status.NOT_IMPLEMENTED).json({ message: 'not implemented yet' });
+};
 module.exports = {
   createGame,
   getGames,
   getGameWithId,
-  startGame,
   joinGame,
+  startGame,
+  getStateOfGame,
   addMessage
 };
