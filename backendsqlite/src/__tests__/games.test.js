@@ -68,7 +68,8 @@ describe('get games', () => {
       nightDuration: 2,
       werewolfProbability: 0.33,
       creatorUsername: 'testGame',
-      players: []
+      players: ['testGame'],
+      started: false
     });
     expect(response.statusCode).toBe(status.OK);
   });
@@ -117,8 +118,37 @@ describe('join game', () => {
       nightDuration: 2,
       werewolfProbability: 0.33,
       creatorUsername: 'testGame',
-      players: ['testGame2']
+      players: ['testGame', 'testGame2'],
+      started: false
     });
     expect(response.statusCode).toBe(status.OK);
+  });
+
+  test('verif testGame2 is a player of game 1 with get with id', async () => {
+    const response = await request(app)
+      .get('/game/1')
+      .set({ 'x-access-token': token });
+    expect(response.body.message).toBe('returning game in the data property');
+    const data = JSON.parse(response.body.data);
+    expect(data).toEqual({
+      idGame: 1,
+      minPlayers: 5,
+      maxPlayers: 20,
+      dayDuration: 3,
+      nightDuration: 2,
+      werewolfProbability: 0.33,
+      creatorUsername: 'testGame',
+      players: ['testGame', 'testGame2'],
+      started: false
+    });
+    expect(response.statusCode).toBe(status.OK);
+  });
+
+  test('testGame2 joins again game 1 created by testgame', async () => {
+    const response = await request(app)
+      .post('/game/1')
+      .set({ 'x-access-token': token2 });
+    expect(response.body.message).toBe('user: testGame2 already in game with id: 1');
+    expect(response.statusCode).toBe(status.FORBIDDEN);
   });
 });
