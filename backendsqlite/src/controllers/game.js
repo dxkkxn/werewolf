@@ -72,7 +72,15 @@ const startGame = async (req, res) => {
 const getStateOfGame = async (req, res) => {
   const idGame = req.params.idGame;
   console.assert(idGame !== undefined);
-  const playersInGame = await PlayersInGame.findAll({ include: [{model: Players, where: {idGame} }]}); //, where: { idGame } });
+  let playersInGame = await PlayersInGame.findAll({ include: [{model: Players, where: {idGame} }]}); //, where: { idGame } });
+  // clearing json object to send
+  playersInGame = playersInGame.map((player) => {
+    player = player.toJSON();
+    const username = player.player.username;
+    player.username = username;
+    delete player.player;
+    return player;
+  });
   res.status(status.OK).json({ message: 'returning players states', data: JSON.stringify(playersInGame) });
 };
 module.exports = {
