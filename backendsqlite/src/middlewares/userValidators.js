@@ -44,8 +44,15 @@ const validateToken = async (req, res, next) => {
   if (!jws.verify(token, 'HS256', SECRET)) {
     throw new CodeError('Invalid token', status.FORBIDDEN);
   }
+  // getting username from token
+  const username = jws.decode(token).payload;
+  // check if username exists
+  const userFound = users.findOne({ where: { username } });
+  if (!userFound) throw new CodeError('Invalid token', status.FORBIDDEN);
+  req.username = username;
   next();
 };
+
 module.exports = {
   validateAddUser,
   validateBody,
