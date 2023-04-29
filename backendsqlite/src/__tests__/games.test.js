@@ -221,3 +221,15 @@ describe('starting game', () => {
     expect(response.statusCode).toBe(status.OK);
   });
 });
+
+
+describe('messages testing', () => {
+  test('sending message', async () => {
+    const response = await request(app)
+      .post('/game/1/message')
+      .set({ 'x-access-token': token })
+      .send({ data: '{"message": "hello testGame2"}' });
+    expect(response.body.message).toBe('message sent');
+    expect(response.statusCode).toBe(status.CREATED);
+  });
+});
