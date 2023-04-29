@@ -38,6 +38,7 @@ const messages = db.define(
   },
   { timestamps: false }
 );
-playersInGame.hasOne(messages, { foreignKey: 'idPlayer', primaryKey: true });
+// playersInGame.hasOne(messages, { foreignKey: 'idPlayer', primaryKey: true });
+messages.belongsTo(playersInGame, { foreignKey: 'idPlayer', primaryKey: true });
 
 module.exports = messages;
