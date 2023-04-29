@@ -188,10 +188,36 @@ describe('starting game', () => {
     expect(response.statusCode).toBe(status.CREATED);
   });
 
+  const expectedData = ['idPlayer', 'username', 'role', 'state'];
+
   test('get state of game', async () => {
     const response = await request(app)
       .get('/game/1/play')
       .set({ 'x-access-token': token2 });
-    expect(response.statusCode).toBe(status.NOT_IMPLEMENTED);
+    expect(response.body.message).toBe('returning players states');
+    const data = JSON.parse(response.body.data);
+    data.forEach((player) => {
+      expectedData.forEach((data) => {
+        expect(player[data]).toBeDefined();
+      });
+    });
+
+    expect(response.statusCode).toBe(status.OK);
+  });
+
+  test('get state of game', async () => {
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': token });
+    expect(response.body.message).toBe('returning players states');
+
+    const data = JSON.parse(response.body.data);
+    data.forEach((player) => {
+      expectedData.forEach((data) => {
+        expect(player[data]).toBeDefined();
+      });
+    });
+
+    expect(response.statusCode).toBe(status.OK);
   });
 });
