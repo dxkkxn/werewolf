@@ -3,11 +3,14 @@ const status = require('http-status');
 // const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
 const Players = require('../models/players.js');
+const PlayersInGame = require('../models/playersInGame.js');
 
 const createGame = async (req, res) => {
   const creatorUsername = req.username;
   const { minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability } = JSON.parse(req.body.data);
-  await Games.create({ creatorUsername, minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability });
+  const newGame = await Games.create({ creatorUsername, minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability });
+  // add creator as player also
+  await Players.create({ username: creatorUsername, idGame: newGame.idGame });
   res.status(status.CREATED).json({ message: 'game created' });
 };
 
