@@ -1,9 +1,10 @@
 const Games = require('../models/games.js');
 const status = require('http-status');
-// const has = require('has-keys');
+const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
 const Players = require('../models/players.js');
 const PlayersInGame = require('../models/playersInGame.js');
+const Messages = require('../models/messages.js');
 
 const createGame = async (req, res) => {
   const creatorUsername = req.username;
@@ -36,9 +37,6 @@ const joinGame = async (req, res) => {
   res.status(status.OK).json({ message: `user: ${username} joined game with id: ${idGame}` });
 };
 
-const addMessage = async (req, res) => {
-  throw new CodeError('not implemented yet', status.NOT_IMPLEMENTED);
-};
 
 const getGameWithId = async (req, res) => {
   const { idGame } = req.params;
@@ -72,7 +70,7 @@ const startGame = async (req, res) => {
 const getStateOfGame = async (req, res) => {
   const idGame = req.params.idGame;
   console.assert(idGame !== undefined);
-  let playersInGame = await PlayersInGame.findAll({ include: [{model: Players, where: {idGame} }]}); //, where: { idGame } });
+  let playersInGame = await PlayersInGame.findAll({ include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
   // clearing json object to send
   playersInGame = playersInGame.map((player) => {
     player = player.toJSON();
@@ -83,6 +81,24 @@ const getStateOfGame = async (req, res) => {
   });
   res.status(status.OK).json({ message: 'returning players states', data: JSON.stringify(playersInGame) });
 };
+
+const addMessage = async (req, res) => {
+  const data = JSON.parse(req.body.data);
+  if (!has(data, 'message')) {
+    throw new CodeError('You need to pass a message in the body data', status.BAD_REQUEST);
+  }
+  const body = data.message;
+  const username = req.username;
+  let idPlayer = await Players.findAll({ attributes: ['idPlayer'], where: { username } });
+  console.assert(idPlayer.length === 1);
+  idPlayer = idPlayer[0].idPlayer;
+
+  const time = new Date(); // time gets now timestamp
+  const gameTime = 'day';
+  Messages.create({ idPlayer, time, body, gameTime });
+  res.status(status.CREATED).json({ message: 'message sent' });
+};
+
 module.exports = {
   createGame,
   getGames,
