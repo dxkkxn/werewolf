@@ -37,7 +37,6 @@ const joinGame = async (req, res) => {
   res.status(status.OK).json({ message: `user: ${username} joined game with id: ${idGame}` });
 };
 
-
 const getGameWithId = async (req, res) => {
   const { idGame } = req.params;
   const game = await Games.findOne({ where: { idGame } });
@@ -79,7 +78,22 @@ const getStateOfGame = async (req, res) => {
     delete player.player;
     return player;
   });
-  res.status(status.OK).json({ message: 'returning players states', data: JSON.stringify(playersInGame) });
+  let messages = await Messages.findAll({
+    include: [{
+      model: PlayersInGame,
+      include: [{ model: Players, where: { idGame } }]
+    }]
+  });
+  // clearing messages output
+  messages = messages.map((msg) => {
+    msg = msg.toJSON();
+    const username = msg.playersInGame.player.username;
+    msg.username = username;
+    delete msg.playersInGame;
+    return msg;
+  });
+  const state = { players: playersInGame, messages };
+  res.status(status.OK).json({ message: 'returning game state', data: JSON.stringify(state) });
 };
 
 const addMessage = async (req, res) => {
