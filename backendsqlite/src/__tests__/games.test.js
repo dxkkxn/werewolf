@@ -190,13 +190,14 @@ describe('starting game', () => {
 
   const expectedData = ['idPlayer', 'username', 'role', 'state'];
 
-  test('get state of game', async () => {
+  test('get state of players', async () => {
     const response = await request(app)
       .get('/game/1/play')
       .set({ 'x-access-token': token2 });
-    expect(response.body.message).toBe('returning players states');
+    expect(response.body.message).toBe('returning game state');
     const data = JSON.parse(response.body.data);
-    data.forEach((player) => {
+    const players = data.players;
+    players.forEach((player) => {
       expectedData.forEach((data) => {
         expect(player[data]).toBeDefined();
       });
@@ -205,14 +206,14 @@ describe('starting game', () => {
     expect(response.statusCode).toBe(status.OK);
   });
 
-  test('get state of game', async () => {
+  test('get state of players', async () => {
     const response = await request(app)
       .get('/game/1/play')
       .set({ 'x-access-token': token });
-    expect(response.body.message).toBe('returning players states');
-
+    expect(response.body.message).toBe('returning game state');
     const data = JSON.parse(response.body.data);
-    data.forEach((player) => {
+    const players = data.players
+    players.forEach((player) => {
       expectedData.forEach((data) => {
         expect(player[data]).toBeDefined();
       });
@@ -220,6 +221,7 @@ describe('starting game', () => {
 
     expect(response.statusCode).toBe(status.OK);
   });
+
 });
 
 
@@ -231,5 +233,17 @@ describe('messages testing', () => {
       .send({ data: '{"message": "hello testGame2"}' });
     expect(response.body.message).toBe('message sent');
     expect(response.statusCode).toBe(status.CREATED);
+  });
+
+  test('receiving messages', async () => {
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': token });
+    expect(response.body.message).toBe('returning game state');
+    const data = JSON.parse(response.body.data);
+    expect(data.messages).toHaveLength(1);
+    expect(data.messages[0].body).toBe('hello testGame2');
+    expect(data.messages[0].username).toBe('testGame');
+    expect(response.statusCode).toBe(status.OK);
   });
 });
