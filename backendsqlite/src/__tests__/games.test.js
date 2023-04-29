@@ -155,6 +155,7 @@ describe('join game', () => {
 
 
 describe('starting game', () => {
+
   test('testGame2 tries to start game', async () => {
     const response = await request(app)
       .post('/game/1/play')
@@ -163,11 +164,34 @@ describe('starting game', () => {
     expect(response.body.message).toBe('You can\'t start the game because you are not the creator');
   });
 
-  test('testGame tries to start game', async () => {
+  test('get state in game not started', async () => {
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': token });
+    expect(response.statusCode).toBe(status.BAD_REQUEST);
+    expect(response.body.message).toBe('You can\'t get game state because the game didn\'t start');
+  });
+
+  test('get state in game not started', async () => {
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': token2 });
+    expect(response.statusCode).toBe(status.BAD_REQUEST);
+    expect(response.body.message).toBe('You can\'t get game state because the game didn\'t start');
+  });
+
+  test('testGame starts game', async () => {
     const response = await request(app)
       .post('/game/1/play')
       .set({ 'x-access-token': token });
     expect(response.body.message).toBe('game started');
     expect(response.statusCode).toBe(status.CREATED);
+  });
+
+  test('get state of game', async () => {
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': token2 });
+    expect(response.statusCode).toBe(status.NOT_IMPLEMENTED);
   });
 });
