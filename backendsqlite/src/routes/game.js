@@ -13,6 +13,6 @@ router.get('/game/:idGame', validateToken, validateIdGame, validateUserInGame, g
 router.post('/game/:idGame/play', validateToken, validateIdGame, validateUserInGame, validateUserIsCreator, startGame);
 router.get('/game/:idGame/play', validateToken, validateIdGame, validateUserInGame, validateGameStarted, getStateOfGame);
 
-// router.post('/:username/:idGame/message', validateToken, validateUserInGame, addMessage);
+router.post('/:username/:idGame/message', validateToken, validateUserInGame, validateGameStarted, addMessage);
 // router.post('/:username/:idGame/vote', validateToken, validateUserInGame, addMessage);
 module.exports = router;
