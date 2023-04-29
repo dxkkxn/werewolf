@@ -23,6 +23,14 @@ const validateBodyCreateGame = async (req, res, next) => {
 };
 
 const validateIdGame = async (req, res, next) => {
+  if (!has(req.params, 'idGame')) throw new CodeError(`no idGame found in params`, status.BAD_REQUEST);
+  const idGame = req.params.idGame;
+  const gameFound = games.findOne({ where: { idGame } });
+  if (!gameFound) throw new CodeError(`Game ${idGame} was not found`, status.BAD_REQUEST);
+  next();
+};
+
+const validateUserInGame = async (req, res, next) => {
   const idGame = req.params.idGame;
   const gameFound = games.findOne({ where: { idGame } });
   if (!gameFound) throw new CodeError(`Game ${idGame} was not found`, status.BAD_REQUEST);
@@ -31,5 +39,6 @@ const validateIdGame = async (req, res, next) => {
 
 module.exports = {
   validateBodyCreateGame,
-  validateIdGame
+  validateIdGame,
+  validateUserInGame
 };
