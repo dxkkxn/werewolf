@@ -32,6 +32,11 @@ const games = db.define(
       type: Sequelize.DECIMAL,
       allowNull: true,
       defaultValue: 0.33
+    },
+    started: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   },
   { timestamps: false }

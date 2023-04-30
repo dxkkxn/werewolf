@@ -22,7 +22,7 @@ const validateAddUser = async(req, res, next) => {
 };
 
 const validateBody = async(req, res, next) => {
-  console.log(req.body);
+    console.log(req.body);
     if (!has(req.body, ['username'])) {
         throw new CodeError('You must include a username in the request body', status.BAD_REQUEST);
     }
@@ -50,8 +50,15 @@ const validateToken = async(req, res, next) => {
     if (!jws.verify(token, 'HS256', SECRET)) {
         throw new CodeError('Invalid token', status.FORBIDDEN);
     }
+    // getting username from token
+    const username = jws.decode(token).payload;
+    // check if username exists
+    const userFound = users.findOne({ where: { username } });
+    if (!userFound) throw new CodeError('Invalid token', status.FORBIDDEN);
+    req.username = username;
     next();
 };
+
 module.exports = {
     validateAddUser,
     validateBody,

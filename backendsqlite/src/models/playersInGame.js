@@ -19,7 +19,8 @@ const playersInGame = db.define(
           args: [['werewolf', 'human']],
           msg: 'role can only be werewolf or human'
         }
-      }
+      },
+      defaultValue: 'human'
     },
     state: {
       type: Sequelize.STRING,
@@ -29,16 +30,18 @@ const playersInGame = db.define(
           args: [['alive', 'dead']],
           msg: 'state can only be alive or dead'
         }
-      }
+      },
+      defaultValue: 'alive'
     }
   },
   { timestamps: false }
 );
 
-players.hasOne(playersInGame, {
+playersInGame.belongsTo(players, {
   foreignKey: 'idPlayer',
   primaryKey: true,
   unique: true
 });
+// players.hasOne(playersInGame);
 
 module.exports = playersInGame;

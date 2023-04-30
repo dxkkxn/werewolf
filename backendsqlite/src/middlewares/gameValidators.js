@@ -1,6 +1,7 @@
 const status = require('http-status');
 const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
+const games = require('../models/games.js');
 
 const validateBodyCreateGame = async (req, res, next) => {
   if (!has(req.body, ['data'])) {
@@ -21,6 +22,49 @@ const validateBodyCreateGame = async (req, res, next) => {
   next();
 };
 
+const validateIdGame = async (req, res, next) => {
+  if (!has(req.params, 'idGame')) throw new CodeError(`no idGame found in params`, status.BAD_REQUEST);
+  const idGame = req.params.idGame;
+  const gameFound = games.findOne({ where: { idGame } });
+  if (!gameFound) throw new CodeError(`Game ${idGame} was not found`, status.BAD_REQUEST);
+  next();
+};
+
+const validateUserInGame = async (req, res, next) => {
+  const idGame = req.params.idGame;
+  const gameFound = games.findOne({ where: { idGame } });
+  if (!gameFound) throw new CodeError(`Game ${idGame} was not found`, status.BAD_REQUEST);
+  next();
+};
+
+const validateUserIsCreator = async (req, res, next) => {
+  const idGame = req.params.idGame;
+  const username = req.username;
+  console.assert(username !== undefined);
+  console.assert(idGame !== undefined);
+  const creator = await games.findOne({ attributes: ['creatorUsername'], where: { idGame } });
+  if (creator.creatorUsername !== username) {
+    throw new CodeError('You can\'t start the game because you are not the creator', status.BAD_REQUEST);
+  }
+  next();
+};
+
+const validateGameStarted = async (req, res, next) => {
+  const idGame = req.params.idGame;
+  const username = req.username;
+  console.assert(username !== undefined);
+  console.assert(idGame !== undefined);
+  const started = await games.findOne({ attributes: ['started'], where: { idGame } });
+  if (started.started !== true) {
+    throw new CodeError('You can\'t get game state because the game didn\'t start', status.BAD_REQUEST);
+  }
+  next();
+};
+
 module.exports = {
-  validateBodyCreateGame
+  validateBodyCreateGame,
+  validateIdGame,
+  validateUserInGame,
+  validateUserIsCreator,
+  validateGameStarted
 };

@@ -8,20 +8,22 @@ const messages = db.define(
     idMessage: {
       primaryKey: true,
       type: Sequelize.INTEGER,
+      autoIncrement: true,
       allowNull: false,
       unique: true
     },
     time: {
       type: Sequelize.DATE,
-      allowNull: false,
+      allowNull: false
     },
     body: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: false
     },
     current: {
       type: Sequelize.BOOLEAN,
-      allowNull: false
+      allowNull: false,
+      defaultValue: true
     },
     gameTime: {
       type: Sequelize.STRING,
@@ -36,6 +38,7 @@ const messages = db.define(
   },
   { timestamps: false }
 );
-playersInGame.hasOne(messages, { foreignKey: 'idPlayer', primaryKey: true });
+// playersInGame.hasOne(messages, { foreignKey: 'idPlayer', primaryKey: true });
+messages.belongsTo(playersInGame, { foreignKey: 'idPlayer', primaryKey: true });
 
 module.exports = messages;
