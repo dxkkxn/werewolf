@@ -6,7 +6,7 @@ const jws = require('jws');
 const { SECRET } = process.env;
 
 const validateAddUser = async(req, res, next) => {
-    const { username } = req;
+    const username = req.body.username;
     const userAlreadyExist = await users.findOne({
         where: {
             username
@@ -22,7 +22,6 @@ const validateAddUser = async(req, res, next) => {
 };
 
 const validateBody = async(req, res, next) => {
-    console.log(req.body);
     if (!has(req.body, ['username'])) {
         throw new CodeError('You must include a username in the request body', status.BAD_REQUEST);
     }
@@ -30,15 +29,12 @@ const validateBody = async(req, res, next) => {
         throw new CodeError('You must include a password in the request body', status.BAD_REQUEST);
     }
     const { username, password } = req.body;
-    console.log("username : ", username);
-    console.log("mdp : ", password);
     if (!username) {
         throw new CodeError('You must specify a username', status.BAD_REQUEST);
     }
     if (!password) {
         throw new CodeError('You must specify a password', status.BAD_REQUEST);
     }
-    Object.assign(req, { username, password });
     next();
 };
 

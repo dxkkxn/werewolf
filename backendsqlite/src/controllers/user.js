@@ -21,8 +21,6 @@ const addUser = async (req, res) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     return res.status(400).json({ error: 'No data provided in request body.'  });
   }
-  console.log('adding user');
-  console.log(req.body);
   const { username, password } = req.body;
   console.log(username, password);
   try {
@@ -36,8 +34,7 @@ const addUser = async (req, res) => {
 };
 
 const checkUser = async (req, res) => {
-  console.log("checkUser called");
-  const { username, password } = req;
+  const { username, password } = req.body;
   const user = await users.findOne(
     {
       where: { username },

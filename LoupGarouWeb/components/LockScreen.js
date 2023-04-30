@@ -14,18 +14,14 @@ function LoginReq(username, password){
     alert("renseignez tous les champs");
     return -1;
   }
-  const data={username, password};
   fetch(`${url}/login` ,{
     method: 'POST',
     headers: {
           'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      data:
-        JSON.stringify({
-          username,
-          password
-        })
+      username: username,
+      password: password
     })
   })
   .then(data => {
@@ -50,27 +46,19 @@ function SignInReq(username, password, passwordConf){
     alert("mot de passe trop court");
     return -1;
   }
-  console.log(
-    JSON.stringify({
-        username: 'myusername',
-        password: 'mypassword'
-    })
-  );
   fetch(`${url}/signin`, {
     method: 'POST',
     headers: {
           'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        username: 'myusername',
-        password: 'mypassword'
+        username: username,
+        password: password
     })
   })
-  .then(response => response.json())
-  .then(data => {
-    // Do something with the data
-    console.log(data)
-    return 0;
+  .then(response => {
+    if(response.status==201) alert("user created");
+    else alert("failure");
   })
   .catch(error => console.error(error));
 }
