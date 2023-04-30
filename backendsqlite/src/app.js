@@ -25,7 +25,7 @@ app.use(cors());
 app.use(helmet());
 
 // Frontend code access in static mode
-app.use('/frontend', express.static('./src/frontend'));
+app.use('/frontend', express.static('../LoupGarouWeb'));
 
 // Swagger Documentation
 const swaggerUi = require('swagger-ui-express');

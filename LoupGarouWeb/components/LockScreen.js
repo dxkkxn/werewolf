@@ -7,15 +7,27 @@ import { InputField } from "./InputField.js";
 import { useFonts } from "expo-font";
 import Partie from "../components/Partie.js";
 
-const url = 'localhost:3000';
+const url = `http://${window.location.hostname}:3000`
 
 function LoginReq(username, password){
-  console.log(`${url}/login?username=${username}&password=${password}`);
   if(password === '' || username === ''){
     alert("renseignez tous les champs");
     return -1;
   }
-  fetch(`${url}/login?username=${username}&password=${password}`)
+  const data={username, password};
+  fetch(`${url}/login` ,{
+    method: 'POST',
+    headers: {
+          'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      data:
+        JSON.stringify({
+          username,
+          password
+        })
+    })
+  })
   .then(data => {
      // Do something with the data
      console.log(data);
@@ -38,11 +50,26 @@ function SignInReq(username, password, passwordConf){
     alert("mot de passe trop court");
     return -1;
   }
-   fetch(`${url}/signin?username=${username}&password=${password}`)
+  console.log(
+    JSON.stringify({
+        username: 'myusername',
+        password: 'mypassword'
+    })
+  );
+  fetch(`${url}/signin`, {
+    method: 'POST',
+    headers: {
+          'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        username: 'myusername',
+        password: 'mypassword'
+    })
+  })
   .then(response => response.json())
   .then(data => {
     // Do something with the data
-    console.log(data);
+    console.log(data)
     return 0;
   })
   .catch(error => console.error(error));

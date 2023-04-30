@@ -10,8 +10,10 @@ const { PORT } = process.env
 
 // Instantiate an Express Application
 const app = require('./app')
+const cors = require('cors')
+app.use(cors()); //allowing requests from frontend
 // Open Server on selected Port
 app.listen(
   PORT,
-  () => console.info('Server listening on port ', PORT)
+  () => console.log('Server listening on port ', PORT)
 )

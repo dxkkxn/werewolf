@@ -18,18 +18,25 @@ const jws = require('jws');
 // };
 
 const addUser = async (req, res) => {
+  if (!req.body || Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: 'No data provided in request body.'  });
+  }
+  console.log('adding user');
+  console.log(req.body);
+  const { username, password } = req.body;
+  console.log(username, password);
   try {
-    const { username, password } = req;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     await users.create({ username, password: hashedPassword });
     res.status(status.CREATED).json({ message: 'user added' });
   } catch (error) {
-    res.status(status.INTERNAL_ERROR).json({ message: 'internal error' });
+    res.status(500).json({ message: 'internal error' });
   }
 };
 
 const checkUser = async (req, res) => {
+  console.log("checkUser called");
   const { username, password } = req;
   const user = await users.findOne(
     {
