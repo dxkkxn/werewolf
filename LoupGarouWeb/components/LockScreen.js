@@ -9,7 +9,7 @@ import Partie from "../components/Partie.js";
 
 const url = `http://${window.location.hostname}:3000`
 
-function LoginReq(username, password, setterCo, setterUser){
+function LoginReq(username, password, setView, setUser){
   if(password === '' || username === ''){
     alert("renseignez tous les champs");
     return -1;
@@ -28,8 +28,8 @@ function LoginReq(username, password, setterCo, setterUser){
     // Do something with the data
     if(data.status == 200){
       alert ("login ok");
-      setterUser(username);
-      setterCo(true);
+      setUser(username);
+      setView("welcome");
     }
     if(data.status == 401) alert ("login failed");
     return 0;
@@ -68,7 +68,7 @@ function SignInReq(username, password, passwordConf){
   .catch(error => console.error(error));
 }
 
-function LockScreen({setterCo, setterUser}) {
+function LockScreen({setView, setUser}) {
   const [connect, setConnect] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -130,7 +130,7 @@ function LockScreen({setterCo, setterUser}) {
         <Text style={styles.textPressable}>Mot de passe oublié ?</Text>
       </Pressable>
     );
-    ConnexionButton = <MyButton onPress={()=>onPressCo(username, password, setterCo, setterUser)} label="Connexion" bg="#371b58" />;
+    ConnexionButton = <MyButton onPress={()=>onPressCo(username, password, setView, setUser)} label="Connexion" bg="#371b58" />;
   }
   // if (true) {
   //   return <Partie time={"day"} />;

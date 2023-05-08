@@ -7,7 +7,7 @@ import Card from './Card.js';
 const ruler = require("../assets/ruler&pen.svg");
 const add = require("../assets/add-circle.svg");
 
-export default function Welcome({ username }) {
+export default function Welcome({ username , setView}) {
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
@@ -18,8 +18,8 @@ export default function Welcome({ username }) {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Bonjour {username}</Text>
-      <Card icon={ruler} text="Créer une partie" />
-      <Card icon={add} text="Rejoindre une partie" />
+      <Card icon={ruler} text="Créer une partie" onPress={()=>{setView("create");}}/>
+      <Card icon={add} text="Rejoindre une partie" onPress={()=>{setView("join");}} />
 		</View>
 	);
 }

@@ -4,7 +4,7 @@ import {useState} from 'react';
 import { useFonts } from 'expo-font';
 
 
-export default function Card({ icon, text }) {
+export default function Card({ icon, text, onPress}) {
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
@@ -12,9 +12,10 @@ export default function Card({ icon, text }) {
   if (!loaded) {
     return null;
   }
+  console.log(onPress);
   return (
     <View style={styles.container}>
-      <Pressable style={styles.presable}>
+      <Pressable style={styles.presable} onPress={onPress}>
         <Image source={icon} style={styles.image} />
         <Text style={styles.text}>{text}</Text>
       </Pressable>

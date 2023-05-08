@@ -6,6 +6,7 @@ import Join from './components/Join.js';
 import Welcome from './components/Welcome.js';
 
 export default function App() {
+  const [view, setView] = useState("login");
   const [connected, setConnected] = useState(false);
   const [username, setUsername] = useState("");
   useEffect(() => {
@@ -24,17 +25,30 @@ export default function App() {
     avatarId:'4',
     creatorPseudo:"notawolf",
   };
-  if(!connected){
+  if(view == "login"){
     return (
       <View style={styles.container}>
-        <LockScreen setterCo={setConnected} setterUser={setUsername}/>
+        <LockScreen setView={setView} setUser={setUsername}/>
       </View>
     );
   }
-  else {
+  else if (view == "welcome"){
     return(
       <View style={styles.container}>
-        <Welcome username={username}/>
+        <Welcome setView = {setView} username={username}/>
+      </View>
+    );
+  }
+  else if (view == "join"){
+    return(
+      <View style={styles.container}>
+        <Join setView = {setView}/>
+      </View>
+    );
+  }
+  else if (view == "create"){
+    return(
+      <View style={styles.container}>
       </View>
     );
   }
