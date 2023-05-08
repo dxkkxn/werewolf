@@ -9,7 +9,7 @@ const availableGames = (propsArray) => {
       return (<AvailableGame key={index} gameProps={game} />);
   }));
 };
-export default function Join({propsArray}){
+export default function Join(){
   //expects an array of props to pass to AvailableGame
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),

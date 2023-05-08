@@ -15,7 +15,7 @@ const validateAddUser = async(req, res, next) => {
     if (userAlreadyExist) {
         throw new CodeError(
             'this user already exists',
-            status.BAD_REQUEST
+            status.CONFLICT
         );
     }
     next();
