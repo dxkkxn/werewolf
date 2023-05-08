@@ -29,7 +29,7 @@ function LoginReq(username, password, setView, setUser){
     if(data.status == 200){
       alert ("login ok");
       setUser(username);
-      setView("welcome");
+      navigation.navigate('Welcome', {username: username});
     }
     if(data.status == 401) alert ("login failed");
     return 0;
@@ -143,12 +143,12 @@ function LockScreen({setView, setUser}) {
         <InputField
           placeholder="Identifiant"
           secureTextEntry={false}
-          onChangeText={handleUsername}
+          onSubmitEditing={handleUsername}
         />
         <InputField
           placeholder= "Mot De Passe"
           secureTextEntry={true}
-          onChangeText={handlePassword}
+          onSubmitEditing={handlePassword}
         />
         {pwdConfirm}
       </View>

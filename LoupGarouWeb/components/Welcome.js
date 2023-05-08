@@ -18,8 +18,8 @@ export default function Welcome({ username , setView}) {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Bonjour {username}</Text>
-      <Card icon={ruler} text="Créer une partie" onPress={()=>{setView("create");}}/>
-      <Card icon={add} text="Rejoindre une partie" onPress={()=>{setView("join");}} />
+      <Card icon={ruler} text="Créer une partie" onPress={()=>{}}/>
+      <Card icon={add} text="Rejoindre une partie" onPress={()=>{}} />
 		</View>
 	);
 }
