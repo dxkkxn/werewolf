@@ -16,7 +16,7 @@ export const InputField = (props) => {
   return (
     <TextInput
       style={[styles.form, {width: width, fontSize: fontSize}]}
-      onSubmitEditing={props.onSubmitEditing}
+      onChangeText={props.onChangeText}
       placeholder={props.placeholder}
       secureTextEntry={props.secureTextEntry}
       placeholderTextColor="rgba(255, 255, 255, 0.5)"

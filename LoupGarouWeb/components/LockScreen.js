@@ -5,11 +5,12 @@ import { useState } from "react";
 import { MyButton } from "./MyButton.js";
 import { InputField } from "./InputField.js";
 import { useFonts } from "expo-font";
+import { useNavigation } from '@react-navigation/native';
 import Partie from "../components/Partie.js";
 
 const url = `http://${window.location.hostname}:3000`
 
-function LoginReq(username, password, setView, setUser){
+function LoginReq(username, password, navigation){
   if(password === '' || username === ''){
     alert("renseignez tous les champs");
     return -1;
@@ -28,7 +29,7 @@ function LoginReq(username, password, setView, setUser){
     // Do something with the data
     if(data.status == 200){
       alert ("login ok");
-      setUser(username);
+      // setUser(username);
       navigation.navigate('Welcome', {username: username});
     }
     if(data.status == 401) alert ("login failed");
@@ -68,11 +69,12 @@ function SignInReq(username, password, passwordConf){
   .catch(error => console.error(error));
 }
 
-function LockScreen({setView, setUser}) {
+function LockScreen() {
   const [connect, setConnect] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConf, setPasswordConf] = useState("");
+  const navigation = useNavigation();
   const onPressDejainscrit = () => {
     setConnect(true);
   };
@@ -113,6 +115,7 @@ function LockScreen({setView, setUser}) {
         placeholder="Confirmer mot de passe"
         secureTextEntry={true}
         onChangeText={handlePasswordConfirm}
+        login={true}
       />
     );
     dejaInscrit = (
@@ -130,7 +133,7 @@ function LockScreen({setView, setUser}) {
         <Text style={styles.textPressable}>Mot de passe oublié ?</Text>
       </Pressable>
     );
-    ConnexionButton = <MyButton onPress={()=>onPressCo(username, password, setView, setUser)} label="Connexion" bg="#371b58" />;
+    ConnexionButton = <MyButton onPress={()=>onPressCo(username, password, navigation)} label="Connexion" primary={false} />;
   }
   // if (true) {
   //   return <Partie time={"day"} />;
@@ -143,17 +146,19 @@ function LockScreen({setView, setUser}) {
         <InputField
           placeholder="Identifiant"
           secureTextEntry={false}
-          onSubmitEditing={handleUsername}
+          onChangeText={handleUsername}
+          login={true}
         />
         <InputField
           placeholder= "Mot De Passe"
           secureTextEntry={true}
-          onSubmitEditing={handlePassword}
+          onChangeText={handlePassword}
+          login={true}
         />
         {pwdConfirm}
       </View>
       {ConnexionButton}
-      <MyButton label="Créer un compte" bg="#7858a6" onPress={onPressCreate} />
+      <MyButton label="Créer un compte" primary={true} onPress={onPressCreate} />
       {dejaInscrit}
       {pwdOublie}
     </View>
