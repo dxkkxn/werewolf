@@ -1,10 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import LockScreen from './components/LockScreen.js';
-import {useEffect} from 'react';
-import Join from './components/Join.js'
+import {useState, useEffect} from 'react';
+import Join from './components/Join.js';
+import Welcome from './components/Welcome.js';
 
 export default function App() {
+  const [connected, setConnected] = useState(false);
+  const [username, setUsername] = useState("");
   useEffect(() => {
     document.body.style.display='display-flex';
   });
@@ -21,11 +24,20 @@ export default function App() {
     avatarId:'4',
     creatorPseudo:"notawolf",
   };
-  return (
-    <View style={styles.container}>
-      <LockScreen />
-    </View>
-  );
+  if(!connected){
+    return (
+      <View style={styles.container}>
+        <LockScreen setterCo={setConnected} setterUser={setUsername}/>
+      </View>
+    );
+  }
+  else {
+    return(
+      <View style={styles.container}>
+        <Welcome username={username}/>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
