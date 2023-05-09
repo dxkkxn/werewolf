@@ -44,6 +44,7 @@ export default function Join({ route }){
         throw new Error('failed to fetch games.');
       }
       const data = await response.json();
+      console.log(data.data);
       setGameData(data.data);
     } catch(error){ console.error(error)};
   };

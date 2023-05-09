@@ -62,7 +62,8 @@ function SignInReq(username, password, passwordConf){
     },
     body: JSON.stringify({
         username: username,
-        password: password
+        password: password,
+        avatarId: 1
     })
   })
   .then(response => {

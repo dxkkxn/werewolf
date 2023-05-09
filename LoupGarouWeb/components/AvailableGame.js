@@ -1,5 +1,6 @@
 import { StyleSheet, Image, TouchableOpacity, View, Text} from 'react-native';
 import { useFonts } from 'expo-font';
+import { useState, useEffect } from 'react';
 
 function importAll(r) {
   let images = {};
@@ -17,10 +18,8 @@ export function AvailableGame ({gameProps}) {
   if (!loaded) {
     return null;
   }
-  //get avatarId from db
-  //todo
-  //const icon = require(`../assets/images/avatar${avatarId}.png`);
-  const icon = require(`../assets/images/avatar1.png`);
+  const avatarId = gameProps.avatarId;
+  const icon = require(`../assets/images/avatar${avatarId}.png`);
   const arrow = require('../assets/images/rightArrow.png');
   return(
     <View style={styles.rectangle}>
