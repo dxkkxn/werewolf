@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('./database.js');
-const users = require('./users.js')
+const users = require('./users.js');
 
 const games = db.define(
   'games',
@@ -42,5 +42,5 @@ const games = db.define(
   { timestamps: false }
 );
 
-users.hasOne(games, { foreignKey: 'creatorUsername' });
+users.belongsToMany(games, { foreignKey: 'creatorUsername' });
 module.exports = games;

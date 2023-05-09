@@ -25,18 +25,21 @@ function LoginReq(username, password, navigation){
       password: password
     })
   })
+  .then((response) => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      alert('login failed');
+      throw new Error('login failed.');
+    }
+  })
   .then(data => {
     // Do something with the data
-    if(data.status == 200){
       alert ("login ok");
-      // setUser(username);
-      navigation.navigate('Welcome', {username: username});
-    }
-    if(data.status == 401) alert ("login failed");
-    return 0;
-    })
-    .catch(error => console.error(error)); 
-}
+      navigation.navigate('Welcome', {username: username, token: data.token});
+  })
+  .catch(error => console.error(error)); 
+};
 
 
 function SignInReq(username, password, passwordConf){

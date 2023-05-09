@@ -17,11 +17,12 @@ export default function Welcome({ route }) {
   if (!loaded) {
     return null;
   }
-  const { username } = route.params;
+  const username = route.params.username;
+  const token = route.params.token;
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Bonjour {username}</Text>
-      <Card icon={ruler} text="Créer une partie" onPress={()=>navigation.navigate('Form')}/>
+      <Card icon={ruler} text="Créer une partie" onPress={()=>navigation.navigate('Form', {username : username, token: token})}/>
       <Card icon={add} text="Rejoindre une partie" onPress={()=>navigation.navigate('Join')} />
 		</View>
 	);

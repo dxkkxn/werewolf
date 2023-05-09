@@ -12,7 +12,6 @@ export default function Card({ icon, text, onPress}) {
   if (!loaded) {
     return null;
   }
-  console.log(onPress);
   return (
     <View style={styles.container}>
       <Pressable style={styles.presable} onPress={onPress}>

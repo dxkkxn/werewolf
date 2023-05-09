@@ -1,4 +1,6 @@
 const status = require('http-status');
+const players = require('../models/players.js');
+const users = require('../models/users.js');
 const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
 const games = require('../models/games.js');
@@ -8,8 +10,29 @@ const validateBodyCreateGame = async (req, res, next) => {
     throw new CodeError('You must include a data property in the request body', status.BAD_REQUEST);
   }
   const data = JSON.parse(req.body.data);
-  // const requiredAttrs = ['minPlayers', 'maxPlayers', 'dayDuration', 'nightDuration', 'werewolfProbability'];
-  const requiredAttrs = ['dayDuration', 'nightDuration'];
+  // verif que l'utilisateur n'a pas de partie en cours
+  const username = req.username;
+  users.findOne({
+    include: {
+      model: players,
+      where: {
+        username: username
+      }
+    }
+  })
+    .then((user) => {
+      if (user) {
+        console.log('User is linked to an existing game');
+      } else {
+        console.log('User is not linked to any existing game');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+
+  const requiredAttrs = ['minPlayers', 'maxPlayers', 'dayDuration', 'nightDuration', 'werewolfProbability',
+    'spiritismProbability', 'startDay', 'startHour', 'seerProbability', 'infectionProbability', 'insomniaProbability'];
   const notFoundAttrs = [];
   requiredAttrs.forEach((attr) => {
     if (!has(data, [attr])) {
