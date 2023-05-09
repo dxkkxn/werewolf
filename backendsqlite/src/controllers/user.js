@@ -21,7 +21,8 @@ const addUser = async (req, res) => {
   if (!req.body || Object.keys(req.body).length === 0) {
     return res.status(400).json({ error: 'No data provided in request body.' });
   }
-  const { username, password, avatarId } = req.body;
+  const data = JSON.parse(req.body.data);
+  const { username, password, avatarId } = data;
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -33,7 +34,8 @@ const addUser = async (req, res) => {
 };
 
 const checkUser = async (req, res) => {
-  const { username, password } = req.body;
+  const data = JSON.parse(req.body.data);
+  const { username, password } = data;
   const user = await users.findOne(
     {
       where: { username },

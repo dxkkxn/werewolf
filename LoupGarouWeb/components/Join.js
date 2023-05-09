@@ -10,19 +10,19 @@ const url = `http://${window.location.hostname}:3000`
 export default function Join({ route }){
   const [gameData, setGameData] = useState(null);
   const [games, setGames] = useState(null);
+  const username = route.params.username;
+  const token = route.params.token;
   const availableGames = (propsArray) => {
     propsArray = JSON.parse(propsArray);
     return(
       propsArray.map((game, index) => {
         if(!game.started){
-          return (<AvailableGame key={index} gameProps={game} />);
+          return (<AvailableGame username={username} token={token} key={index} gameProps={game} />);
         }
       }
     ));
   };
 
-  const username = route.params.username;
-  const token = route.params.token;
   useEffect(() => {
     if(gameData != null){
       setGames(availableGames(gameData));
@@ -44,7 +44,6 @@ export default function Join({ route }){
         throw new Error('failed to fetch games.');
       }
       const data = await response.json();
-      console.log(data.data);
       setGameData(data.data);
     } catch(error){ console.error(error)};
   };
