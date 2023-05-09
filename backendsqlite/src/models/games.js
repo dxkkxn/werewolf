@@ -10,6 +10,40 @@ const games = db.define(
       type: Sequelize.INTEGER,
       autoIncrement: true
     },
+    creatorUsername: {
+      type: Sequelize.STRING,
+      alloxNull: false
+    },
+    startHour: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      defaultValue: 8
+    },
+    startDay: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      defaultValue: 1
+    },
+    infectionProbability: {
+      type: Sequelize.FLOAT,
+      allowNull: false,
+      defaultValue: 0
+    },
+    insomniaProbability: {
+      type: Sequelize.FLOAT,
+      allowNull: false,
+      defaultValue: 0
+    },
+    seerProbability: {
+      type: Sequelize.FLOAT,
+      allowNull: false,
+      defaultValue: 0
+    },
+    spiritismProbability: {
+      type: Sequelize.FLOAT,
+      allowNull: false,
+      defaultValue: 0
+    },
     minPlayers: {
       type: Sequelize.INTEGER,
       allowNull: false,
@@ -42,5 +76,5 @@ const games = db.define(
   { timestamps: false }
 );
 
-users.belongsToMany(games, { foreignKey: 'creatorUsername' });
+users.hasOne(games, { foreignKey: 'creatorUsername' });
 module.exports = games;

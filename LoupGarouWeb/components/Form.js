@@ -103,8 +103,8 @@ export default function Form({route}) {
       }
       if(data.status == 401) alert ("failure");
       return 0;
-      })
-      .catch(error => console.error(error)); 
+    })
+    .catch(error => console.error(error)); 
   }
 
   const handleNbPlayers = (nbPlayersInput) => {

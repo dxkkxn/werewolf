@@ -23,7 +23,7 @@ export default function Welcome({ route }) {
 		<View style={styles.container}>
 			<Text style={styles.title}>Bonjour {username}</Text>
       <Card icon={ruler} text="Créer une partie" onPress={()=>navigation.navigate('Form', {username : username, token: token})}/>
-      <Card icon={add} text="Rejoindre une partie" onPress={()=>navigation.navigate('Join')} />
+      <Card icon={add} text="Rejoindre une partie" onPress={()=>navigation.navigate('Join', {username: username, token : token})} />
 		</View>
 	);
 }

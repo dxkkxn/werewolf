@@ -9,8 +9,8 @@ const Messages = require('../models/messages.js');
 const createGame = async (req, res) => {
   const creatorUsername = req.username;
   console.log('username', creatorUsername);
-  const { minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability, insomniaProbability, seerProbability, infectionProbability, spritismProbability } = JSON.parse(req.body.data);
-  const newGame = await Games.create({ creatorUsername, minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability });
+  const { minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability, startHour, startDay, insomniaProbability, seerProbability, infectionProbability, spiritismProbability } = JSON.parse(req.body.data);
+  const newGame = await Games.create({ creatorUsername, startHour, startDay, infectionProbability, insomniaProbability, seerProbability, spiritismProbability, minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability });
   // add creator as player also
   await Players.create({ username: creatorUsername, idGame: newGame.idGame });
   res.status(status.CREATED).json({ message: 'game created' });

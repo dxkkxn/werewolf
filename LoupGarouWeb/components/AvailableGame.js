@@ -10,20 +10,6 @@ function importAll(r) {
 
  
 export function AvailableGame ({gameProps}) {
-  //  avatarId is a number corresonding to an image
-  //  nbPlayersMin
-  //  nbPlayersMax(facultatif: si null, pas de fourchette)
-  //  dayStart : heure de début du jour
-  //  dayEnd
-  //  startDate
-  //  startHour
-  //  probaC
-  //  probaI
-  //  probaV
-  //  probaS
-  //  nbWolves
-  //  hoursToStart : nb of hours before start of game
-  //pseudo is a string
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
@@ -31,21 +17,25 @@ export function AvailableGame ({gameProps}) {
   if (!loaded) {
     return null;
   }
-  const icon = require(`../assets/images/avatar${gameProps.avatarId}.png`);
+  //get avatarId from db
+  //todo
+  //const icon = require(`../assets/images/avatar${avatarId}.png`);
+  const icon = require(`../assets/images/avatar1.png`);
   const arrow = require('../assets/images/rightArrow.png');
   return(
     <View style={styles.rectangle}>
       <View style={styles.leftPart}>
         <Image source={icon} style={styles.image}/>
-        <Text style={styles.text}> {gameProps.creatorPseudo} </Text>
+        <Text style={styles.text}> {gameProps.username} </Text>
       </View>
       <View style={styles.rightPart}>
         <ul style={styles.paramList}>
-          <li> Debut dans {gameProps.hoursToStart}h </li>
-          <li> {gameProps.nbPlayersMin} joueurs </li>
-          <li> Jour de {gameProps.dayStart}h à {gameProps.dayEnd}h </li>
-          <li> C: {gameProps.probaC}, I:{gameProps.probaI}, V:{gameProps.probaV}, S:{gameProps.probaS} </li>
-          <li> {gameProps.nbWolves} loups </li>
+          <li> Créée par {gameProps.creatorUsername} </li>
+          <li> Debut a {gameProps.startHour}h dans {gameProps.startDay} jours</li>
+          <li> De {gameProps.minPlayers} à {gameProps.maxPlayers} joueurs</li>
+          <li> Jour: {gameProps.dayDuration} min, Nuit: {gameProps.nightDuration} min </li>
+          <li> C: {gameProps.infectionProbability}, I:{gameProps.insomniaProbability}, V:{gameProps.seerProbability}, S:{gameProps.spiritismProbability} </li>
+          <li> Proportion de loups : {gameProps.werewolfProbability} </li>
         </ul>
         <TouchableOpacity style={styles.arrowBox}>
           <Image style={styles.arrowStyle} source={arrow}/>
@@ -77,9 +67,9 @@ const styles = StyleSheet.create({
   },
   rectangle: {
     flexDirection:'row',
-    height: '150px',
+    height: '190px',
     marginBottom: 15,
-    width: '320px',
+    width: '350px',
     backgroundColor: 'rgba(120, 88, 166, 0.3)',
     borderRadius: 10,
   },
