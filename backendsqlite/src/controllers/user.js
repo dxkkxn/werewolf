@@ -19,14 +19,13 @@ const jws = require('jws');
 
 const addUser = async (req, res) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    return res.status(400).json({ error: 'No data provided in request body.'  });
+    return res.status(400).json({ error: 'No data provided in request body.' });
   }
-  const { username, password } = req.body;
-  console.log(username, password);
+  const { username, password, avatarId } = req.body;
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    await users.create({ username, password: hashedPassword });
+    await users.create({ username, password: hashedPassword, avatarId });
     res.status(status.CREATED).json({ message: 'user added' });
   } catch (error) {
     res.status(500).json({ message: 'internal error' });

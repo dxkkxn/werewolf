@@ -21,7 +21,30 @@ const validateAddUser = async(req, res, next) => {
     next();
 };
 
-const validateBody = async(req, res, next) => {
+const validateBodySignin = async(req, res, next) => {
+    if (!has(req.body, ['username'])) {
+        throw new CodeError('You must include a username in the request body', status.BAD_REQUEST);
+    }
+    if (!has(req.body, ['password'])) {
+        throw new CodeError('You must include a password in the request body', status.BAD_REQUEST);
+    }
+    if(!has(req.body, ['avatarId'])) {
+      throw new CodeError('You must include an avatarId in the request body', status.BAD_REQUEST);
+    }
+    const { username, password, avatarId } = req.body;
+    if (!username) {
+        throw new CodeError('You must specify a username', status.BAD_REQUEST);
+    }
+    if (!password) {
+        throw new CodeError('You must specify a password', status.BAD_REQUEST);
+    }
+    if(!avatarId || isNaN(parseInt(avatarId)) || parseInt(avatarId) < 1 || parseInt(avatarId) > 12) {
+        throw new CodeError('You must specify a valid avatarId (1 - 12)', status.BAD_REQUEST);
+    }
+    next();
+};
+
+const validateBodyLogin = async (req, res, next) => {
     if (!has(req.body, ['username'])) {
         throw new CodeError('You must include a username in the request body', status.BAD_REQUEST);
     }
@@ -57,6 +80,7 @@ const validateToken = async(req, res, next) => {
 
 module.exports = {
     validateAddUser,
-    validateBody,
+    validateBodyLogin,
+    validateBodySignin,
     validateToken
 };
