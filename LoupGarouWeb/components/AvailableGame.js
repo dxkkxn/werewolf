@@ -31,7 +31,13 @@ export function AvailableGame ({gameProps, username, token}) {
       }
     })
     .then(data => {
-      console.log(data);
+      if(data.ok){
+        alert('partie intégrée avec succès !');
+      }
+      else if(data.status == 403){
+        alert('vous ne pouvez pas rejoindre plusieurs parties simultanément');
+      }
+      else if(data.status == 401) alert ("failure");
     })
     .catch(error => console.error(error));
   };
