@@ -9,6 +9,10 @@ const Messages = require('../models/messages.js');
 
 const createGame = async (req, res) => {
   const creatorUsername = req.username;
+  const userAlreadyInGame = await Players.findOne({ where: { username: creatorUsername } });
+  if (userAlreadyInGame) {
+    throw new CodeError(`user: ${creatorUsername} already in game `, status.FORBIDDEN);
+  }
   const { minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability, startHour, startDay, insomniaProbability, seerProbability, infectionProbability, spiritismProbability } = JSON.parse(req.body.data);
   const newGame = await Games.create({ creatorUsername, startHour, startDay, infectionProbability, insomniaProbability, seerProbability, spiritismProbability, minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability });
   // add creator as player also
@@ -33,9 +37,9 @@ const joinGame = async (req, res) => {
   const username = req.username;
   const idGame = req.params.idGame;
   // check if user already in game
-  const userAlreadyInGame = await Players.findOne({ where: { username, idGame } });
+  const userAlreadyInGame = await Players.findOne({ where: { username } });
   if (userAlreadyInGame) {
-    throw new CodeError(`user: ${username} already in game with id: ${idGame}`, status.FORBIDDEN);
+    throw new CodeError(`user: ${username} already in game`, status.FORBIDDEN);
   }
   await Players.create({ username, idGame });
   res.status(status.OK).json({ message: `user: ${username} joined game with id: ${idGame}` });
@@ -68,6 +72,7 @@ const startGame = async (req, res) => {
     const idPlayer = player.idPlayer;
     PlayersInGame.create({ role, idPlayer });
   }
+  // distribue les roles spéciaux
   res.status(status.CREATED).json({ message: 'game started' });
 };
 const getStateOfGame = async (req, res) => {

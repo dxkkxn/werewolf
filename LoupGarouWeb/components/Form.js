@@ -96,12 +96,14 @@ export default function Form({route}) {
       })
     })
     .then(data => {
-      // Do something with the data
-      if(data.status == 201){
-        alert ("game created");
-        navigation.navigate('Welcome', {username : username, token: token})
+      if(data.ok){
+        alert('partie créée avec succès !');
+        navigation.navigate('Welcome', {username : username, token: token});
       }
-      if(data.status == 401) alert ("failure");
+      else if(data.status == 403){
+        alert('vous ne pouvez pas rejoindre plusieurs parties simultanément');
+      }
+      else if(data.status == 401) alert ("failure");
       return 0;
     })
     .catch(error => console.error(error)); 

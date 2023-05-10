@@ -56,10 +56,12 @@ const games = db.define(
     },
     dayDuration: {
       type: Sequelize.INTEGER,
+      defaultValue: 3,
       allowNull: false
     },
     nightDuration: {
       type: Sequelize.INTEGER,
+      defaultValue: 2,
       allowNull: false
     },
     werewolfProbability: {
