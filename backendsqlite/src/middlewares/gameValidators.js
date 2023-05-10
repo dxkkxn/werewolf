@@ -53,6 +53,18 @@ const validateIdGame = async (req, res, next) => {
   next();
 };
 
+const validateGameNotStarted = async (req, res, next) => {
+  const idGame = req.params.idGame;
+  const username = req.username;
+  console.assert(username !== undefined);
+  console.assert(idGame !== undefined);
+  const started = await games.findOne({ attributes: ['started'], where: { idGame } });
+  if (started.started === true) {
+    throw new CodeError(`Game ${idGame} already started`, status.FORBIDDEN);
+  }
+  next();
+};
+
 const validateUserInGame = async (req, res, next) => {
   const idGame = req.params.idGame;
   const gameFound = games.findOne({ where: { idGame } });
@@ -89,5 +101,6 @@ module.exports = {
   validateIdGame,
   validateUserInGame,
   validateUserIsCreator,
+  validateGameNotStarted,
   validateGameStarted
 };

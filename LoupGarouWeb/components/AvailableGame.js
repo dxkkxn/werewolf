@@ -22,6 +22,27 @@ export function AvailableGame ({gameProps, username, token}) {
   const avatarId = gameProps.avatarId;
   const icon = require(`../assets/images/avatar${avatarId}.png`);
   const arrow = require('../assets/images/rightArrow.png');
+  const startGame = (idGame, username) => {
+    fetch(`${url}/game/${idGame}/play` ,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': token
+      }
+    })
+    .then(data => {
+      if(data.ok){
+        alert('partie démarrée avec succès !');
+      }
+      else if(data.status == 403){
+        alert('cette partie a déjà commencé !');
+      }
+      else {
+        alert('erreur interne');
+      }
+    })
+    .catch(error => console.error(error));
+  };
   const joinGame = (idGame, username, token) => {
     fetch(`${url}/game/${idGame}` ,{
       method: 'POST',
@@ -41,9 +62,16 @@ export function AvailableGame ({gameProps, username, token}) {
     })
     .catch(error => console.error(error));
   };
+  let onPress;
   let styleArrowBox;
-  if(username == gameProps.creatorUsername) styleArrowBox = styles.arrowBoxStart;
-  else styleArrowBox = styles.arrowBox;
+  if(username == gameProps.creatorUsername) {
+    styleArrowBox = styles.arrowBoxStart;
+    onPress = ()=>{startGame(gameProps.idGame, username, token)};
+  }
+  else {
+    styleArrowBox = styles.arrowBox;
+    onPress = ()=>{joinGame(gameProps.idGame, username, token)};
+  }
   return(
     <View style={styles.rectangle}>
       <View style={styles.leftPart}>
@@ -59,7 +87,7 @@ export function AvailableGame ({gameProps, username, token}) {
           <li> C: {gameProps.infectionProbability}, I:{gameProps.insomniaProbability}, V:{gameProps.seerProbability}, S:{gameProps.spiritismProbability} </li>
           <li> Proportion de loups : {gameProps.werewolfProbability} </li>
         </ul>
-        <TouchableOpacity style={styleArrowBox} onPress = {()=>{joinGame(gameProps.idGame, username, token)}}>
+        <TouchableOpacity style={styleArrowBox} onPress={onPress}> 
           <Image style={styles.arrowStyle} source={arrow}/>
         </TouchableOpacity>
       </View>

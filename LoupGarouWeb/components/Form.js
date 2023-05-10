@@ -96,9 +96,9 @@ export default function Form({route}) {
       })
     })
     .then(data => {
-      // Do something with the data
       if(data.ok){
         alert('partie créée avec succès !');
+        navigation.navigate('Welcome', {username : username, token: token});
       }
       else if(data.status == 403){
         alert('vous ne pouvez pas rejoindre plusieurs parties simultanément');
