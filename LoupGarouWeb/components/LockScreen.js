@@ -21,8 +21,10 @@ function LoginReq(username, password, navigation){
           'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      username: username,
-      password: password
+      data: JSON.stringify({
+        username: username,
+        password: password
+      })
     })
   })
   .then((response) => {
@@ -60,9 +62,11 @@ function SignInReq(username, password, passwordConf,navigation){
           'Content-Type': 'application/json'
     },
     body: JSON.stringify({
+      data: JSON.stringify({
         username: username,
         password: password,
-        avatarId: 0
+        avatarId: 1
+      })
     })
   })
   .then(response => {

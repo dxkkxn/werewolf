@@ -33,7 +33,8 @@ const updateUser = async (req, res) => {
     return res.status(400).json({ error: 'No data provided in request body.'  });
   }
   const username = req.params.username;
-  const { username: usernameUpdated, password: passwordUpdated, avatarId:avatarIdUpdated } = req.body;
+  const data = JSON.parse(req.body.data);
+  const { username: usernameUpdated, password: passwordUpdated, avatarId:avatarIdUpdated } = data;
   
   try {
     const user = await users.findOne(
@@ -53,14 +54,15 @@ const updateUser = async (req, res) => {
 
 const addUser = async (req, res) => {
   if (!req.body || Object.keys(req.body).length === 0) {
-    return res.status(400).json({ error: 'No data provided in request body.'  });
+    return res.status(400).json({ error: 'No data provided in request body.' });
   }
-  const { username, password } = req.body;
-  console.log(username, password );
+  const data = JSON.parse(req.body.data);
+  const { username, password } = data;
+
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    await users.create({ username, password: hashedPassword , avatarId: 0});
+    await users.create({ username, password: hashedPassword , avatarId: 1});
     const token = jws.sign({
       header: { alg: 'HS256' },
       payload: username,
@@ -74,7 +76,8 @@ const addUser = async (req, res) => {
 
 
 const checkUser = async (req, res) => {
-  const { username, password } = req.body;
+  const data = JSON.parse(req.body.data);
+  const { username, password } = data;
     const user = await users.findOne(
       {
         where: { username },

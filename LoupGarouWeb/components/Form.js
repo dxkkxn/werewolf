@@ -17,7 +17,6 @@ export default function Form({route}) {
   const navigation = useNavigation()
   const username = route.params.username;
   const token = route.params.token;
-  console.log(token);
 
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
@@ -100,6 +99,7 @@ export default function Form({route}) {
       // Do something with the data
       if(data.status == 201){
         alert ("game created");
+        navigation.navigate('Welcome', {username : username, token: token})
       }
       if(data.status == 401) alert ("failure");
       return 0;

@@ -1,4 +1,5 @@
 const Games = require('../models/games.js');
+const Users = require('../models/users.js');
 const status = require('http-status');
 const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
@@ -8,7 +9,6 @@ const Messages = require('../models/messages.js');
 
 const createGame = async (req, res) => {
   const creatorUsername = req.username;
-  console.log('username', creatorUsername);
   const { minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability, startHour, startDay, insomniaProbability, seerProbability, infectionProbability, spiritismProbability } = JSON.parse(req.body.data);
   const newGame = await Games.create({ creatorUsername, startHour, startDay, infectionProbability, insomniaProbability, seerProbability, spiritismProbability, minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability });
   // add creator as player also
@@ -20,8 +20,11 @@ const getGames = async (req, res) => {
   const games = await Games.findAll();
   const gamesWithPlayers = await Promise.all(games.map(async (game) => {
     let players = await Players.findAll({ attributes: ['username'], where: { idGame: game.idGame } });
+    let avatarId = await Users.findOne({ attributes: ['avatarId'], where: { username: game.creatorUsername } });
+    console.log('id : ', avatarId);
     players = players.map(player => player.username);
-    return { ...game.toJSON(), players };
+    avatarId = avatarId.avatarId;
+    return { ...game.toJSON(), players, avatarId };
   }));
   res.status(status.OK).json({ message: 'returning games in the data property', data: JSON.stringify(gamesWithPlayers) });
 };

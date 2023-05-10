@@ -31,7 +31,7 @@ async function fetchAvatarId(username) {
   }
 }
  
-export function AvailableGame ({gameProps}) {
+export function AvailableGame ({gameProps, username, token}) {
   const [icon, setIcon] = useState(null);
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
@@ -44,6 +44,19 @@ export function AvailableGame ({gameProps}) {
   .then(icon => {
     setIcon(icon)
   });
+  const joinGame = (idGame, username, token) => {
+    fetch(`${url}/game/${idGame}` ,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': token
+      }
+    })
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => console.error(error));
+  };
   return(
     <View style={styles.rectangle}>
       <View style={styles.leftPart}>
@@ -59,7 +72,7 @@ export function AvailableGame ({gameProps}) {
           <li> C: {gameProps.infectionProbability}, I:{gameProps.insomniaProbability}, V:{gameProps.seerProbability}, S:{gameProps.spiritismProbability} </li>
           <li> Proportion de loups : {gameProps.werewolfProbability} </li>
         </ul>
-        <TouchableOpacity style={styles.arrowBox}>
+        <TouchableOpacity style={styles.arrowBox} onPress = {()=>{joinGame(gameProps.idGame, username, token)}}>
           <Image style={styles.arrowStyle} source={arrow}/>
         </TouchableOpacity>
       </View>

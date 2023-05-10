@@ -6,7 +6,8 @@ const jws = require('jws');
 const { SECRET } = process.env;
 
 const validateAddUser = async(req, res, next) => {
-    const username = req.body.username;
+    const data = JSON.parse(req.body.data);
+    const username = data.username;
     const userAlreadyExist = await users.findOne({
         where: {
             username
@@ -21,22 +22,30 @@ const validateAddUser = async(req, res, next) => {
     next();
 };
 
+
 const validateBody = async(req, res, next) => {
-    if (!has(req.body, ['username'])) {
+    if (!has(req.body, ['data'])) {
+      throw new CodeError('You must include a data property in the request body', status.BAD_REQUEST);
+    }
+    const data = JSON.parse(req.body.data);
+    if (!has(data, ['username'])) {
         throw new CodeError('You must include a username in the request body', status.BAD_REQUEST);
     }
-    if (!has(req.body, ['password'])) {
+    if (!has(data, ['password'])) {
         throw new CodeError('You must include a password in the request body', status.BAD_REQUEST);
     }
-    const { username, password } = req.body;
+    const { username, password } = data;
     if (!username) {
         throw new CodeError('You must specify a username', status.BAD_REQUEST);
     }
     if (!password) {
         throw new CodeError('You must specify a password', status.BAD_REQUEST);
     }
+    Object.assign(req, { username, password });
     next();
 };
+
+
 
 const validateToken = async(req, res, next) => {
     const token = req.get('x-access-token');
@@ -58,5 +67,5 @@ const validateToken = async(req, res, next) => {
 module.exports = {
     validateAddUser,
     validateBody,
-    validateToken,
+    validateToken
 };

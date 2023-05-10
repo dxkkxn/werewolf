@@ -54,13 +54,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "username": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                },
-                "avatarId": {
+                "data": {
                   "example": "any"
                 }
               }
@@ -87,10 +81,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "username": {
-                  "example": "any"
-                },
-                "password": {
+                "data": {
                   "example": "any"
                 }
               }
@@ -117,10 +108,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "username": {
-                  "example": "any"
-                },
-                "password": {
+                "data": {
                   "example": "any"
                 }
               }

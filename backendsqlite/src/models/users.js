@@ -17,7 +17,8 @@ const users = db.define(
     },
     avatarId: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
+      defaultValue: 1
     }
   },
   { timestamps: false }

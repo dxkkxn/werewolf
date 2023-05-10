@@ -39,12 +39,7 @@ export default function Avatars({ route }) {
     avatar11,
     avatar12,
   ];
-  const defaultStyle = {
-    width: "100px",
-    height: "90px",
-    borderRadius: "20px",
-    linearGradient: "rgba(0,0,0,0)",
-  };
+
   const [avatarId, setAvatarId] = useState(0);
   const [Clicked, setClicked] = useState(avatars.map(() => false));
   
@@ -68,10 +63,13 @@ export default function Avatars({ route }) {
     fetch(`${url}/users/${username}` ,{
         method: 'PUT',
         headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'x-access-token': token
         },
         body: JSON.stringify({
-          avatarId: avatarId
+          data: JSON.stringify({
+            avatarId: avatarId
+          })
         })
       })
     navigation.navigate('Welcome', {username : username, token: token})

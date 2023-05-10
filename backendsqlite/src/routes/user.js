@@ -12,3 +12,4 @@ router.post('/signin', validateBody, validateAddUser, addUser);
 router.post('/login', validateBody, checkUser);
 
 module.exports = router;
+
