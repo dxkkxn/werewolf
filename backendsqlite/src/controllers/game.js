@@ -72,6 +72,7 @@ const startGame = async (req, res) => {
     const idPlayer = player.idPlayer;
     PlayersInGame.create({ role, idPlayer });
   }
+  // distribue les roles spéciaux
   res.status(status.CREATED).json({ message: 'game started' });
 };
 const getStateOfGame = async (req, res) => {

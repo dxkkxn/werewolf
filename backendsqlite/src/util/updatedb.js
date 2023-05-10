@@ -1,4 +1,5 @@
 const userModel = require('../models/users.js');
+const gameModel = require('../models/games.js');
 const powerModel = require('../models/powers.js');
 const playerModel = require('../models/players.js');
 const powersProbabilityModel = require('../models/powersProbabilities.js');
@@ -49,23 +50,42 @@ const bcrypt = require('bcrypt');
       //   symbols: 1, // Points for containing special characters
       // },
     };
-    const password = 'Robin777@';
-    const isValidPassword = validator.isStrongPassword(password, options);
-    console.log(isValidPassword);
-    if (isValidPassword) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      await userModel.create({
-        username: 'Imad',
-        password: hashedPassword,
-      });
+    // create 10 users
+    for (let i = 0; i < 10; i++) {
+      const password = 'Robin777@';
+      const isValidPassword = validator.isStrongPassword(password, options);
+      console.log(isValidPassword);
+      if (isValidPassword) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        await userModel.create({
+          username: `user${i+1}`,
+          password: hashedPassword,
+          avatarId: `${i+1}`,
+        });
+      }
     }
-    // console.log(isValidPassword);
-  } catch (error) {
-    console.log(error);
-  }
-  const powers = ['infection', 'sleeplessness', 'clairvoyance', 'spiritism'];
-  powers.forEach(async (power) => await powerModel.create({ name: power }));
+    // user 5 creates game with defalut values except probas = 0.5
+    await gameModel.create({
+      creatorUsername: 'user5',
+      seerProbability: '0.3',
+      insomniaProbability: '0.6',
+      infectionProbability: '0.5',
+      spiritismProbability: '0.4'
+    });
+    // ici on triche un peu : on sait que idGame = 0
+    // les  10 users rejoignent la partie
+    for (let i = 0; i < 10; i++) {
+      await playerModel.create({
+        idGame: '1',
+        username: `user${i + 1}`
+      });
+      console.log('i : ', i);
+    }
+    // now user 5 can start
+    const powers = ['contaminant', 'insomniaque', 'voyant', 'spiritiste'];
+    powers.forEach(async (power) => await powerModel.create({ name: power }));
+  } catch (error) { console.log(error); }
   // const data = await powerModel.findAll();
   // console.log(data);
 })();
