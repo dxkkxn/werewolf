@@ -57,7 +57,10 @@ typings/
 # next.js build output
 .next
 
+# dev cache
+LoupGarouWeb/.expo/web/cache/*
 
 node_modules
 
+*.swp
 *~
