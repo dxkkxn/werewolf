@@ -34,7 +34,6 @@ function LoginReq(username, password, navigation){
     }
   })
   .then(data => {
-    // Do something with the data
       alert ("login ok");
       navigation.navigate('Welcome', {username: username, token: data.token});
   })
@@ -42,7 +41,7 @@ function LoginReq(username, password, navigation){
 };
 
 
-function SignInReq(username, password, passwordConf){
+function SignInReq(username, password, passwordConf,navigation){
   if(password === '' || username === '' || passwordConf === ''){
     alert("renseignez tous les champs");
     return -1;
@@ -62,12 +61,19 @@ function SignInReq(username, password, passwordConf){
     },
     body: JSON.stringify({
         username: username,
-        password: password
+        password: password,
+        avatarId: 0
     })
   })
   .then(response => {
-    if(response.status==201) alert("user created");
+    if(response.status==201) {
+      alert("user created");
+      return response.json();
+    }
     else alert("failure");
+  })
+  .then(data => {
+    navigation.navigate('Avatars', {username: username, token: data.token});
   })
   .catch(error => console.error(error));
 }
@@ -111,7 +117,7 @@ function LockScreen() {
 
   if (!connect) {
     onPressCreate = () => {
-      SignInReq(username, password, passwordConf);
+      SignInReq(username, password, passwordConf,navigation);
     }; //actual account creation process
     pwdConfirm = (
       <InputField

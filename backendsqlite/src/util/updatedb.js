@@ -58,6 +58,7 @@ const bcrypt = require('bcrypt');
       await userModel.create({
         username: 'Imad',
         password: hashedPassword,
+        avatarId: 1,
       });
     }
     // console.log(isValidPassword);

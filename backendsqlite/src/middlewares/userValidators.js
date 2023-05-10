@@ -58,5 +58,5 @@ const validateToken = async(req, res, next) => {
 module.exports = {
     validateAddUser,
     validateBody,
-    validateToken
+    validateToken,
 };

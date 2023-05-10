@@ -14,6 +14,10 @@ const users = db.define(
     password: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    avatarId: {
+      type: Sequelize.INTEGER,
+      allowNull: false
     }
   },
   { timestamps: false }
