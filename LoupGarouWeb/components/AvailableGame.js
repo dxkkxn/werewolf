@@ -41,6 +41,9 @@ export function AvailableGame ({gameProps, username, token}) {
     })
     .catch(error => console.error(error));
   };
+  let styleArrowBox;
+  if(username == gameProps.creatorUsername) styleArrowBox = styles.arrowBoxStart;
+  else styleArrowBox = styles.arrowBox;
   return(
     <View style={styles.rectangle}>
       <View style={styles.leftPart}>
@@ -56,7 +59,7 @@ export function AvailableGame ({gameProps, username, token}) {
           <li> C: {gameProps.infectionProbability}, I:{gameProps.insomniaProbability}, V:{gameProps.seerProbability}, S:{gameProps.spiritismProbability} </li>
           <li> Proportion de loups : {gameProps.werewolfProbability} </li>
         </ul>
-        <TouchableOpacity style={styles.arrowBox} onPress = {()=>{joinGame(gameProps.idGame, username, token)}}>
+        <TouchableOpacity style={styleArrowBox} onPress = {()=>{joinGame(gameProps.idGame, username, token)}}>
           <Image style={styles.arrowStyle} source={arrow}/>
         </TouchableOpacity>
       </View>
@@ -79,6 +82,20 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
   },
+  arrowBoxStart: {
+    height: '40px',
+    width: '50px',
+    backgroundColor: '#58a678',
+    borderTopLeftRadius: 10, 
+    borderBottomLeftRadius: 0, 
+    borderTopRightRadius: 0, 
+    borderBottomRightRadius: 10,
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+  },
+
   arrowStyle: {
     width:'28px', 
     height:'20px',
