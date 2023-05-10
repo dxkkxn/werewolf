@@ -41,15 +41,6 @@ export default function BodyPartie({ time }) {
     image1,
     image1,
     image1,
-    image1,
-    image1,
-    image1,
-    image1,
-    image1,
-    image1,
-    image1,
-    image1,
-    image1,
   ];
   //Pass token as an id or something add unit key
   const handleImage = () => {

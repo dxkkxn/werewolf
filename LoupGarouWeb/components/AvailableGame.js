@@ -1,6 +1,9 @@
 import { StyleSheet, Image, TouchableOpacity, View, Text} from 'react-native';
 import { useFonts } from 'expo-font';
-import { useState, useEffect } from 'react';
+import {useState} from 'react';
+
+const url = `http://${window.location.hostname}:3000`
+const arrow = require('../assets/images/rightArrow.png');
 
 function importAll(r) {
   let images = {};
@@ -8,10 +11,28 @@ function importAll(r) {
   return images;
 }
 
-
+async function fetchAvatarId(username) {
+  try {
+    const response = await fetch(`${url}/users/${username}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Response was not ok');
+    }
+    const data = await response.json();
+    const avatarId = data.data.avatarId;
+    const icon = require(`../assets/images/avatar${avatarId}.png`);
+    return icon;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
+}
  
 export function AvailableGame ({gameProps, username, token}) {
-  const url = `http://${window.location.hostname}:3000`
+  const [icon, setIcon] = useState(null);
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
@@ -19,9 +40,10 @@ export function AvailableGame ({gameProps, username, token}) {
   if (!loaded) {
     return null;
   }
-  const avatarId = gameProps.avatarId;
-  const icon = require(`../assets/images/avatar${avatarId}.png`);
-  const arrow = require('../assets/images/rightArrow.png');
+  fetchAvatarId(gameProps.creatorUsername)
+  .then(icon => {
+    setIcon(icon)
+  });
   const startGame = (idGame, username) => {
     fetch(`${url}/game/${idGame}/play` ,{
       method: 'POST',
