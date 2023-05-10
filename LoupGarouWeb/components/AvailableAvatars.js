@@ -24,7 +24,9 @@ const avatar12 = require("../assets/images/avatar12.png");
 
 
 export default function Avatars({ route }) {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const username = route.params.username;
+  const password = route.params.password;
   const avatars = [
     avatar1,
     avatar2,
@@ -43,16 +45,12 @@ export default function Avatars({ route }) {
   const [avatarId, setAvatarId] = useState(0);
   const [Clicked, setClicked] = useState(avatars.map(() => false));
   
-
-
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
   if (!loaded) {
     return null;
   }
-  const username = route.params.username;
-  const token = route.params.token;
   const handleClick = (id) => {
     setAvatarId(id+1)
     const newClicked = avatars.map(() => false);
@@ -60,34 +58,42 @@ export default function Avatars({ route }) {
     setClicked(newClicked)
   };
   const handleContinue = (avatarId) => {
-    fetch(`${url}/users/${username}` ,{
-        method: 'PUT',
+    fetch(`${url}/signin` ,{
+        method: 'POST',
         headers: {
-              'Content-Type': 'application/json',
-              'x-access-token': token
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          data: JSON.stringify({
-            avatarId: avatarId
+            data: JSON.stringify({
+              username: username,
+              password: password,
+              avatarId: avatarId
           })
         })
       })
-    navigation.navigate('Welcome', {username : username, token: token})
+    .then(data => {
+      if(data.status==201) {
+        alert("user created");
+        navigation.navigate('LockScreen');
+      }
+      else alert("failure");
+    })
+    .catch(error => console.error(error)); 
   };
 	return ( 
-        <View style={styles.container}>
-			<Text style={styles.title}>Choisissez un Avatar</Text>
-            <ScrollView>
-                <View style={styles.containerAvatar}>
-                
-                {avatars.map((avatar,index) => (
-                    <Avatar source={avatar} onPress={() => handleClick(index)} key={index} clicked ={Clicked[index]}/>
-                ))}
-                </View>
-            </ScrollView>
-            <MyButton label="Continuer" primary={true} onPress={() => handleContinue(avatarId)} />   
-        </View>
-        
+          <View style={styles.container}>
+        <Text style={styles.title}>Choisissez un Avatar</Text>
+              <ScrollView>
+                  <View style={styles.containerAvatar}>
+                  
+                  {avatars.map((avatar,index) => (
+                      <Avatar source={avatar} onPress={() => handleClick(index)} key={index} clicked ={Clicked[index]}/>
+                  ))}
+                  </View>
+              </ScrollView>
+              <MyButton label="Continuer" primary={true} onPress={() => handleContinue(avatarId)} />   
+          </View>
+          
         
         
 	);

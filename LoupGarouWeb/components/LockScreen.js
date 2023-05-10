@@ -36,14 +36,13 @@ function LoginReq(username, password, navigation){
     }
   })
   .then(data => {
-      alert ("login ok");
       navigation.navigate('Welcome', {username: username, token: data.token});
   })
   .catch(error => console.error(error)); 
 };
 
 
-function SignInReq(username, password, passwordConf,navigation){
+function SignInReq(username, password, passwordConf, navigation){
   if(password === '' || username === '' || passwordConf === ''){
     alert("renseignez tous les champs");
     return -1;
@@ -56,30 +55,7 @@ function SignInReq(username, password, passwordConf,navigation){
     alert("mot de passe trop court");
     return -1;
   }
-  fetch(`${url}/signin`, {
-    method: 'POST',
-    headers: {
-          'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      data: JSON.stringify({
-        username: username,
-        password: password,
-        avatarId: 1
-      })
-    })
-  })
-  .then(response => {
-    if(response.status==201) {
-      alert("user created");
-      return response.json();
-    }
-    else alert("failure");
-  })
-  .then(data => {
-    navigation.navigate('Avatars', {username: username, token: data.token});
-  })
-  .catch(error => console.error(error));
+  navigation.navigate('Avatars', {username: username, password: password});
 }
 
 function LockScreen() {
@@ -121,7 +97,7 @@ function LockScreen() {
 
   if (!connect) {
     onPressCreate = () => {
-      SignInReq(username, password, passwordConf,navigation);
+      SignInReq(username, password, passwordConf, navigation);
     }; //actual account creation process
     pwdConfirm = (
       <InputField
@@ -131,7 +107,7 @@ function LockScreen() {
         login={true}
       />
     );
-    dejaInscrit = (
+    dejaInscrit =  (
       <Pressable onPress={() => setConnect(true)}>
         <Text style={styles.textPressable}>Déjà inscrit ? Se connecter</Text>
       </Pressable>

@@ -57,12 +57,12 @@ const addUser = async (req, res) => {
     return res.status(400).json({ error: 'No data provided in request body.' });
   }
   const data = JSON.parse(req.body.data);
-  const { username, password } = data;
+  const { username, password, avatarId } = data;
 
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    await users.create({ username, password: hashedPassword , avatarId: 1});
+    await users.create({ username, password: hashedPassword, avatarId });
     const token = jws.sign({
       header: { alg: 'HS256' },
       payload: username,
