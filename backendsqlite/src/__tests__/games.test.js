@@ -3,6 +3,8 @@ const request = require('supertest');
 const status = require('http-status');
 
 /* eslint-env jest */
+
+
 let token;
 describe('create test user for this module', () => {
   test('create testGame user', async () => {
@@ -24,6 +26,10 @@ describe('create test user for this module', () => {
 });
 
 describe('create game', () => {
+  // get starting date in the good format
+  const currentDate = new Date();
+  const dateOneHourLater = new Date(currentDate.getTime() + (60 * 60 * 1000));
+  const startingDate = dateOneHourLater.toISOString().slice(0, 19).replace('T', ' ');
   test('no body', async () => {
     const response = await request(app)
       .post('/game')
@@ -37,18 +43,27 @@ describe('create game', () => {
       .set({ 'x-access-token': token })
       .send({ data: '{}' });
     expect(response.statusCode).toBe(status.BAD_REQUEST);
-    const notFoundAttrs = ['dayDuration', 'nightDuration'];
+    const notFoundAttrs = ['dayDuration', 'nightDuration', 'startingDate'];
     expect(response.body.message).toBe(`needed attributes: [${notFoundAttrs}] where not found`);
   });
   test('creating a normal game', async () => {
-    const data = { creatorUsername: 'testGame', dayDuration: 3, nightDuration: 2 };
+    const data = { creatorUsername: 'testGame', dayDuration: 3, nightDuration: 2, startingDate };
     const response = await request(app)
       .post('/game')
       .set({ 'x-access-token': token })
       .send({ data: JSON.stringify(data) });
-    expect(response.statusCode).toBe(status.CREATED);
-    // const notFoundAttrs = ['minPlayers', 'maxPlayers', 'dayDuration', 'nightDuration', 'werewolfProbability'];
     expect(response.body.message).toBe('game created');
+    expect(response.statusCode).toBe(status.CREATED);
+  });
+
+  test('trying to create another game with same user (should fail)', async () => {
+    const data = { creatorUsername: 'testGame', dayDuration: 3, nightDuration: 2, startingDate };
+    const response = await request(app)
+      .post('/game')
+      .set({ 'x-access-token': token })
+      .send({ data: JSON.stringify(data) });
+    expect(response.statusCode).toBe(status.FORBIDDEN);
+    expect(response.body.message).toBe('user: testGame already in game');
   });
 });
 
