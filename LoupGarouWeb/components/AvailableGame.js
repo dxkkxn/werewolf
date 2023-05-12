@@ -78,7 +78,13 @@ export function AvailableGame ({gameProps, username, token}) {
         alert('partie intégrée avec succès !');
       }
       else if(data.status == 403){
-        alert('vous ne pouvez pas rejoindre plusieurs parties simultanément');
+        if (data.message === "maximum number of players reached") {
+          alert('Cette partie est complète !');
+        }
+        else{
+          alert('Vous ne pouvez pas rejoindre plusieurs parties simultanément');
+
+        }
       }
       else if(data.status == 401) alert ("failure");
     })
@@ -108,10 +114,15 @@ export function AvailableGame ({gameProps, username, token}) {
           <li> Jour: {gameProps.dayDuration} min, Nuit: {gameProps.nightDuration} min </li>
           <li> C: {gameProps.infectionProbability}, I:{gameProps.insomniaProbability}, V:{gameProps.seerProbability}, S:{gameProps.spiritismProbability} </li>
           <li> Proportion de loups : {gameProps.werewolfProbability} </li>
+          <li> Joueurs actuels : {gameProps.currentPlayers} </li>
         </ul>
-        <TouchableOpacity style={styleArrowBox} onPress={onPress}> 
-          <Image style={styles.arrowStyle} source={arrow}/>
-        </TouchableOpacity>
+        {gameProps.currentPlayers==gameProps.maxPlayers ? (
+          <Text style={styles.textPartieComplete}>Partie complète !</Text>
+          ) : (
+          <TouchableOpacity style={styleArrowBox} onPress={onPress}> 
+            <Image style={styles.arrowStyle} source={arrow}/>
+          </TouchableOpacity> 
+        )}
       </View>
     </View>
   ); 
@@ -190,6 +201,16 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     fontSize: 14,
     paddingLeft:20,
+  },
+  textPartieComplete: {
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: 700,
+    fontSize: 20,
+    paddingLeft:20,
+    color: 'green',
+    position: 'absolute',
+     bottom :0
   },
 });
 

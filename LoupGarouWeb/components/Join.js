@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import {useState, useEffect} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View ,ScrollView} from 'react-native';
 import {AvailableGame} from './AvailableGame.js'
 import { useNavigation } from '@react-navigation/native';
 const url = `http://${window.location.hostname}:3000`
@@ -61,9 +61,11 @@ export default function Join({ route }){
     return (
       <View style={styles.container}>
         <Text style={styles.title}> Rejoindre une partie </Text>
-        <View style={styles.container}>
+        <ScrollView>
+          <View style={styles.container}>
           {games}
-        </View>
+          </View>
+        </ScrollView>
       </View>
     );
 

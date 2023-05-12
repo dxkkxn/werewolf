@@ -73,6 +73,11 @@ const games = db.define(
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: false
+    },
+    currentPlayers: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      defaultValue: 1
     }
   },
   { timestamps: false }
