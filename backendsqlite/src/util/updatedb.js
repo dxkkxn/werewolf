@@ -54,7 +54,6 @@ const bcrypt = require('bcrypt');
     for (let i = 0; i < 10; i++) {
       const password = 'Robin777@';
       const isValidPassword = validator.isStrongPassword(password, options);
-      console.log(isValidPassword);
       if (isValidPassword) {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -66,12 +65,12 @@ const bcrypt = require('bcrypt');
       }
     }
     // user 5 creates game with defalut values except probas = 0.5
+    const currentDate = new Date();
+    const dateOneHourLater = new Date(currentDate.getTime() + (60 * 60 * 1000));
+    const startingDate = dateOneHourLater.toISOString().slice(0, 19).replace('T', ' ');
     await gameModel.create({
       creatorUsername: 'user5',
-      seerProbability: '0.3',
-      insomniaProbability: '0.6',
-      infectionProbability: '0.5',
-      spiritismProbability: '0.4'
+      startingDate
     });
     // ici on triche un peu : on sait que idGame = 0
     // les  10 users rejoignent la partie
@@ -80,7 +79,6 @@ const bcrypt = require('bcrypt');
         idGame: '1',
         username: `user${i + 1}`
       });
-      console.log('i : ', i);
     }
     // now user 5 can start
     const powers = ['contaminant', 'insomniaque', 'voyant', 'spiritiste'];
