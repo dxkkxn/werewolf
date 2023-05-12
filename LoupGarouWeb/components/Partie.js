@@ -12,7 +12,7 @@ export default function Partie({ time, route }) {
   const token = route.params.token;
   // fetch state of game
   const fetchState = () => {
-    fetch(`${url}/${username}/${idGame}/play` ,{
+    fetch(`${url}/${idGame}/play` ,{
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
