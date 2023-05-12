@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native-web";
 import NavBarPartie from "./NavBarPartie";
 import BodyPartie from "./BodyPartie";
+import { useEffect, useState } from 'react';
 import FooterPartie from "./FooterPartie";
 import { useNavigation } from '@react-navigation/native';
 const url = `http://${window.location.hostname}:3000`;
@@ -10,9 +11,10 @@ export default function Partie({ time, route }) {
   const username = route.params.username;
   const idGame = route.params.idGame;
   const token = route.params.token;
+  const [stateOfGame, setStateOfGame] = useState(); 
   // fetch state of game
   const fetchState = () => {
-    fetch(`${url}/${idGame}/play` ,{
+    fetch(`${url}/game/${idGame}/play` ,{
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -26,10 +28,16 @@ export default function Partie({ time, route }) {
       }
       else{
         console.log('game fetched :', data);
+        setStateOfGame();
       }
     })
     .catch(error => console.error(error)); 
   };
+
+  useEffect(() => {
+    //maj graphique
+    }, [stateOfGame]);
+  setInterval(fetchState,1000);
   return (
     <View style={styles.container}>
       <NavBarPartie time={time} />
