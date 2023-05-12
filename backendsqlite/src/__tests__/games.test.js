@@ -206,6 +206,7 @@ describe('starting game', () => {
   });
 
   test('testGame starts game', async () => {
+    jest.useFakeTimers();
     const response = await request(app)
       .post('/game/1/play')
       .set({ 'x-access-token': token });
@@ -270,6 +271,18 @@ describe('starting game', () => {
     });
 
     expect(response.statusCode).toBe(status.OK);
+  });
+
+  test('checking if gameTime changes correctly', async () => {
+    jest.advanceTimersByTime(3 * 60 * 1000);
+    const response = await request(app)
+      .get('/game/1')
+      .set({ 'x-access-token': token });
+    expect(response.body.message).toBe('returning game in the data property');
+    const data = JSON.parse(response.body.data);
+    expect(data.started).toBe(true);
+    expect(data.gameTime).toBe('night');
+    jest.useRealTimers();
   });
 
 });
