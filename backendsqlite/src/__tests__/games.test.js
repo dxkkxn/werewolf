@@ -88,7 +88,8 @@ describe('get games', () => {
       creatorUsername: 'testGame',
       players: ['testGame'],
       started: false,
-      startingDate
+      startingDate,
+      gameTime: null
     });
     expect(response.statusCode).toBe(status.OK);
   });
@@ -140,7 +141,8 @@ describe('join game', () => {
       creatorUsername: 'testGame',
       players: ['testGame', 'testGame2'],
       started: false,
-      startingDate
+      startingDate,
+      gameTime: null
     });
     expect(response.statusCode).toBe(status.OK);
   });
@@ -161,7 +163,8 @@ describe('join game', () => {
       creatorUsername: 'testGame',
       players: ['testGame', 'testGame2'],
       started: false,
-      startingDate
+      startingDate,
+      gameTime: null
     });
     expect(response.statusCode).toBe(status.OK);
   });
@@ -210,6 +213,30 @@ describe('starting game', () => {
     expect(response.statusCode).toBe(status.CREATED);
   });
 
+  test('checking game started correctly', async () => {
+    const response = await request(app)
+      .get('/game/1')
+      .set({ 'x-access-token': token });
+    expect(response.body.message).toBe('returning game in the data property');
+    const data = JSON.parse(response.body.data);
+    expect(data.startingDate).toBeDefined();
+    // we remove staringDate because we cant check with high precision the date of start
+    delete data.startingDate;
+    expect(data).toEqual({
+      idGame: 1,
+      minPlayers: 5,
+      maxPlayers: 20,
+      dayDuration: 3,
+      nightDuration: 2,
+      werewolfProbability: 0.33,
+      creatorUsername: 'testGame',
+      players: ['testGame', 'testGame2'],
+      started: true,
+      gameTime: 'day'
+    });
+    expect(response.statusCode).toBe(status.OK);
+  });
+
   const expectedData = ['idPlayer', 'username', 'role', 'state'];
 
   test('get state of players', async () => {
@@ -218,6 +245,7 @@ describe('starting game', () => {
       .set({ 'x-access-token': token2 });
     expect(response.body.message).toBe('returning game state');
     const data = JSON.parse(response.body.data);
+
     const players = data.players;
     players.forEach((player) => {
       expectedData.forEach((data) => {
