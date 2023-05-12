@@ -11,7 +11,7 @@ router.post('/game/:idGame', validateToken, validateIdGame, joinGame);
 router.get('/game/:idGame', validateToken, validateIdGame, validateUserInGame, getGameWithId);
 
 router.post('/game/:idGame/play', validateToken, validateIdGame, validateUserInGame, validateUserIsCreator, validateGameNotStarted, startGame);
-router.get('/game/:username/:idGame/play', validateToken, validateIdGame, validateUserInGame, validateGameStarted, getStateOfGame);
+router.get('/game/:idGame/play', validateToken, validateIdGame, validateUserInGame, validateGameStarted, getStateOfGame);
 
 router.post('/:username/:idGame/message', validateToken, validateUserInGame, validateGameStarted, addMessage);
 // router.post('/:username/:idGame/vote', validateToken, validateUserInGame, addMessage);

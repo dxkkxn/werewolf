@@ -98,7 +98,7 @@ const startGame = async (req, res) => {
   // change started to true
   const game = await Games.findOne({ where: { idGame } });
   game.started = true;
-  game.save(); // REVIEW: maybe await?
+  await game.save(); // REVIEW: maybe await?
   // create playersInGame
   const players = await Players.findAll({ attributes: ['idPlayer'], where: { idGame } });
   // une proportion n'est pas une proba (cf cahier des charges)
@@ -107,61 +107,69 @@ const startGame = async (req, res) => {
   if (nbWerewolves === 0) nbWerewolves = 1;
   const { indexWerewolves, indexHumans } = getRandomNumbers(nbWerewolves, players.length);
   // assign wws
-  for (const i in indexWerewolves) {
-    const idPlayer = players[i].idPlayer;
-    PlayersInGame.create({ role: 'werewolf', idPlayer }); // default value for state is alive
+  console.log('assign wws');
+  console.log(indexWerewolves);
+  for (const i of indexWerewolves) {
+    const idPlayer = i;
+    console.log("id player : ", idPlayer);
+    await PlayersInGame.create({ role: 'werewolf', idPlayer }); // default value for state is alive
   }
   // create associations for humans
-
-  for (const i in indexHumans) {
-    const idPlayer = players[i].idPlayer;
-    PlayersInGame.create({ role: 'human', idPlayer }); // default value for state is alive
+  const playersingame = await PlayersInGame.findAll ();
+  console.log(playersingame);
+  console.log('assign humans');
+  console.log(indexHumans);
+  for (const i of indexHumans) {
+    const idPlayer = i;
+    await PlayersInGame.create({ role: 'human', idPlayer }); // default value for state is alive
   }
+  console.log('roles assigned');
   let indexCont = -1;
   // assign role contaminant
-  if (Math.random() < game.infectionProbability || true) {
-    // pick one among ww
-    indexCont = Math.floor(Math.random() * indexWerewolves.length);
-    const idPlayer = players[indexCont].idPlayer;
-    const power = Powers.findOne({ where: { name: 'contaminant' } });
-    console.log(power);
-    PlayersPowers.create({ power, idPlayer });
-  }
-  let indexIns = -1;
-  // assign role insomnie
-  if (Math.random() < game.insomniaProbability) {
-    // pick one among humans
-    indexIns = Math.floor(Math.random() * indexHumans.length);
-    const idPlayer = players[indexIns].idPlayer;
-    const power = Powers.findOne({ where: { name: 'insomniaque' } });
-    PlayersPowers.create({ power, idPlayer });
-  }
+  //console.log('adding contaminant');
+  //if (Math.random() < game.infectionProbability || true) {
+  //  // pick one among ww
+  //  indexCont = Math.floor(Math.random() * indexWerewolves.length);
+  //  const idPlayer = players[indexCont].idPlayer;
+  //  const power = await Powers.findOne({ where: { name: 'contaminant' } });
+  //  console.log('power to be added : ', power);
+  //  PlayersPowers.create({ power, idPlayer });
+  //}
+  //let indexIns = -1;
+  //// assign role insomnie
+  //if (Math.random() < game.insomniaProbability) {
+  //  // pick one among humans
+  //  indexIns = Math.floor(Math.random() * indexHumans.length);
+  //  const idPlayer = players[indexIns].idPlayer;
+  //  const power = Powers.findOne({ where: { name: 'insomniaque' } });
+  //  PlayersPowers.create({ power, idPlayer });
+  //}
 
-  // on enlève l'insomniaque et le contaminant de l'array players
-  // ça casse la correspondance entre indexWerewolves, indexHumans
-  // et les roles réellement distribués,
-  // c'est pour ça qu'on ne le fait pas avant
-  if (indexCont !== -1) players.splice(indexCont, 1);
-  if (indexIns !== -1) players.splice(indexIns, 1);
+  //// on enlève l'insomniaque et le contaminant de l'array players
+  //// ça casse la correspondance entre indexWerewolves, indexHumans
+  //// et les roles réellement distribués,
+  //// c'est pour ça qu'on ne le fait pas avant
+  //if (indexCont !== -1) players.splice(indexCont, 1);
+  //if (indexIns !== -1) players.splice(indexIns, 1);
 
-  // distribue le roles de voyant
-  if (Math.random() < game.seerProbability && players.length > 0) {
-    const index = Math.floor(Math.random() * players.length);
-    const player = players[index];
-    const idPlayer = player.idPlayer;
-    players.splice(index, 1); // ensures a same player has one power only
-    const power = Powers.findOne({ where: { name: 'voyant' } });
-    PlayersPowers.create({ power, idPlayer });
-  }
-  // spiritiste
-  if (Math.random() < game.spiritismProbability && players.length > 0) {
-    // pick one from remaining players
-    const index = Math.floor(Math.random() * players.length);
-    const player = players[index];
-    const idPlayer = player.idPlayer;
-    const power = Powers.findOne({ where: { name: 'spiritiste' } });
-    PlayersPowers.create({ power, idPlayer });
-  }
+  //// distribue le roles de voyant
+  //if (Math.random() < game.seerProbability && players.length > 0) {
+  //  const index = Math.floor(Math.random() * players.length);
+  //  const player = players[index];
+  //  const idPlayer = player.idPlayer;
+  //  players.splice(index, 1); // ensures a same player has one power only
+  //  const power = await Powers.findOne({ where: { name: 'voyant' } });
+  //  PlayersPowers.create({ power, idPlayer });
+  //}
+  //// spiritiste
+  //if (Math.random() < game.spiritismProbability && players.length > 0) {
+  //  // pick one from remaining players
+  //  const index = Math.floor(Math.random() * players.length);
+  //  const player = players[index];
+  //  const idPlayer = player.idPlayer;
+  //  const power = Powers.findOne({ where: { name: 'spiritiste' } });
+  //  PlayersPowers.create({ power, idPlayer });
+  //}
   res.status(status.CREATED).json({ message: 'game started' });
 };
 const getStateOfGame = async (req, res) => {
