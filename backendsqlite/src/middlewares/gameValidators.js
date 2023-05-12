@@ -1,6 +1,5 @@
 const status = require('http-status');
-const players = require('../models/players.js');
-const users = require('../models/users.js');
+const Players = require('../models/players.js');
 const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
 const games = require('../models/games.js');
@@ -10,29 +9,7 @@ const validateBodyCreateGame = async (req, res, next) => {
     throw new CodeError('You must include a data property in the request body', status.BAD_REQUEST);
   }
   const data = JSON.parse(req.body.data);
-  // verif que l'utilisateur n'a pas de partie en cours
-  const username = req.username;
-  users.findOne({
-    include: {
-      model: players,
-      where: {
-        username: username
-      }
-    }
-  })
-    .then((user) => {
-      if (user) {
-        console.log('User is linked to an existing game');
-      } else {
-        console.log('User is not linked to any existing game');
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-
-  const requiredAttrs = ['minPlayers', 'maxPlayers', 'dayDuration', 'nightDuration', 'werewolfProbability',
-    'spiritismProbability', 'startDay', 'startHour', 'seerProbability', 'infectionProbability', 'insomniaProbability'];
+  const requiredAttrs = ['dayDuration', 'nightDuration', 'startingDate'];
   const notFoundAttrs = [];
   requiredAttrs.forEach((attr) => {
     if (!has(data, [attr])) {
@@ -50,6 +27,15 @@ const validateIdGame = async (req, res, next) => {
   const idGame = req.params.idGame;
   const gameFound = games.findOne({ where: { idGame } });
   if (!gameFound) throw new CodeError(`Game ${idGame} was not found`, status.BAD_REQUEST);
+  next();
+};
+
+const validateUserNotAlreadyInGame = async (req, res, next) => {
+  const username = req.username;
+  const userAlreadyInGame = await Players.findOne({ where: { username } });
+  if (userAlreadyInGame) {
+    throw new CodeError(`user: ${username} already in game`, status.FORBIDDEN);
+  }
   next();
 };
 
@@ -103,5 +89,6 @@ module.exports = {
   validateUserInGame,
   validateUserIsCreator,
   validateGameNotStarted,
-  validateGameStarted
+  validateGameStarted,
+  validateUserNotAlreadyInGame
 };
