@@ -68,7 +68,7 @@ const addUser = async (req, res) => {
       payload: username,
       secret: SECRET
     });
-    res.status(status.CREATED).json({ message: 'User added !',token });
+    res.status(status.CREATED).json({ message: 'user added',token });
   } catch (error) {
     res.status(500).json({ message: 'internal error' });
   }

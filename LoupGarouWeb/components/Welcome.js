@@ -9,7 +9,7 @@ const ruler = require("../assets/ruler&pen.svg");
 const add = require("../assets/add-circle.svg");
 
 export default function Welcome({ route }) {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });

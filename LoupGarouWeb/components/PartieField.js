@@ -16,7 +16,7 @@ const ClickableImage = ({ source, onPress }) => {
     </TouchableOpacity>
   );
 };
-export const PartieField = ({ text, time, type }) => {
+export const PartieField = ({ text, time, type, username, idGame, token }) => {
   const [loaded] = useFonts({
     Poppins: require("../assets/fonts/Poppins-Regular.ttf"),
   });
@@ -24,9 +24,26 @@ export const PartieField = ({ text, time, type }) => {
   if (!loaded) {
     return null;
   }
-  console.log(text);
-  const handleSubmit = () => {
-    console.log("handle submit");
+  const url = `http://${window.location.hostname}:3000`;
+  const handleSubmit = (messageInput) => {
+    //post message
+    fetch(`${url}/${username}/${idGame}` ,{
+      method: 'POST',
+      headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': token
+      },
+      body: JSON.stringify({
+        data : JSON.stringify({
+          message: messageInput
+        })
+      })
+    })
+    .then(data => {
+      if(data.status.created) console.log('message posted');
+      else console.log('something went wrong');
+    })
+    .catch(error => console.error(error)); 
   };
   if (type == "title") {
     return (

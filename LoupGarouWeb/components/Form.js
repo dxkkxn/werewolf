@@ -25,7 +25,7 @@ export default function Form({route}) {
   if (!loaded) {
     return null;
   }
-  const url = `http://${window.location.hostname}:3000`
+  const url = `http://${window.location.hostname}:3000`;
 
   const createGame = () => {
     //verifications

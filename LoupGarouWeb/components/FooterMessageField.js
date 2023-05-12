@@ -36,8 +36,8 @@ export default function FooterMessageField() {
   return (
     <View style={styles.footerContainer}>
       <ScrollView styles={styles.scroller}>
-        {messages.map((message) => {
-          return <PartieMessage id={message.id} text={message.text} />;
+        {messages.map((message, index) => {
+          return <PartieMessage key={index} id={message.id} text={message.text} />;
         })}
       </ScrollView>
     </View>

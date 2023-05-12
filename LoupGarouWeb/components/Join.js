@@ -17,7 +17,8 @@ export default function Join({ route }){
     return(
       propsArray.map((game, index) => {
         if(!game.started){
-          return (<AvailableGame username={username} token={token} key={index} gameProps={game} />);
+          return (<AvailableGame key={index} username={username} token={token} gameProps={game} />); 
+          // non, la key n'est pas utile, mais sans on a un warning dans la console
         }
       }
     ));
