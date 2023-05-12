@@ -14,35 +14,9 @@ const games = db.define(
       type: Sequelize.STRING,
       alloxNull: false
     },
-    startHour: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      defaultValue: 8
-    },
-    startDay: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      defaultValue: 1
-    },
-    infectionProbability: {
-      type: Sequelize.FLOAT,
-      allowNull: false,
-      defaultValue: 0
-    },
-    insomniaProbability: {
-      type: Sequelize.FLOAT,
-      allowNull: false,
-      defaultValue: 0
-    },
-    seerProbability: {
-      type: Sequelize.FLOAT,
-      allowNull: false,
-      defaultValue: 0
-    },
-    spiritismProbability: {
-      type: Sequelize.FLOAT,
-      allowNull: false,
-      defaultValue: 0
+    startingDate: {
+      type: Sequelize.DATE,
+      allowNull: false
     },
     minPlayers: {
       type: Sequelize.INTEGER,
