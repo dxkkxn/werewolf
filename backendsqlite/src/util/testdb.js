@@ -6,8 +6,7 @@ const powersProbabilityModel = require('../models/powersProbabilities.js');
 const playerInGameModel = require('../models/playersInGame.js');
 const playersPowers = require('../models/playersPowers.js');
 const messages = require('../models/messages.js');
-const votingMessages = require('../models/votingMessages.js');
-const voters = require('../models/voters.js');
+const votes = require('../models/votes.js');
 // const playersPowersModel = require('../models/playersPowers.js');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
@@ -67,7 +66,7 @@ const bcrypt = require('bcrypt');
     // user 5 creates game with defalut values except probas = 0.5
     const currentDate = new Date();
     const dateOneHourLater = new Date(currentDate.getTime() + (60 * 60 * 1000));
-    const startingDate = dateOneHourLater.toISOString().slice(0, 19).replace('T', ' ');
+    const startingDate = dateOneHourLater//.toISOString().slice(0, 19).replace('T', ' ');
     await gameModel.create({
       creatorUsername: 'user5',
       startingDate

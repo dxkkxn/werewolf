@@ -6,8 +6,7 @@ const powersProbabilityModel = require('../models/powersProbabilities.js');
 const playerInGameModel = require('../models/playersInGame.js');
 const playersPowers = require('../models/playersPowers.js');
 const messages = require('../models/messages.js');
-const votingMessages = require('../models/votingMessages.js');
-const voters = require('../models/voters.js');
+const votes = require('../models/votes.js');
 
 (async () => {
   // Regénère la base de données

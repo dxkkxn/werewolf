@@ -195,16 +195,10 @@
         "responses": {}
       }
     },
-    "/{username}/{idGame}/message": {
+    "/game/{idGame}/message": {
       "post": {
         "description": "",
         "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "idGame",
             "in": "path",
@@ -222,6 +216,20 @@
                 }
               }
             }
+          }
+        ],
+        "responses": {}
+      }
+    },
+    "/game/{idGame}/vote": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {}
