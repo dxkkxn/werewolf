@@ -6,6 +6,7 @@
     "scripts": {
         "setup": "npm install && npm run doc && npm run updatedb",
         "updatedb": "node src/util/updatedb.js",
+        "testdb": "node src/util/testdb.js",
         "doc": "node src/util/swagger.js",
         "start": "npm run doc && npm run updatedb  && node src/server.js",
         "startdev": "npm run doc && nodemon src/server.js",
