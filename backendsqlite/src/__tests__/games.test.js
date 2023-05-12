@@ -273,7 +273,7 @@ describe('starting game', () => {
     expect(response.statusCode).toBe(status.OK);
   });
 
-  test('checking if gameTime changes correctly', async () => {
+  test('checking if gameTime changes correctly (day->night)', async () => {
     jest.advanceTimersByTime(3 * 60 * 1000);
     const response = await request(app)
       .get('/game/1')
@@ -282,9 +282,22 @@ describe('starting game', () => {
     const data = JSON.parse(response.body.data);
     expect(data.started).toBe(true);
     expect(data.gameTime).toBe('night');
-    jest.useRealTimers();
   });
 
+
+  test('checking if gameTime changes correctly (night->day)', async () => {
+    // new change to be 100% sure
+    jest.advanceTimersByTime(2 * 60 * 1000);
+    const response = await request(app)
+      .get('/game/1')
+      .set({ 'x-access-token': token });
+    expect(response.body.message).toBe('returning game in the data property');
+    const data = JSON.parse(response.body.data);
+    expect(data.started).toBe(true);
+    expect(data.gameTime).toBe('day');
+
+    jest.useRealTimers();
+  });
 });
 
 
