@@ -79,7 +79,8 @@ export function AvailableGame ({gameProps, username, token}) {
     })
     .then(data => {
       if(data.ok){
-        alert('partie intégrée avec succès !');
+        // for now, after joining, user is locked in a waiting room until the game starts
+        navigation.navigate('WaitingRoom', {idGame, username, token} );
       }
       else if(data.status == 403){
         alert('vous ne pouvez pas rejoindre plusieurs parties simultanément');
