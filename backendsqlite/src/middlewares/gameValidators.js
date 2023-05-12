@@ -34,7 +34,8 @@ const validateUserNotAlreadyInGame = async (req, res, next) => {
   const username = req.username;
   const userAlreadyInGame = await Players.findOne({ where: { username } });
   if (userAlreadyInGame) {
-    throw new CodeError(`user: ${username} already in game`, status.FORBIDDEN);
+    const idGame = userAlreadyInGame.idGame;
+    throw new CodeError(`user: ${username} already in game with id: ${idGame}`, status.FORBIDDEN);
   }
   next();
 };
@@ -54,7 +55,7 @@ const validateGameNotStarted = async (req, res, next) => {
 const validateUserInGame = async (req, res, next) => {
   const idGame = req.params.idGame;
   const username = req.username;
-  const inGame = players.findOne({ where: { username, idGame } });
+  const inGame = Players.findOne({ where: { username, idGame } });
   if (!inGame) throw new CodeError('player is not in requested game', status.BAD_REQUEST);
   next();
 };
