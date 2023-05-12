@@ -137,8 +137,6 @@ const startGame = async (req, res) => {
   game.gameTime = 'day';
   const time = game.dayDuration * 60 * 1000;
   gameStates[idGame] = { game, timeoutDate: currentDate + time };
-  console.log('added');
-  console.log(gameStates);
   setTimeout(changeDayTime, time, idGame);
   game.save();
 
