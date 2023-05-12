@@ -55,8 +55,8 @@ export default function BodyPartie({ time }) {
             : [styles.middleBox, { backgroundColor: "#371B58" }]
         }
       >
-        {users.map((user) => (
-          <ClickableImage source={user} onPress={handleImage} />
+        {users.map((user, index) => (
+          <ClickableImage key={index} source={user} onPress={handleImage} />
         ))}
       </View>
     </ScrollView>

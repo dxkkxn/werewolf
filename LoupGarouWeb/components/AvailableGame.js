@@ -1,6 +1,7 @@
 import { StyleSheet, Image, TouchableOpacity, View, Text} from 'react-native';
 import { useFonts } from 'expo-font';
 import {useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 const url = `http://${window.location.hostname}:3000`
 const arrow = require('../assets/images/rightArrow.png');
@@ -32,6 +33,7 @@ async function fetchAvatarId(username) {
 }
  
 export function AvailableGame ({gameProps, username, token}) {
+  const navigation = useNavigation();
   const [icon, setIcon] = useState(null);
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
@@ -64,6 +66,8 @@ export function AvailableGame ({gameProps, username, token}) {
       }
     })
     .catch(error => console.error(error));
+
+    navigation.navigate('Partie', {idGame, username, token}); 
   };
   const joinGame = (idGame, username, token) => {
     fetch(`${url}/game/${idGame}` ,{

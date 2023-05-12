@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native-web";
 import PartieField from "./PartieField";
 import FooterMessageField from "./FooterMessageField";
 
-export default function FooterPartie({ time }) {
+export default function FooterPartie({ time, username, idGame, token }) {
   return (
     <View
       style={
@@ -18,7 +18,7 @@ export default function FooterPartie({ time }) {
       time={time}
     >
       <FooterMessageField />
-      <PartieField type={"message"} />
+      <PartieField  time={time} text={"hello"} username={username} idGame={idGame} token={token} type={"message"} />
     </View>
   );
 }
