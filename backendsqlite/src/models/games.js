@@ -47,6 +47,15 @@ const games = db.define(
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: false
+    },
+    gameTime: {
+      type: Sequelize.STRING,
+      validate: {
+        isIn: {
+          args: [['day', 'night']],
+          msg: 'gameTime can only be day or night'
+        }
+      }
     }
   },
   { timestamps: false }
