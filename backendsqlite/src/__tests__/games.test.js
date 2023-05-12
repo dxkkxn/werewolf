@@ -25,11 +25,13 @@ describe('create test user for this module', () => {
   });
 });
 
+let startingDate;
 describe('create game', () => {
   // get starting date in the good format
   const currentDate = new Date();
-  const dateOneHourLater = new Date(currentDate.getTime() + (60 * 60 * 1000));
-  const startingDate = dateOneHourLater.toISOString().slice(0, 19).replace('T', ' ');
+  startingDate = new Date(currentDate.getTime() + (60 * 60 * 1000));
+  startingDate = startingDate.toISOString();
+  // startingDate = dateOneHourLater.toISOString().slice(0, 19).replace('T', ' ');
   test('no body', async () => {
     const response = await request(app)
       .post('/game')
@@ -63,7 +65,7 @@ describe('create game', () => {
       .set({ 'x-access-token': token })
       .send({ data: JSON.stringify(data) });
     expect(response.statusCode).toBe(status.FORBIDDEN);
-    expect(response.body.message).toBe('user: testGame already in game');
+    expect(response.body.message).toBe('user: testGame already in game with id: 1');
   });
 });
 
@@ -76,6 +78,7 @@ describe('get games', () => {
     const data = JSON.parse(response.body.data);
     expect(data.length).toBe(1);
     expect(data[0]).toEqual({
+      avatarId: 1,
       idGame: 1,
       minPlayers: 5,
       maxPlayers: 20,
@@ -84,7 +87,8 @@ describe('get games', () => {
       werewolfProbability: 0.33,
       creatorUsername: 'testGame',
       players: ['testGame'],
-      started: false
+      started: false,
+      startingDate
     });
     expect(response.statusCode).toBe(status.OK);
   });
@@ -126,6 +130,7 @@ describe('join game', () => {
     const data = JSON.parse(response.body.data);
     expect(data.length).toBe(1);
     expect(data[0]).toEqual({
+      avatarId: 1,
       idGame: 1,
       minPlayers: 5,
       maxPlayers: 20,
@@ -134,7 +139,8 @@ describe('join game', () => {
       werewolfProbability: 0.33,
       creatorUsername: 'testGame',
       players: ['testGame', 'testGame2'],
-      started: false
+      started: false,
+      startingDate
     });
     expect(response.statusCode).toBe(status.OK);
   });
@@ -154,7 +160,8 @@ describe('join game', () => {
       werewolfProbability: 0.33,
       creatorUsername: 'testGame',
       players: ['testGame', 'testGame2'],
-      started: false
+      started: false,
+      startingDate
     });
     expect(response.statusCode).toBe(status.OK);
   });
