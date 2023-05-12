@@ -70,9 +70,10 @@ const joinGame = async (req, res) => {
   const idGame = req.params.idGame;
   // check room capacity
   const players = await Players.findAll({ where: { idGame } });
-  const maxPlayers = await Games.findOne({ attributes: ['maxPlayers'], where: { idGame } });
-  if (players.length >= maxPlayers) {
-    throw new CodeError(`Game ${idGame} is full`, status.FORBIDDEN);
+  const currentPlayers = players.length;
+  const game = await Games.findOne({ where: { idGame } });
+  if (currentPlayers >= game.maxPlayers) {
+    throw new CodeError('maximum number of players reached', status.FORBIDDEN);
   }
   await Players.create({ username, idGame });
   res.status(status.OK).json({ message: `user: ${username} joined game with id: ${idGame}` });
@@ -86,6 +87,8 @@ const getGameWithId = async (req, res) => {
   const gameWithPlayers = { ...game.toJSON(), players };
   res.status(status.OK).json({ message: 'returning game in the data property', data: JSON.stringify(gameWithPlayers) });
 };
+
+
 
 const startGame = async (req, res) => {
   const idGame = req.params.idGame;
@@ -216,5 +219,5 @@ module.exports = {
   joinGame,
   startGame,
   getStateOfGame,
-  addMessage
+  addMessage,
 };
