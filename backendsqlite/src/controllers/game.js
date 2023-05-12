@@ -212,6 +212,10 @@ const addMessage = async (req, res) => {
   res.status(status.CREATED).json({ message: 'message sent' });
 };
 
+const votePlayer = async (req, res) => {
+  throw new CodeError('not implemented yet', status.BAD_REQUEST);
+};
+
 module.exports = {
   createGame,
   getGames,
@@ -220,4 +224,5 @@ module.exports = {
   startGame,
   getStateOfGame,
   addMessage,
+  votePlayer
 };
