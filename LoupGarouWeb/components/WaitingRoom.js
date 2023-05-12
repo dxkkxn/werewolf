@@ -28,11 +28,16 @@ export default function WaitingRoom({ route }) {
         'Content-Type': 'application/json',
         'x-access-token': token
       }
-    });
-    const response = await data.json();
-      if(JSON.parse(response.data).started) {
-        navigation.navigate('Partie', {idGame, username, token});
-        clearInterval(interval);
+      });
+      if(!data.ok) {
+        console.log('failed when fetching state of game');
+      }
+      else {
+        const response = await data.json();
+          if(JSON.parse(response.data).started) {
+            navigation.navigate('Partie', {idGame, username, token});
+            clearInterval(interval);
+          }
       }
     } catch(error) {
       console.log(error);
