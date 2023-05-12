@@ -2,7 +2,8 @@ const status = require('http-status');
 const Players = require('../models/players.js');
 const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
-const games = require('../models/games.js');
+const Games = require('../models/games.js');
+const PlayersInGame = require('../models/playersInGame.js');
 
 const validateBodyCreateGame = async (req, res, next) => {
   if (!has(req.body, ['data'])) {
@@ -25,7 +26,7 @@ const validateBodyCreateGame = async (req, res, next) => {
 const validateIdGame = async (req, res, next) => {
   if (!has(req.params, 'idGame')) throw new CodeError('no idGame found in params', status.BAD_REQUEST);
   const idGame = req.params.idGame;
-  const gameFound = games.findOne({ where: { idGame } });
+  const gameFound = Games.findOne({ where: { idGame } });
   if (!gameFound) throw new CodeError(`Game ${idGame} was not found`, status.BAD_REQUEST);
   next();
 };
@@ -45,7 +46,7 @@ const validateGameNotStarted = async (req, res, next) => {
   const username = req.username;
   console.assert(username !== undefined);
   console.assert(idGame !== undefined);
-  const started = await games.findOne({ attributes: ['started'], where: { idGame } });
+  const started = await Games.findOne({ attributes: ['started'], where: { idGame } });
   if (started.started === true) {
     throw new CodeError(`Game ${idGame} already started`, status.FORBIDDEN);
   }
@@ -65,7 +66,7 @@ const validateUserIsCreator = async (req, res, next) => {
   const username = req.username;
   console.assert(username !== undefined);
   console.assert(idGame !== undefined);
-  const creator = await games.findOne({ attributes: ['creatorUsername'], where: { idGame } });
+  const creator = await Games.findOne({ attributes: ['creatorUsername'], where: { idGame } });
   if (creator.creatorUsername !== username) {
     throw new CodeError('You can\'t start the game because you are not the creator', status.BAD_REQUEST);
   }
@@ -77,9 +78,40 @@ const validateGameStarted = async (req, res, next) => {
   const username = req.username;
   console.assert(username !== undefined);
   console.assert(idGame !== undefined);
-  const started = await games.findOne({ attributes: ['started'], where: { idGame } });
+  const started = await Games.findOne({ attributes: ['started'], where: { idGame } });
   if (started.started !== true) {
     throw new CodeError('You can\'t get game state because the game didn\'t start', status.BAD_REQUEST);
+  }
+  next();
+};
+
+const validatePlayerAlive = async (req, res, next) => {
+  const idGame = req.params.idGame;
+  const username = req.username;
+  console.assert(username !== undefined);
+  console.assert(idGame !== undefined);
+
+  const player = await PlayersInGame.findOne(
+    { include: [{ model: Players, where: { username, idGame } }] });
+
+  if (player.state === 'dead') {
+    throw new CodeError('Player is dead', status.BAD_REQUEST);
+  }
+  next();
+};
+
+
+const validateRightRole = async (req, res, next) => {
+  const idGame = req.params.idGame;
+  const username = req.username;
+  console.assert(username !== undefined);
+  console.assert(idGame !== undefined);
+
+  const player = await PlayersInGame.findOne(
+    { include: [{ model: Players, where: { username, idGame } }] });
+
+  if (player.state === 'dead') {
+    throw new CodeError('Player is dead', status.BAD_REQUEST);
   }
   next();
 };
@@ -91,5 +123,7 @@ module.exports = {
   validateUserIsCreator,
   validateGameNotStarted,
   validateGameStarted,
-  validateUserNotAlreadyInGame
+  validateUserNotAlreadyInGame,
+  validatePlayerAlive,
+  validateRightRole
 };
