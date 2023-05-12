@@ -88,17 +88,30 @@ const getGameWithId = async (req, res) => {
   res.status(status.OK).json({ message: 'returning game in the data property', data: JSON.stringify(gameWithPlayers) });
 };
 
+const gameStates = {};
 
+function changeDayTime (idGame) {
+  const { game, timeoutDate } = gameStates[idGame];
+  if (game.gameTime === 'day') {
+    const time = game.nightDuration * 60 * 1000;
+    game.gameTime = 'night';
+    setTimeout(changeDayTime, time, idGame);
+  } else {
+    console.assert(game.gameTime === 'night');
+    const time = game.dayDuration * 60 * 1000;
+    game.gameTime = 'day';
+    setTimeout(changeDayTime, time, idGame);
+  }
+  game.save();
+}
 
 const startGame = async (req, res) => {
   const idGame = req.params.idGame;
   const username = req.username;
   console.assert(username !== undefined);
   console.assert(idGame !== undefined);
-  // change started to true
   const game = await Games.findOne({ where: { idGame } });
-  game.started = true;
-  await game.save(); // REVIEW: maybe await?
+  // change started to true
   // create playersInGame
   const players = await Players.findAll({ attributes: ['idPlayer'], where: { idGame } });
   // une proportion n'est pas une proba (cf cahier des charges)
@@ -117,8 +130,20 @@ const startGame = async (req, res) => {
     const idPlayer = i;
     await PlayersInGame.create({ role: 'human', idPlayer }); // default value for state is alive
   }
-  const indexCont = -1;
+
+  game.started = true;
+  const currentDate = new Date();
+  game.startingDate = currentDate;
+  game.gameTime = 'day';
+  const time = game.dayDuration * 60 * 1000;
+  gameStates[idGame] = { game, timeoutDate: currentDate + time };
+  console.log('added');
+  console.log(gameStates);
+  setTimeout(changeDayTime, time, idGame);
+  game.save();
+
   // assign role contaminant
+  // const indexCont = -1;
   // console.log('adding contaminant');
   // if (Math.random() < game.infectionProbability || true) {
   //  // pick one among ww
