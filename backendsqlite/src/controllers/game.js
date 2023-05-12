@@ -35,12 +35,19 @@ function getRandomNumbers(k, n) {
 
 const createGame = async (req, res) => {
   const creatorUsername = req.username;
-  const userAlreadyInGame = await Players.findOne({ where: { username: creatorUsername } });
-  if (userAlreadyInGame) {
-    throw new CodeError(`user: ${creatorUsername} already in game `, status.FORBIDDEN);
-  }
-  const { minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability, startHour, startDay, insomniaProbability, seerProbability, infectionProbability, spiritismProbability } = JSON.parse(req.body.data);
-  const newGame = await Games.create({ creatorUsername, startHour, startDay, infectionProbability, insomniaProbability, seerProbability, spiritismProbability, minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability });
+  const {
+    minPlayers, maxPlayers, dayDuration, nightDuration,
+    werewolfProbability, startingDate
+  } = JSON.parse(req.body.data);
+  const newGame = await Games.create({
+    creatorUsername,
+    startingDate,
+    minPlayers,
+    maxPlayers,
+    dayDuration,
+    nightDuration,
+    werewolfProbability
+  });
   // add creator as player also
   await Players.create({ username: creatorUsername, idGame: newGame.idGame });
   res.status(status.CREATED).json({ message: 'game created' });
@@ -62,16 +69,11 @@ const getGames = async (req, res) => {
 const joinGame = async (req, res) => {
   const username = req.username;
   const idGame = req.params.idGame;
-  // check if user already in game
-  const userAlreadyInGame = await Players.findOne({ where: { username } });
-  if (userAlreadyInGame) {
-    throw new CodeError(`user: ${username} already in game`, status.FORBIDDEN);
-  }
-  // check rooms are available
+  // check room capacity
   const players = await Players.findAll({ where: { idGame } });
   const maxPlayers = await Games.findOne({ attributes: ['maxPlayers'], where: { idGame } });
-  if (players.length > maxPlayers) {
-    throw new CodeError('maximum number of players reached', status.FORBIDDEN);
+  if (players.length >= maxPlayers) {
+    throw new CodeError(`Game ${idGame} is full`, status.FORBIDDEN);
   }
   await Players.create({ username, idGame });
   res.status(status.OK).json({ message: `user: ${username} joined game with id: ${idGame}` });
