@@ -3,6 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import {useState} from 'react';
 import { useFonts } from 'expo-font';
 import { useNavigation } from '@react-navigation/native';
+import ClickableImage from './ClickableImage';
+const leftArrow = require("../assets/images/leftArrow.png");
+
 const url = `http://${window.location.hostname}:3000`;
 
 
@@ -47,21 +50,38 @@ export default function WaitingRoom({ route }) {
   const interval = setInterval(()=>{testStarted(interval);}, 1000);
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Salle d'attente de la partie {idGame} to start...</Text>
+      <View style={styles.header}>
+        <ClickableImage
+          source={leftArrow}
+          onPress={() => navigation.navigate('Join', {username: username, token : token})}
+          symbol={"leftArrow"}
+        />
+      </View>
+      <View style={styles.textContainer}>
+			  <Text style={styles.title}>Salle d'attente de la partie {idGame} to start...</Text>
+      </View>
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: "80%",
-    top: 64,
+    height: "100%",
+  },
+  textContainer: {
+    height: "90%",
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: "center",
+    textAlign: 'center',
   },
   title: {
     color: '#ffffff',
     fontSize: 28,
     fontFamily: 'Poppins'
   },
+  header: {
+    height: "10%",
+    justifyContent: 'center',
+    marginLeft: 20,
+  }
 })

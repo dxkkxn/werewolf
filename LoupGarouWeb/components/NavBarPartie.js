@@ -1,19 +1,10 @@
 import { Image, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-web";
 import PartieField from "./PartieField";
+import ClickableImage from "./ClickableImage";
 const leftArrow = require("../assets/images/leftArrow.png");
 const burguerMenu = require("../assets/images/burguerMenu.png");
 
-const ClickableImage = ({ source, onPress, symbol }) => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <Image
-        source={source}
-        style={symbol == "burguerMenu" ? styles.burguerMenu : styles.leftArrow}
-      />
-    </TouchableOpacity>
-  );
-};
 export default function NavBarPartie({ time }) {
   const handleLeftArrow = () => {
     console.log("left arrow pressed");
@@ -59,15 +50,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#7858A6",
     //
     // justifyContent:"space"
-  },
-  burguerMenu: {
-    width: "27px",
-    height: "15px",
-    // display: "inline-block",
-    // color: "white",
-  },
-  leftArrow: {
-    width: "25.5px",
-    height: "18.21px",
   },
 });
