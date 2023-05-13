@@ -12,37 +12,11 @@ const games = db.define(
     },
     creatorUsername: {
       type: Sequelize.STRING,
-      alloxNull: false
+      allowNull: false
     },
-    startHour: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      defaultValue: 8
-    },
-    startDay: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      defaultValue: 1
-    },
-    infectionProbability: {
-      type: Sequelize.FLOAT,
-      allowNull: false,
-      defaultValue: 0
-    },
-    insomniaProbability: {
-      type: Sequelize.FLOAT,
-      allowNull: false,
-      defaultValue: 0
-    },
-    seerProbability: {
-      type: Sequelize.FLOAT,
-      allowNull: false,
-      defaultValue: 0
-    },
-    spiritismProbability: {
-      type: Sequelize.FLOAT,
-      allowNull: false,
-      defaultValue: 0
+    startingDate: {
+      type: Sequelize.DATE,
+      allowNull: false
     },
     minPlayers: {
       type: Sequelize.INTEGER,
@@ -73,10 +47,19 @@ const games = db.define(
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: false
+    },
+    gameTime: {
+      type: Sequelize.STRING,
+      validate: {
+        isIn: {
+          args: [['day', 'night']],
+          msg: 'gameTime can only be day or night'
+        }
+      }
     }
   },
   { timestamps: false }
 );
 
-users.hasOne(games, { foreignKey: 'creatorUsername' });
+users.hasOne(games, { foreignKey: 'creatorUsername', allowNull: false });
 module.exports = games;

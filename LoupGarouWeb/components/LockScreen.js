@@ -147,7 +147,7 @@ function LockScreen() {
         {pwdConfirm}
       </View>
       {ConnexionButton}
-      <MyButton label="Créer un compte" primary={true} onPress={onPressCreate} />
+      <MyButton testid="create-account" label="Créer un compte" primary={true} onPress={onPressCreate} />
       {dejaInscrit}
       {pwdOublie}
     </View>

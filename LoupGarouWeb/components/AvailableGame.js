@@ -44,6 +44,14 @@ export function AvailableGame({ gameProps, username, token }) {
   if (!loaded) {
     return null;
   }
+  const moment = require("moment");
+  const currentDate = moment();
+  const remainingTime = moment.duration(
+    moment(gameProps.startingDate).diff(moment(currentDate))
+  );
+  const hours = Math.floor(remainingTime.asHours());
+  const minutes = Math.floor(remainingTime.asMinutes() % 60);
+
   fetchAvatarId(gameProps.creatorUsername).then((icon) => {
     setIcon(icon);
   });
@@ -78,9 +86,16 @@ export function AvailableGame({ gameProps, username, token }) {
     })
       .then((data) => {
         if (data.ok) {
-          alert("partie intégrée avec succès !");
+          // for now, after joining, user is locked in a waiting room until the game starts
+          navigation.navigate("WaitingRoom", { idGame, username, token });
         } else if (data.status == 403) {
-          alert("vous ne pouvez pas rejoindre plusieurs parties simultanément");
+          if (data.message === "maximum number of players reached") {
+            alert("Cette partie est complète !");
+          } else {
+            alert(
+              "Vous ne pouvez pas rejoindre plusieurs parties simultanément"
+            );
+          }
         } else if (data.status == 401) alert("failure");
       })
       .catch((error) => console.error(error));
@@ -108,7 +123,7 @@ export function AvailableGame({ gameProps, username, token }) {
         <ul style={styles.paramList}>
           <li>Créée par {gameProps.creatorUsername}</li>
           <li>
-            Debut a {gameProps.startHour}h dans {gameProps.startDay} jours
+            Debut dans {hours}h {minutes}m
           </li>
           <li>
             De {gameProps.minPlayers} à {gameProps.maxPlayers} joueurs
@@ -123,10 +138,15 @@ export function AvailableGame({ gameProps, username, token }) {
             {gameProps.spiritismProbability}
           </li>
           <li>Proportion de loups : {gameProps.werewolfProbability}</li>
+          <li>Joueurs actuels : {gameProps.currentPlayers}</li>
         </ul>
-        <TouchableOpacity style={styleArrowBox} onPress={onPress}>
-          <Image style={styles.arrowStyle} source={arrow} />
-        </TouchableOpacity>
+        {gameProps.currentPlayers == gameProps.maxPlayers ? (
+          <Text style={styles.textPartieComplete}>Partie complète !</Text>
+        ) : (
+          <TouchableOpacity style={styleArrowBox} onPress={onPress}>
+            <Image style={styles.arrowStyle} source={arrow} />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -204,5 +224,15 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     fontSize: 14,
     paddingLeft: 20,
+  },
+  textPartieComplete: {
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 700,
+    fontSize: 20,
+    paddingLeft: 20,
+    color: "green",
+    position: "absolute",
+    bottom: 0,
   },
 });
