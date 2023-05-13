@@ -100,9 +100,9 @@ export function AvailableGame ({gameProps, username, token}) {
           <li> Jour: {gameProps.dayDuration} min, Nuit: {gameProps.nightDuration} min </li>
           <li> C: {gameProps.infectionProbability}, I:{gameProps.insomniaProbability}, V:{gameProps.seerProbability}, S:{gameProps.spiritismProbability} </li>
           <li> Proportion de loups : {gameProps.werewolfProbability} </li>
-          <li> Joueurs actuels : {gameProps.currentPlayers} </li>
+          <li> Joueurs actuels : {gameProps.players.length} </li>
         </ul>
-        {gameProps.currentPlayers==gameProps.maxPlayers ? (
+        {gameProps.players.length==gameProps.maxPlayers ? (
           <Text style={styles.textPartieComplete}>Partie complète !</Text>
           ) : (
           <TouchableOpacity style={styleArrowBox} onPress={onPress}> 

@@ -9,7 +9,7 @@ const Powers = require('../models/powers.js');
 const PlayersPowers = require('../models/playersPowers.js');
 const Messages = require('../models/messages.js');
 
-function getRandomNumbers(k, n) {
+function getRandomNumbers (k, n) {
   // we use this to determine who is a werewolf and who is human
   if (k > n) {
     console.error('Error: k cannot be greater than n.');
@@ -35,12 +35,19 @@ function getRandomNumbers(k, n) {
 
 const createGame = async (req, res) => {
   const creatorUsername = req.username;
-  const userAlreadyInGame = await Players.findOne({ where: { username: creatorUsername } });
-  if (userAlreadyInGame) {
-    throw new CodeError(`user: ${creatorUsername} already in game `, status.FORBIDDEN);
-  }
-  const { minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability, startHour, startDay, insomniaProbability, seerProbability, infectionProbability, spiritismProbability } = JSON.parse(req.body.data);
-  const newGame = await Games.create({ creatorUsername, startHour, startDay, infectionProbability, insomniaProbability, seerProbability, spiritismProbability, minPlayers, maxPlayers, dayDuration, nightDuration, werewolfProbability });
+  const {
+    minPlayers, maxPlayers, dayDuration, nightDuration,
+    werewolfProbability, startingDate
+  } = JSON.parse(req.body.data);
+  const newGame = await Games.create({
+    creatorUsername,
+    startingDate,
+    minPlayers,
+    maxPlayers,
+    dayDuration,
+    nightDuration,
+    werewolfProbability
+  });
   // add creator as player also
   await Players.create({ username: creatorUsername, idGame: newGame.idGame });
   res.status(status.CREATED).json({ message: 'game created' });
@@ -51,7 +58,6 @@ const getGames = async (req, res) => {
   const gamesWithPlayers = await Promise.all(games.map(async (game) => {
     let players = await Players.findAll({ attributes: ['username'], where: { idGame: game.idGame } });
     let avatarId = await Users.findOne({ attributes: ['avatarId'], where: { username: game.creatorUsername } });
-    console.log('id : ', avatarId);
     players = players.map(player => player.username);
     avatarId = avatarId.avatarId;
     return { ...game.toJSON(), players, avatarId };
@@ -62,20 +68,14 @@ const getGames = async (req, res) => {
 const joinGame = async (req, res) => {
   const username = req.username;
   const idGame = req.params.idGame;
-  // check if user already in game
-  const userAlreadyInGame = await Players.findOne({ where: { username } });
-  if (userAlreadyInGame) {
-    throw new CodeError(`user: ${username} already in game`, status.FORBIDDEN);
-  }
-  // check rooms are available
+  // check room capacity
   const players = await Players.findAll({ where: { idGame } });
-  const currentPlayers = players.length+1 ;
+  const currentPlayers = players.length;
   const game = await Games.findOne({ where: { idGame } });
-  if (currentPlayers > game.maxPlayers) {
+  if (currentPlayers >= game.maxPlayers) {
     throw new CodeError('maximum number of players reached', status.FORBIDDEN);
   }
   await Players.create({ username, idGame });
-  await game.update({currentPlayers: currentPlayers})
   res.status(status.OK).json({ message: `user: ${username} joined game with id: ${idGame}` });
 };
 
@@ -88,17 +88,34 @@ const getGameWithId = async (req, res) => {
   res.status(status.OK).json({ message: 'returning game in the data property', data: JSON.stringify(gameWithPlayers) });
 };
 
+const gameStates = {};
 
+
+function changeDayTime (idGame) {
+  const { game } = gameStates[idGame];
+  gameStates[idGame].timeoutStart = new Date();
+  if (game.gameTime === 'day') {
+    const time = game.nightDuration * 60 * 1000;
+    game.gameTime = 'night';
+    gameStates[idGame].timeoutTime = time;
+    setTimeout(changeDayTime, time, idGame);
+  } else {
+    console.assert(game.gameTime === 'night');
+    const time = game.dayDuration * 60 * 1000;
+    gameStates[idGame].timeoutTime = time;
+    game.gameTime = 'day';
+    setTimeout(changeDayTime, time, idGame);
+  }
+  game.save();
+}
 
 const startGame = async (req, res) => {
   const idGame = req.params.idGame;
   const username = req.username;
   console.assert(username !== undefined);
   console.assert(idGame !== undefined);
-  // change started to true
   const game = await Games.findOne({ where: { idGame } });
-  game.started = true;
-  await game.save(); // REVIEW: maybe await?
+  // change started to true
   // create playersInGame
   const players = await Players.findAll({ attributes: ['idPlayer'], where: { idGame } });
   // une proportion n'est pas une proba (cf cahier des charges)
@@ -107,71 +124,98 @@ const startGame = async (req, res) => {
   if (nbWerewolves === 0) nbWerewolves = 1;
   const { indexWerewolves, indexHumans } = getRandomNumbers(nbWerewolves, players.length);
   // assign wws
-  console.log('assign wws');
-  console.log(indexWerewolves);
   for (const i of indexWerewolves) {
     const idPlayer = i;
-    console.log("id player : ", idPlayer);
     await PlayersInGame.create({ role: 'werewolf', idPlayer }); // default value for state is alive
   }
   // create associations for humans
-  // const playersingame = await PlayersInGame.findAll ();
-  // console.log(playersingame);
-  // console.log('assign humans');
-  // console.log(indexHumans);
-  // for (const i of indexHumans) {
-  //   const idPlayer = i;
-  //   await PlayersInGame.create({ role: 'human', idPlayer }); // default value for state is alive
-  // }
-  // console.log('roles assigned');
-  // let indexCont = -1;
+  const playersingame = await PlayersInGame.findAll();
+  for (const i of indexHumans) {
+    const idPlayer = i;
+    await PlayersInGame.create({ role: 'human', idPlayer }); // default value for state is alive
+  }
+
+  game.started = true;
+  const currentDate = new Date();
+  game.startingDate = currentDate;
+  game.gameTime = 'day';
+  const time = game.dayDuration * 60 * 1000;
+  gameStates[idGame] = { game, timeoutStart: currentDate, timeoutTime: time };
+  setTimeout(changeDayTime, time, idGame);
+  game.save();
+
   // assign role contaminant
-  //console.log('adding contaminant');
-  //if (Math.random() < game.infectionProbability || true) {
+  // const indexCont = -1;
+  // console.log('adding contaminant');
+  // if (Math.random() < game.infectionProbability || true) {
   //  // pick one among ww
   //  indexCont = Math.floor(Math.random() * indexWerewolves.length);
   //  const idPlayer = players[indexCont].idPlayer;
   //  const power = await Powers.findOne({ where: { name: 'contaminant' } });
   //  console.log('power to be added : ', power);
   //  PlayersPowers.create({ power, idPlayer });
-  //}
-  //let indexIns = -1;
-  //// assign role insomnie
-  //if (Math.random() < game.insomniaProbability) {
+  // }
+  // let indexIns = -1;
+  /// / assign role insomnie
+  // if (Math.random() < game.insomniaProbability) {
   //  // pick one among humans
   //  indexIns = Math.floor(Math.random() * indexHumans.length);
   //  const idPlayer = players[indexIns].idPlayer;
   //  const power = Powers.findOne({ where: { name: 'insomniaque' } });
   //  PlayersPowers.create({ power, idPlayer });
-  //}
+  // }
 
-  //// on enlève l'insomniaque et le contaminant de l'array players
-  //// ça casse la correspondance entre indexWerewolves, indexHumans
-  //// et les roles réellement distribués,
-  //// c'est pour ça qu'on ne le fait pas avant
-  //if (indexCont !== -1) players.splice(indexCont, 1);
-  //if (indexIns !== -1) players.splice(indexIns, 1);
+  /// / on enlève l'insomniaque et le contaminant de l'array players
+  /// / ça casse la correspondance entre indexWerewolves, indexHumans
+  /// / et les roles réellement distribués,
+  /// / c'est pour ça qu'on ne le fait pas avant
+  // if (indexCont !== -1) players.splice(indexCont, 1);
+  // if (indexIns !== -1) players.splice(indexIns, 1);
 
-  //// distribue le roles de voyant
-  //if (Math.random() < game.seerProbability && players.length > 0) {
+  /// / distribue le roles de voyant
+  // if (Math.random() < game.seerProbability && players.length > 0) {
   //  const index = Math.floor(Math.random() * players.length);
   //  const player = players[index];
   //  const idPlayer = player.idPlayer;
   //  players.splice(index, 1); // ensures a same player has one power only
   //  const power = await Powers.findOne({ where: { name: 'voyant' } });
   //  PlayersPowers.create({ power, idPlayer });
-  //}
-  //// spiritiste
-  //if (Math.random() < game.spiritismProbability && players.length > 0) {
+  // }
+  /// / spiritiste
+  // if (Math.random() < game.spiritismProbability && players.length > 0) {
   //  // pick one from remaining players
   //  const index = Math.floor(Math.random() * players.length);
   //  const player = players[index];
   //  const idPlayer = player.idPlayer;
   //  const power = Powers.findOne({ where: { name: 'spiritiste' } });
   //  PlayersPowers.create({ power, idPlayer });
-  //}
+  // }
   res.status(status.CREATED).json({ message: 'game started' });
 };
+
+function getGameHour(idGame) {
+  const { game, timeoutStart, timeoutTime } = gameStates[idGame]; // timeoutTime in ms
+  const currentDate = new Date();
+  console.assert(timeoutStart >= currentDate);
+  const gamePercent = (currentDate - timeoutStart) / timeoutTime; // percent of game time elapsed
+  console.assert(0 <= gamePercent && gamePercent <= 1);
+  const start = 8 * 3600 * 1000; // in ms
+  const end = 22 * 3600 * 1000; // in ms
+  let currentGameHour;
+  if (game.gameTime === 'day') {
+    currentGameHour = start + gamePercent * (end - start); // in ms
+  } else {
+    console.assert(game.gameTime === 'night');
+    currentGameHour = end + gamePercent * (end - start); // in ms
+  }
+  // passing ms to string "hh:mm"
+  let hours = Math.floor(currentGameHour / (1000 * 3600)) % 24;
+  let minutes = (currentGameHour % (1000 * 3600)) / 60;
+  if (hours < 10) { hours = `0${hours}`; }
+  if (minutes < 10) { minutes = `0${minutes}`; }
+  return `${hours}:${minutes}`;
+}
+
 const getStateOfGame = async (req, res) => {
   const idGame = req.params.idGame;
   console.assert(idGame !== undefined);
@@ -198,7 +242,7 @@ const getStateOfGame = async (req, res) => {
     delete msg.playersInGame;
     return msg;
   });
-  const state = { players: playersInGame, messages };
+  const state = { players: playersInGame, messages, gameHour: getGameHour(idGame) };
   res.status(status.OK).json({ message: 'returning game state', data: JSON.stringify(state) });
 };
 
@@ -219,6 +263,10 @@ const addMessage = async (req, res) => {
   res.status(status.CREATED).json({ message: 'message sent' });
 };
 
+const votePlayer = async (req, res) => {
+  throw new CodeError('not implemented yet', status.BAD_REQUEST);
+};
+
 module.exports = {
   createGame,
   getGames,
@@ -227,4 +275,5 @@ module.exports = {
   startGame,
   getStateOfGame,
   addMessage,
+  votePlayer
 };

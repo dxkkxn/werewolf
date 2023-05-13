@@ -81,17 +81,25 @@ export default function Form({route}) {
       },
       body: JSON.stringify({
         data : JSON.stringify({
-          startDay: jourDebut,
-          startHour: heureDebut,
-          minPlayers: nbPlayers[0],
-          maxPlayers: nbPlayers[1],
-          dayDuration: dureeJour,
-          nightDuration: dureeNuit,
-          werewolfProbability: portionLoups,
-          seerProbability: probasPouvoirs[2],
-          infectionProbability: probasPouvoirs[0],
-          spiritismProbability: probasPouvoirs[3],
-          insomniaProbability: probasPouvoirs[1]
+          // startDay: jourDebut,
+          // startHour: heureDebut,
+          // minPlayers: nbPlayers[0],
+          // maxPlayers: nbPlayers[1],
+          // dayDuration: dureeJour,
+          // nightDuration: dureeNuit,
+          // werewolfProbability: portionLoups,
+          // seerProbability: probasPouvoirs[2],
+          // infectionProbability: probasPouvoirs[0],
+          // spiritismProbability: probasPouvoirs[3],
+          // insomniaProbability: probasPouvoirs[1]
+
+          creatorUsername : username,
+          startingDate : jourDebut,
+          minPlayers : nbPlayers[0],
+          maxPlayers : nbPlayers[1],
+          dayDuration : dureeJour,
+          nightDuration : dureeNuit,
+          werewolfProbability : portionLoups
         })
       })
     })

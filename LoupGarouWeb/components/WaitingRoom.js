@@ -132,10 +132,13 @@ export default function WaitingRoom({ route }) {
         <AvailableGame username={username} token={token} gameProps={gameData} />
         <Text style={styles.title}>Joueurs actuels : {currentPlayers} </Text>
         {currentPlayers < gameData.minPlayers ? (
-          <MyButton  label="Attente de joueurs .." primary={"createButton"}/>
-        ) :(
-          <MyButton  label="Commencer la partie" primary={"startButton"} onPress={onPress} />
+        <MyButton  label="Attente de joueurs .." primary={"createButton"}/>
+          ) : currentPlayers < gameData.maxPlayers ? (
+        <MyButton  label="Commencer" primary={"startButton"} onPress={onPress} />
+          ) : (
+        <MyButton  label="Commencer" primary={"startButton"} onPress={() => onPress()} />
         )}
+
         </View>
       ) : (
       <View>
