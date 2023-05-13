@@ -6,13 +6,14 @@ const {
 } = require('../controllers/game.js');
 const { validateToken } = require('../middlewares/userValidators.js');
 const {
+  validateBodyHasData,
   validateGameNotStarted, validateBodyCreateGame, validateUserInGame,
   validateIdGame, validateUserIsCreator, validateGameStarted,
   validateUserNotAlreadyInGame, validatePlayerAlive, validateRightRole
 } = require('../middlewares/gameValidators.js');
 
 router.get('/game', validateToken, getGames);
-router.post('/game', validateToken, validateBodyCreateGame,
+router.post('/game', validateToken, validateBodyHasData, validateBodyCreateGame,
   validateUserNotAlreadyInGame, createGame);
 
 router.post('/game/:idGame', validateToken, validateIdGame,
@@ -25,9 +26,9 @@ router.post('/game/:idGame/play', validateToken, validateIdGame,
 router.get('/game/:idGame/play', validateToken, validateIdGame, validateUserInGame,
   validateGameStarted, getStateOfGame);
 
-router.post('/game/:idGame/message', validateToken, validateUserInGame,
+router.post('/game/:idGame/message', validateToken, validateBodyHasData, validateUserInGame,
   validateGameStarted, validatePlayerAlive, validateRightRole, addMessage);
 
-router.post('/game/:idGame/vote', validateToken, validateUserInGame,
+router.post('/game/:idGame/vote', validateToken, validateBodyHasData, validateUserInGame,
   validateGameStarted, validatePlayerAlive, validateRightRole, votePlayer);
 module.exports = router;

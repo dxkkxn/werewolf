@@ -10,14 +10,15 @@ export default function Form({route}) {
   const [nbPlayers, setNbPlayers] = useState([5, 20]);
   const [dureeJour, setDureeJour] = useState(3);
   const [dureeNuit, setDureeNuit] = useState(2)
-  const [jourDebut, setJourDebut] = useState(1);
-  const [heureDebut, setHeureDebut] = useState(8);
+  const [minutesDebut, setMinutesDebut] = useState(0);
+  const [heuresDebut, setHeuresDebut] = useState(1);
   const [probasPouvoirs, setProbasPouvoirs] = useState(Array(4).fill(0.0)); // the order is C, I, V, S
   const [portionLoups, setPortionLoups] = useState(0.3);
   const navigation = useNavigation()
   const username = route.params.username;
   const token = route.params.token;
 
+  const moment = require('moment');
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
@@ -61,11 +62,11 @@ export default function Form({route}) {
       alert("proba de spiritisme invalide");
       return -1;
     }
-    if(typeof(jourDebut) === 'undefined' || jourDebut == null || isNaN(jourDebut) || jourDebut < 0){
+    if(typeof(minutesDebut) === 'undefined' || minutesDebut == null || isNaN(minutesDebut) || minutesDebut < 0){
       alert("jour de début invalide");
       return -1;
     }
-    if(typeof(heureDebut) === 'undefined' || heureDebut == null || isNaN(heureDebut) || heureDebut < 0){
+    if(typeof(heuresDebut) === 'undefined' || heuresDebut == null || isNaN(heuresDebut) || heuresDebut < 0){
       alert("heure de début invalide");
       return -1;
     }
@@ -73,6 +74,11 @@ export default function Form({route}) {
       alert("portion de loups invalide");
       return -1;
     }
+    // startingDate : timestamp
+    const currentDate = moment();
+    let startingDate = currentDate.add(heuresDebut, 'hours');
+    startingDate = startingDate.add(minutesDebut, 'minutes');
+
     fetch(`${url}/game` ,{
       method: 'POST',
       headers: {
@@ -131,11 +137,11 @@ export default function Form({route}) {
   const handleDureeNuit = (dureeNuitInput) => {
     setDureeNuit(parseInt(dureeNuitInput));
   }
-  const handleJourDebut = (jourDebutInput) => {
-    setJourDebut(parseInt(jourDebutInput));
+  const handleHeuresDebut = (heuresDebutInput) => {
+    setHeuresDebut(parseInt(heuresDebutInput));
   }
-  const handleHeureDebut = (heureDebutInput) => {
-    setHeureDebut(parseInt(heureDebutInput));
+  const handleMinutesDebut = (minutesDebutInput) => {
+    setMinutesDebut(parseInt(minutesDebutInput));
   }
   const handleProbasPouvoirs = (probasPouvoirsInput, index) => {
     const pouvoirs = [...probasPouvoirs];
@@ -156,10 +162,10 @@ export default function Form({route}) {
           <InputField placeholder="Durée jour" secureTextEntry={false} onChangeText={handleDureeJour} width={140} />
           <InputField placeholder="Durée nuit" secureTextEntry={false} onChangeText={handleDureeNuit} width={140} />
         </View>
-        <Text style={styles.question}>Horaire de début :</Text>
+        <Text style={styles.question}>Début dans :</Text>
         <View style={styles.inlineFields}>
-          <InputField placeholder="Nombre de jours" secureTextEntry={false} onChangeText={handleJourDebut} width={155} />
-          <InputField placeholder="Heure début" secureTextEntry={false} onChangeText={handleHeureDebut} width={125} />
+          <InputField placeholder="heures" secureTextEntry={false} onChangeText={handleHeuresDebut} width={155} />
+          <InputField placeholder="minutes" secureTextEntry={false} onChangeText={handleMinutesDebut} width={125} />
         </View>
         <Text style={styles.question}>Probabiltés des pouvoirs :</Text>
         <View style={styles.inlineFields}>
