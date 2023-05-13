@@ -8,6 +8,7 @@ const PlayersInGame = require('../models/playersInGame.js');
 const Powers = require('../models/powers.js');
 const PlayersPowers = require('../models/playersPowers.js');
 const Messages = require('../models/messages.js');
+const Votes = require('../models/votes.js');
 const { checkRightRole } = require('../middlewares/gameValidators.js');
 
 function getRandomNumbers (k, n) {
@@ -285,7 +286,17 @@ const addMessage = async (req, res) => {
 };
 
 const votePlayer = async (req, res) => {
-  throw new CodeError('not implemented yet', status.BAD_REQUEST);
+  const username = req.username;
+  const data = JSON.parse(req.body.data);
+  if (!has(data, 'accusedId')) {
+    return res.status(status.BAD_REQUEST).json({ message: 'You need to specify the accusedId' });
+  }
+  const { accusedId } = data;
+  const idPlayer = await Players.findOne({ attributes: ['idPlayer'], where: { username } });
+  // console.log(accusedId, idPlayer.idPlayer, username);
+  await Votes.create({ accusedIdPlayer: accusedId, voterIdPlayer: idPlayer.idPlayer });
+
+  return res.status(status.CREATED).json({ message: 'Your vote has been recorded' });
 };
 
 module.exports = {
