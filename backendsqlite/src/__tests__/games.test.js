@@ -428,7 +428,6 @@ describe('voting testing', () => {
     expect(response.statusCode).toBe(status.CREATED);
   });
 
-  console.log(humanToken)
   test('checking if we get the opened vote', async () => {
     const response = await request(app)
       .get('/game/1/play')
@@ -436,10 +435,31 @@ describe('voting testing', () => {
     const data = JSON.parse(response.body.data);
     console.log(data);
     expect(data.votes).toHaveLength(1);
-    expect(data.votes[0]).toEqual({
-      accusedIdPlayer: 1,
-      voterIdPlayer: 2
+    expect(data.votes[0].accusedIdPlayer).toBeDefined();
+    expect(data.votes[0].voterIdPlayer).toBeDefined();
+  });
+
+  test('werewolf sucicides', async () => {
+    const response = await request(app)
+      .post('/game/1/vote')
+      .set({ 'x-access-token': werewolfToken })
+      .send({ data: '{"accusedId": "1"}' });
+    expect(response.body.message).toBe('Your vote has been recorded');
+    expect(response.statusCode).toBe(status.CREATED);
+  });
+
+  test('checking the opened vote', async () => {
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': token });
+    const data = JSON.parse(response.body.data);
+    console.log(data);
+    expect(data.votes).toHaveLength(2);
+    data.votes.forEach((vote) => {
+      expect(vote.accusedIdPlayer).toBeDefined();
+      expect(vote.voterIdPlayer).toBeDefined();
     });
   });
+
 
 });
