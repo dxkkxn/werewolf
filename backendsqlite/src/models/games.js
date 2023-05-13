@@ -12,7 +12,7 @@ const games = db.define(
     },
     creatorUsername: {
       type: Sequelize.STRING,
-      alloxNull: false
+      allowNull: false
     },
     startingDate: {
       type: Sequelize.DATE,
@@ -61,5 +61,5 @@ const games = db.define(
   { timestamps: false }
 );
 
-users.hasOne(games, { foreignKey: 'creatorUsername' });
+users.hasOne(games, { foreignKey: 'creatorUsername', allowNull: false });
 module.exports = games;
