@@ -42,7 +42,7 @@ export default function Avatars({ route }) {
     avatar12,
   ];
 
-  const [avatarId, setAvatarId] = useState(0);
+  const [avatarId, setAvatarId] = useState(1);
   const [Clicked, setClicked] = useState(avatars.map(() => false));
   
   const [loaded] = useFonts({
