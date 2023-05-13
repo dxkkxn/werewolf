@@ -90,15 +90,19 @@ const getGameWithId = async (req, res) => {
 
 const gameStates = {};
 
+
 function changeDayTime (idGame) {
-  const { game, timeoutDate } = gameStates[idGame];
+  const { game } = gameStates[idGame];
+  gameStates[idGame].timeoutStart = new Date();
   if (game.gameTime === 'day') {
     const time = game.nightDuration * 60 * 1000;
     game.gameTime = 'night';
+    gameStates[idGame].timeoutTime = time;
     setTimeout(changeDayTime, time, idGame);
   } else {
     console.assert(game.gameTime === 'night');
     const time = game.dayDuration * 60 * 1000;
+    gameStates[idGame].timeoutTime = time;
     game.gameTime = 'day';
     setTimeout(changeDayTime, time, idGame);
   }
@@ -136,7 +140,7 @@ const startGame = async (req, res) => {
   game.startingDate = currentDate;
   game.gameTime = 'day';
   const time = game.dayDuration * 60 * 1000;
-  gameStates[idGame] = { game, timeoutDate: currentDate + time };
+  gameStates[idGame] = { game, timeoutStart: currentDate, timeoutTime: time };
   setTimeout(changeDayTime, time, idGame);
   game.save();
 
@@ -188,6 +192,30 @@ const startGame = async (req, res) => {
   // }
   res.status(status.CREATED).json({ message: 'game started' });
 };
+
+function getGameHour(idGame) {
+  const { game, timeoutStart, timeoutTime } = gameStates[idGame]; // timeoutTime in ms
+  const currentDate = new Date();
+  console.assert(timeoutStart >= currentDate);
+  const gamePercent = (currentDate - timeoutStart) / timeoutTime; // percent of game time elapsed
+  console.assert(0 <= gamePercent && gamePercent <= 1);
+  const start = 8 * 3600 * 1000; // in ms
+  const end = 22 * 3600 * 1000; // in ms
+  let currentGameHour;
+  if (game.gameTime === 'day') {
+    currentGameHour = start + gamePercent * (end - start); // in ms
+  } else {
+    console.assert(game.gameTime === 'night');
+    currentGameHour = end + gamePercent * (end - start); // in ms
+  }
+  // passing ms to string "hh:mm"
+  let hours = Math.floor(currentGameHour / (1000 * 3600)) % 24;
+  let minutes = (currentGameHour % (1000 * 3600)) / 60;
+  if (hours < 10) { hours = `0${hours}`; }
+  if (minutes < 10) { minutes = `0${minutes}`; }
+  return `${hours}:${minutes}`;
+}
+
 const getStateOfGame = async (req, res) => {
   const idGame = req.params.idGame;
   console.assert(idGame !== undefined);
@@ -214,7 +242,7 @@ const getStateOfGame = async (req, res) => {
     delete msg.playersInGame;
     return msg;
   });
-  const state = { players: playersInGame, messages };
+  const state = { players: playersInGame, messages, gameHour: getGameHour(idGame) };
   res.status(status.OK).json({ message: 'returning game state', data: JSON.stringify(state) });
 };
 
