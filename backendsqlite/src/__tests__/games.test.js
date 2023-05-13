@@ -427,4 +427,19 @@ describe('voting testing', () => {
     expect(response.body.message).toBe('Your vote has been recorded');
     expect(response.statusCode).toBe(status.CREATED);
   });
+
+  console.log(humanToken)
+  test('checking if we get the opened vote', async () => {
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': token });
+    const data = JSON.parse(response.body.data);
+    console.log(data);
+    expect(data.votes).toHaveLength(1);
+    expect(data.votes[0]).toEqual({
+      accusedIdPlayer: 1,
+      voterIdPlayer: 2
+    });
+  });
+
 });
