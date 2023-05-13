@@ -126,7 +126,7 @@ const validateRightRole = async (req, res, next) => {
   const username = req.username;
   if (await checkRightRole(username, idGame) === false) {
     const response = {
-      message: 'Humans cannot send messages during night',
+      message: 'Humans cannot send messages or vote during night',
       status: status.FORBIDDEN
     };
     return res.status(response.status).json(response);
