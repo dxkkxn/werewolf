@@ -360,7 +360,7 @@ describe('messages testing', () => {
       .post('/game/1/message')
       .set({ 'x-access-token': humanToken })
       .send({ data: '{"message": "i see u werewolf"}' });
-    expect(response.body.message).toBe('Humans cannot send messages during night');
+    expect(response.body.message).toBe('Humans cannot send messages or vote during night');
     expect(response.statusCode).toBe(status.FORBIDDEN);
   });
 
@@ -379,6 +379,7 @@ describe('messages testing', () => {
       .set({ 'x-access-token': werewolfToken });
     expect(response.body.message).toBe('returning game state');
     const data = JSON.parse(response.body.data);
+    console.log(data);
     expect(data.messages).toHaveLength(1);
     expect(data.messages[0].body).toBe('i\' m a werewolf');
     expect(response.statusCode).toBe(status.OK);
@@ -392,5 +393,38 @@ describe('messages testing', () => {
     const data = JSON.parse(response.body.data);
     expect(data.messages).toHaveLength(0);
     expect(response.statusCode).toBe(status.OK);
+  });
+  // jest
+
+    // jest.useRealTimers();
+});
+
+describe('voting testing', () => {
+  test('error no data', async () => {
+    jest.useFakeTimers();
+    jest.advanceTimersByTime(2 * 60 * 1000); //jump to day
+    const response = await request(app)
+      .post('/game/1/vote')
+      .set({ 'x-access-token': humanToken });
+    expect(response.body.message).toBe('You must include a data property in the request body');
+    expect(response.statusCode).toBe(status.BAD_REQUEST);
+  });
+
+  test('error forgot accusedId in date', async () => {
+    const response = await request(app)
+      .post('/game/1/vote')
+      .set({ 'x-access-token': humanToken })
+      .send({ data: '{}' });
+    expect(response.body.message).toBe('You need to specify the accusedId');
+    expect(response.statusCode).toBe(status.BAD_REQUEST);
+  });
+
+  test('human votes for player with id 1', async () => {
+    const response = await request(app)
+      .post('/game/1/vote')
+      .set({ 'x-access-token': humanToken })
+      .send({ data: '{"accusedId": "1"}' });
+    expect(response.body.message).toBe('Your vote has been recorded');
+    expect(response.statusCode).toBe(status.CREATED);
   });
 });
