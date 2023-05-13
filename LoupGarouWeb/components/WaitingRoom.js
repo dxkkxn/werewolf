@@ -47,7 +47,7 @@ export default function WaitingRoom({ route }) {
   const interval = setInterval(()=>{testStarted(interval);}, 1000);
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Waiting for game {idGame} to start...</Text>
+			<Text style={styles.title}>Salle d'attente de la partie {idGame} to start...</Text>
 		</View>
 	);
 }
