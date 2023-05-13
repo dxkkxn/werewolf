@@ -100,9 +100,8 @@ const validatePlayerAlive = async (req, res, next) => {
   next();
 };
 
-const validateRightRole = async (req, res, next) => {
-  const idGame = req.params.idGame;
-  const username = req.username;
+
+const checkRightRole = async (username, idGame) => {
   console.assert(username !== undefined);
   console.assert(idGame !== undefined);
   let gameTime = await Games.findOne({
@@ -115,6 +114,15 @@ const validateRightRole = async (req, res, next) => {
     { attributes: ['role'], include: [{ model: Players, where: { username, idGame } }] });
   playerRole = playerRole.role;
   if (gameTime === 'night' && playerRole === 'human') {
+    return false;
+  }
+  return true;
+};
+
+const validateRightRole = async (req, res, next) => {
+  const idGame = req.params.idGame;
+  const username = req.username;
+  if (await checkRightRole(username, idGame) === false) {
     const response = {
       message: 'Humans cannot send messages during night',
       status: status.FORBIDDEN
@@ -133,5 +141,7 @@ module.exports = {
   validateGameStarted,
   validateUserNotAlreadyInGame,
   validatePlayerAlive,
-  validateRightRole
+  validateRightRole,
+  checkRightRole,
+
 };
