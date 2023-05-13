@@ -115,16 +115,16 @@ const startGame = async (req, res) => {
     await PlayersInGame.create({ role: 'werewolf', idPlayer }); // default value for state is alive
   }
   // create associations for humans
-  const playersingame = await PlayersInGame.findAll ();
-  console.log(playersingame);
-  console.log('assign humans');
-  console.log(indexHumans);
-  for (const i of indexHumans) {
-    const idPlayer = i;
-    await PlayersInGame.create({ role: 'human', idPlayer }); // default value for state is alive
-  }
-  console.log('roles assigned');
-  let indexCont = -1;
+  // const playersingame = await PlayersInGame.findAll ();
+  // console.log(playersingame);
+  // console.log('assign humans');
+  // console.log(indexHumans);
+  // for (const i of indexHumans) {
+  //   const idPlayer = i;
+  //   await PlayersInGame.create({ role: 'human', idPlayer }); // default value for state is alive
+  // }
+  // console.log('roles assigned');
+  // let indexCont = -1;
   // assign role contaminant
   //console.log('adding contaminant');
   //if (Math.random() < game.infectionProbability || true) {

@@ -46,29 +46,10 @@ export function AvailableGame ({gameProps, username, token}) {
   .then(icon => {
     setIcon(icon)
   });
-  const startGame = (idGame, username) => {
-    fetch(`${url}/game/${idGame}/play` ,{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': token
-      }
-    })
-    .then(data => {
-      if(data.ok){
-        alert('partie démarrée avec succès !');
-      }
-      else if(data.status == 403){
-        alert('cette partie a déjà commencé !');
-      }
-      else {
-        alert('erreur interne');
-      }
-    })
-    .catch(error => console.error(error));
-
-    navigation.navigate('Partie', {idGame, username, token}); 
-  };
+  
+  const joinGameCreator = (idGame, username, token) => {
+    navigation.navigate('WaitingRoom', {idGame, username, token});
+  }
   const joinGame = (idGame, username, token) => {
     fetch(`${url}/game/${idGame}` ,{
       method: 'POST',
@@ -99,7 +80,7 @@ export function AvailableGame ({gameProps, username, token}) {
   let styleArrowBox;
   if(username == gameProps.creatorUsername) {
     styleArrowBox = styles.arrowBoxStart;
-    onPress = ()=>{startGame(gameProps.idGame, username, token)};
+    onPress = ()=>{joinGameCreator(gameProps.idGame, username, token)};
   }
   else {
     styleArrowBox = styles.arrowBox;

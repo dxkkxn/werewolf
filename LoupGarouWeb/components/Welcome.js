@@ -32,7 +32,7 @@ export default function Welcome({ route }) {
         else {
           const response = await data.json();
           for (const game of JSON.parse(response.data)){
-            if(game.players.includes(username) && game.creatorUsername !== username){
+            if(game.players.includes(username)){
               navigation.navigate('WaitingRoom', {idGame: game.idGame, username, token});
             }
           }
