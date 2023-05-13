@@ -5,10 +5,13 @@ const CodeError = require('../util/CodeError.js');
 const Games = require('../models/games.js');
 const PlayersInGame = require('../models/playersInGame.js');
 
-const validateBodyCreateGame = async (req, res, next) => {
+const validateBodyHasData = async (req, res, next) => {
   if (!has(req.body, ['data'])) {
-    throw new CodeError('You must include a data property in the request body', status.BAD_REQUEST);
+    return res.status(status.BAD_REQUEST).json({ message: 'You must include a data property in the request body' });
   }
+  next();
+};
+const validateBodyCreateGame = async (req, res, next) => {
   const data = JSON.parse(req.body.data);
   const requiredAttrs = ['dayDuration', 'nightDuration', 'startingDate'];
   const notFoundAttrs = [];
@@ -109,7 +112,6 @@ const checkRightRole = async (username, idGame) => {
     where: { idGame }
   });
   gameTime = gameTime.gameTime;
-  console.log(gameTime);
   let playerRole = await PlayersInGame.findOne(
     { attributes: ['role'], include: [{ model: Players, where: { username, idGame } }] });
   playerRole = playerRole.role;
@@ -133,6 +135,7 @@ const validateRightRole = async (req, res, next) => {
 };
 
 module.exports = {
+  validateBodyHasData,
   validateBodyCreateGame,
   validateIdGame,
   validateUserInGame,
@@ -142,6 +145,6 @@ module.exports = {
   validateUserNotAlreadyInGame,
   validatePlayerAlive,
   validateRightRole,
-  checkRightRole,
+  checkRightRole
 
 };
