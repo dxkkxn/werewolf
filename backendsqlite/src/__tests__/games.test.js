@@ -4,7 +4,6 @@ const status = require('http-status');
 
 /* eslint-env jest */
 
-
 let token;
 describe('create test user for this module', () => {
   test('create testGame user', async () => {
@@ -178,6 +177,8 @@ describe('join game', () => {
   });
 });
 
+let werewolfToken;
+let humanToken;
 
 describe('starting game', () => {
 
@@ -252,6 +253,16 @@ describe('starting game', () => {
       expectedData.forEach((data) => {
         expect(player[data]).toBeDefined();
       });
+      // getting roles for future tests
+      if (player.username === 'testGame') {
+        if (player.role === 'werewolf') {
+          werewolfToken = token;
+          humanToken = token2;
+        } else {
+          werewolfToken = token2;
+          humanToken = token;
+        }
+      }
     });
 
     expect(response.statusCode).toBe(status.OK);
@@ -263,7 +274,7 @@ describe('starting game', () => {
       .set({ 'x-access-token': token });
     expect(response.body.message).toBe('returning game state');
     const data = JSON.parse(response.body.data);
-    const players = data.players
+    const players = data.players;
     players.forEach((player) => {
       expectedData.forEach((data) => {
         expect(player[data]).toBeDefined();
@@ -284,7 +295,6 @@ describe('starting game', () => {
     expect(data.gameTime).toBe('night');
   });
 
-
   test('checking if gameTime changes correctly (night->day)', async () => {
     // new change to be 100% sure
     jest.advanceTimersByTime(2 * 60 * 1000);
@@ -296,7 +306,6 @@ describe('starting game', () => {
     expect(data.started).toBe(true);
     expect(data.gameTime).toBe('day');
   });
-
 
   test('checking virtual timer aka game time aka game hour (hh:mm) during day', async () => {
     // new change to be 100% sure
@@ -318,13 +327,14 @@ describe('starting game', () => {
     expect(response.body.message).toBe('returning game state');
     const data = JSON.parse(response.body.data);
     expect(data.gameHour).toBe('05:00');
-    jest.useRealTimers();
+    // jest.useRealTimers();
   });
 });
 
-
 describe('messages testing', () => {
+
   test('sending message', async () => {
+    jest.advanceTimersByTime(60 * 1000);
     const response = await request(app)
       .post('/game/1/message')
       .set({ 'x-access-token': token })
@@ -336,12 +346,23 @@ describe('messages testing', () => {
   test('receiving messages', async () => {
     const response = await request(app)
       .get('/game/1/play')
-      .set({ 'x-access-token': token });
+      .set({ 'x-access-token': token2 });
     expect(response.body.message).toBe('returning game state');
     const data = JSON.parse(response.body.data);
     expect(data.messages).toHaveLength(1);
     expect(data.messages[0].body).toBe('hello testGame2');
     expect(data.messages[0].username).toBe('testGame');
     expect(response.statusCode).toBe(status.OK);
+  });
+
+  // // jest.advanceTimersByTime(60 * 1000);
+  test('checking that humans cannot send messages during night', async () => {
+    jest.advanceTimersByTime(3 * 60 * 1000);
+    const response = await request(app)
+      .post('/game/1/message')
+      .set({ 'x-access-token': humanToken })
+      .send({ data: '{"message": "i see u werewolf"}' });
+    expect(response.body.message).toBe('Humans cannot send messages during night');
+    expect(response.statusCode).toBe(status.FORBIDDEN);
   });
 });
