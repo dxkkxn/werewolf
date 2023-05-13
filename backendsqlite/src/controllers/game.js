@@ -8,6 +8,8 @@ const PlayersInGame = require('../models/playersInGame.js');
 const Powers = require('../models/powers.js');
 const PlayersPowers = require('../models/playersPowers.js');
 const Messages = require('../models/messages.js');
+const Votes = require('../models/votes.js');
+const { checkRightRole } = require('../middlewares/gameValidators.js');
 
 function getRandomNumbers (k, n) {
   // we use this to determine who is a werewolf and who is human
@@ -94,6 +96,18 @@ const gameStates = {};
 function changeDayTime (idGame) {
   const { game } = gameStates[idGame];
   gameStates[idGame].timeoutStart = new Date();
+  // archiving all the messages
+  Messages.findAll({
+    include: [{
+      model: PlayersInGame,
+      include: [{ model: Players, where: { idGame } }]
+    }]
+  }).then((messages) => {
+    messages.forEach((msg) => { msg.current = false; msg.save(); });
+  });
+  // console.log("before", messages)
+  // console.log("after", messages)
+
   if (game.gameTime === 'day') {
     const time = game.nightDuration * 60 * 1000;
     game.gameTime = 'night';
@@ -216,6 +230,8 @@ function getGameHour(idGame) {
   return `${hours}:${minutes}`;
 }
 
+
+
 const getStateOfGame = async (req, res) => {
   const idGame = req.params.idGame;
   console.assert(idGame !== undefined);
@@ -228,21 +244,39 @@ const getStateOfGame = async (req, res) => {
     delete player.player;
     return player;
   });
-  let messages = await Messages.findAll({
+  // checking gameTime and role
+  // if role is human and gameTime is night returning no messages
+  let messages = [];
+  if (await checkRightRole(req.username, idGame)) {
+    messages = await Messages.findAll({
+      include: [{
+        model: PlayersInGame,
+        include: [{ model: Players, where: { idGame } }]
+      }],
+      where: { current: true }
+    });
+    // clearing messages output
+    messages = messages.map((msg) => {
+      msg = msg.toJSON();
+      const username = msg.playersInGame.player.username;
+      msg.username = username;
+      delete msg.playersInGame;
+      return msg;
+    });
+  }
+  //get current opened votes
+  const openVotes = await Votes.findAll({
     include: [{
       model: PlayersInGame,
-      include: [{ model: Players, where: { idGame } }]
-    }]
+      include: [{
+        model: Players,
+        where: { idGame }
+      }],
+      attributes: []
+    }],
+    attributes: ['accusedIdPlayer', 'voterIdPlayer']
   });
-  // clearing messages output
-  messages = messages.map((msg) => {
-    msg = msg.toJSON();
-    const username = msg.playersInGame.player.username;
-    msg.username = username;
-    delete msg.playersInGame;
-    return msg;
-  });
-  const state = { players: playersInGame, messages, gameHour: getGameHour(idGame) };
+  const state = { players: playersInGame, messages, gameHour: getGameHour(idGame), votes: openVotes };
   res.status(status.OK).json({ message: 'returning game state', data: JSON.stringify(state) });
 };
 
@@ -264,7 +298,17 @@ const addMessage = async (req, res) => {
 };
 
 const votePlayer = async (req, res) => {
-  throw new CodeError('not implemented yet', status.BAD_REQUEST);
+  const username = req.username;
+  const data = JSON.parse(req.body.data);
+  if (!has(data, 'accusedId')) {
+    return res.status(status.BAD_REQUEST).json({ message: 'You need to specify the accusedId' });
+  }
+  const { accusedId } = data;
+  const idPlayer = await Players.findOne({ attributes: ['idPlayer'], where: { username } });
+  // console.log(accusedId, idPlayer.idPlayer, username);
+  await Votes.create({ accusedIdPlayer: accusedId, voterIdPlayer: idPlayer.idPlayer });
+
+  return res.status(status.CREATED).json({ message: 'Your vote has been recorded' });
 };
 
 module.exports = {
