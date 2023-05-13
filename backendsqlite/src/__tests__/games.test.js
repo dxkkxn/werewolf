@@ -48,7 +48,7 @@ describe('create game', () => {
     expect(response.body.message).toBe(`needed attributes: [${notFoundAttrs}] where not found`);
   });
   test('creating a normal game', async () => {
-    const data = { creatorUsername: 'testGame', dayDuration: 3, nightDuration: 2, startingDate };
+    const data = { dayDuration: 3, nightDuration: 2, startingDate };
     const response = await request(app)
       .post('/game')
       .set({ 'x-access-token': token })
@@ -58,7 +58,7 @@ describe('create game', () => {
   });
 
   test('trying to create another game with same user (should fail)', async () => {
-    const data = { creatorUsername: 'testGame', dayDuration: 3, nightDuration: 2, startingDate };
+    const data = { dayDuration: 3, nightDuration: 2, startingDate };
     const response = await request(app)
       .post('/game')
       .set({ 'x-access-token': token })
