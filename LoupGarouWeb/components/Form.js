@@ -18,6 +18,7 @@ export default function Form({route}) {
   const username = route.params.username;
   const token = route.params.token;
 
+  const moment = require('moment');
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
@@ -73,6 +74,11 @@ export default function Form({route}) {
       alert("portion de loups invalide");
       return -1;
     }
+    // startingDate : timestamp
+    const currentDate = moment();
+    let startingDate = currentDate.add(jourDebut, 'days');
+    startingDate = startingDate.add(heureDebut, 'hours');
+
     fetch(`${url}/game` ,{
       method: 'POST',
       headers: {
@@ -81,8 +87,7 @@ export default function Form({route}) {
       },
       body: JSON.stringify({
         data : JSON.stringify({
-          startDay: jourDebut,
-          startHour: heureDebut,
+          startingDate: startingDate,
           minPlayers: nbPlayers[0],
           maxPlayers: nbPlayers[1],
           dayDuration: dureeJour,
