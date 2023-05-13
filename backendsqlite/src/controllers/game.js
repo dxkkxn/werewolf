@@ -92,7 +92,6 @@ const getGameWithId = async (req, res) => {
 
 const gameStates = {};
 
-
 function changeDayTime (idGame) {
   const { game } = gameStates[idGame];
   gameStates[idGame].timeoutStart = new Date();
@@ -207,12 +206,12 @@ const startGame = async (req, res) => {
   res.status(status.CREATED).json({ message: 'game started' });
 };
 
-function getGameHour(idGame) {
+function getGameHour (idGame) {
   const { game, timeoutStart, timeoutTime } = gameStates[idGame]; // timeoutTime in ms
   const currentDate = new Date();
   console.assert(timeoutStart >= currentDate);
   const gamePercent = (currentDate - timeoutStart) / timeoutTime; // percent of game time elapsed
-  console.assert(0 <= gamePercent && gamePercent <= 1);
+  console.assert(gamePercent >= 0 && gamePercent <= 1);
   const start = 8 * 3600 * 1000; // in ms
   const end = 22 * 3600 * 1000; // in ms
   let currentGameHour;
@@ -229,8 +228,6 @@ function getGameHour(idGame) {
   if (minutes < 10) { minutes = `0${minutes}`; }
   return `${hours}:${minutes}`;
 }
-
-
 
 const getStateOfGame = async (req, res) => {
   const idGame = req.params.idGame;
@@ -265,17 +262,16 @@ const getStateOfGame = async (req, res) => {
     });
   }
   // get current opened votes
-  const openVotes = await Votes.findAll({
-    include: [{
-      model: PlayersInGame,
-      include: [{
-        model: Players,
-        where: { idGame }
-      }],
-      attributes: []
-    }],
-    attributes: ['accusedIdPlayer', 'voterIdPlayer']
-  });
+  const openVotes = {};
+  for (const player of playersInGame) {
+    const votes = await Votes.findAll({
+      attributes: ['voterIdPlayer'],
+      where: { accusedIdPlayer: player.idPlayer }
+    });
+    if (votes.length > 0) {
+      openVotes[player.username] = votes.length;
+    }
+  }
   const state = { players: playersInGame, messages, gameHour: getGameHour(idGame), votes: openVotes };
   res.status(status.OK).json({ message: 'returning game state', data: JSON.stringify(state) });
 };
