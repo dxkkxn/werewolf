@@ -264,7 +264,19 @@ const getStateOfGame = async (req, res) => {
       return msg;
     });
   }
-  const state = { players: playersInGame, messages, gameHour: getGameHour(idGame) };
+  //get current opened votes
+  const openVotes = await Votes.findAll({
+    include: [{
+      model: PlayersInGame,
+      include: [{
+        model: Players,
+        where: { idGame }
+      }],
+      attributes: []
+    }],
+    attributes: ['accusedIdPlayer', 'voterIdPlayer']
+  });
+  const state = { players: playersInGame, messages, gameHour: getGameHour(idGame), votes: openVotes };
   res.status(status.OK).json({ message: 'returning game state', data: JSON.stringify(state) });
 };
 
