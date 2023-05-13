@@ -295,7 +295,29 @@ describe('starting game', () => {
     const data = JSON.parse(response.body.data);
     expect(data.started).toBe(true);
     expect(data.gameTime).toBe('day');
+  });
 
+
+  test('checking virtual timer aka game time aka game hour (hh:mm) during day', async () => {
+    // new change to be 100% sure
+    jest.advanceTimersByTime(1.5 * 60 * 1000);
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': token });
+    expect(response.body.message).toBe('returning game state');
+    const data = JSON.parse(response.body.data);
+    expect(data.gameHour).toBe('15:00');
+  });
+  test('checking virtual timer aka game time aka game hour (hh:mm) during night', async () => {
+    // new change to be 100% sure
+    jest.advanceTimersByTime(1.5 * 60 * 1000);
+    jest.advanceTimersByTime(60 * 1000);
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': token });
+    expect(response.body.message).toBe('returning game state');
+    const data = JSON.parse(response.body.data);
+    expect(data.gameHour).toBe('05:00');
     jest.useRealTimers();
   });
 });
