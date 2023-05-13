@@ -20,7 +20,7 @@ function getRandomNumbers (k, n) {
   const indexWerewolves = [];
   const indexHumans = [];
   // Initialize availableNumbers array with all numbers in the range
-  for (let i = 1; i <= n; i++) {
+  for (let i = 0; i < n; i++) {
     indexHumans.push(i);
   }
   // Pick k distinct random numbers
@@ -139,13 +139,13 @@ const startGame = async (req, res) => {
   const { indexWerewolves, indexHumans } = getRandomNumbers(nbWerewolves, players.length);
   // assign wws
   for (const i of indexWerewolves) {
-    const idPlayer = i;
+    const idPlayer = players[i].idPlayer;
     await PlayersInGame.create({ role: 'werewolf', idPlayer }); // default value for state is alive
   }
   // create associations for humans
-  const playersingame = await PlayersInGame.findAll();
+  // const playersingame = await PlayersInGame.findAll();
   for (const i of indexHumans) {
-    const idPlayer = i;
+    const idPlayer = players[i].idPlayer;
     await PlayersInGame.create({ role: 'human', idPlayer }); // default value for state is alive
   }
 
@@ -264,7 +264,7 @@ const getStateOfGame = async (req, res) => {
       return msg;
     });
   }
-  //get current opened votes
+  // get current opened votes
   const openVotes = await Votes.findAll({
     include: [{
       model: PlayersInGame,
