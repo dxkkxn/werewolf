@@ -71,32 +71,32 @@ export default function Avatars({ route }) {
           })
         })
       })
-    .then(data => {
-      if(data.status==201) {
-        alert("user created");
-        navigation.navigate('LockScreen');
-      }
-      else alert("failure");
-    })
-    .catch(error => console.error(error)); 
-  };
-	return ( 
-          <View style={styles.container}>
-        <Text style={styles.title}>Choisissez un Avatar</Text>
-              <ScrollView>
-                  <View style={styles.containerAvatar}>
-                  
-                  {avatars.map((avatar,index) => (
-                      <Avatar source={avatar} onPress={() => handleClick(index)} key={index} clicked ={Clicked[index]}/>
-                  ))}
-                  </View>
-              </ScrollView>
-              <MyButton label="Continuer" primary={true} onPress={() => handleContinue(avatarId)} />   
-          </View>
-          
-        
-        
-	);
+      .then((response) => {
+        if (response.ok) {
+            return response.json();
+          } else {
+            navigation.navigate('LockScreen');
+          }
+        })
+        .then(data => {
+          navigation.navigate('Welcome', {username, token: data.token});
+        })
+        .catch(error => console.error(error)); 
+    };
+    return ( 
+            <View style={styles.container}>
+          <Text style={styles.title}>Choisissez un Avatar</Text>
+                <ScrollView>
+                    <View style={styles.containerAvatar}>
+                    
+                    {avatars.map((avatar,index) => (
+                        <Avatar source={avatar} onPress={() => handleClick(index)} key={index} clicked ={Clicked[index]}/>
+                    ))}
+                    </View>
+                </ScrollView>
+                <MyButton label="Continuer" primary={true} onPress={() => handleContinue(avatarId)} />   
+            </View>
+    );
 }
 const styles = StyleSheet.create({
   container: {
