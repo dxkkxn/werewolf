@@ -181,7 +181,6 @@ let werewolfToken;
 let humanToken;
 
 describe('starting game', () => {
-
   test('testGame2 tries to start game', async () => {
     const response = await request(app)
       .post('/game/1/play')
@@ -332,7 +331,6 @@ describe('starting game', () => {
 });
 
 describe('messages testing', () => {
-
   test('sending message', async () => {
     jest.advanceTimersByTime(60 * 1000);
     const response = await request(app)
@@ -364,5 +362,35 @@ describe('messages testing', () => {
       .send({ data: '{"message": "i see u werewolf"}' });
     expect(response.body.message).toBe('Humans cannot send messages during night');
     expect(response.statusCode).toBe(status.FORBIDDEN);
+  });
+
+  test('werewolf sending message during night', async () => {
+    const response = await request(app)
+      .post('/game/1/message')
+      .set({ 'x-access-token': werewolfToken })
+      .send({ data: '{"message": "i\' m a werewolf"}' });
+    expect(response.body.message).toBe('message sent');
+    expect(response.statusCode).toBe(status.CREATED);
+  });
+
+  test('werewolf receving his message', async () => {
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': werewolfToken });
+    expect(response.body.message).toBe('returning game state');
+    const data = JSON.parse(response.body.data);
+    expect(data.messages).toHaveLength(1);
+    expect(data.messages[0].body).toBe('i\' m a werewolf');
+    expect(response.statusCode).toBe(status.OK);
+  });
+
+  test('human trying to get messages during night', async () => {
+    const response = await request(app)
+      .get('/game/1/play')
+      .set({ 'x-access-token': humanToken });
+    expect(response.body.message).toBe('returning game state');
+    const data = JSON.parse(response.body.data);
+    expect(data.messages).toHaveLength(0);
+    expect(response.statusCode).toBe(status.OK);
   });
 });
