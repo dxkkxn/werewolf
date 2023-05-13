@@ -27,33 +27,31 @@ export const PartieField = ({ text, time, type, username, idGame, token }) => {
   const url = `http://${window.location.hostname}:3000`;
   const handleSubmit = (messageInput) => {
     //post message
-    fetch(`${url}/${username}/${idGame}` ,{
-      method: 'POST',
+    fetch(`${url}/${username}/${idGame}`, {
+      method: "POST",
       headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': token
+        "Content-Type": "application/json",
+        "x-access-token": token,
       },
       body: JSON.stringify({
-        data : JSON.stringify({
-          message: messageInput
-        })
+        data: JSON.stringify({
+          message: messageInput,
+        }),
+      }),
+    })
+      .then((data) => {
+        if (data.status.created) console.log("message posted");
+        else console.log("something went wrong");
       })
-    })
-    .then(data => {
-      if(data.status.created) console.log('message posted');
-      else console.log('something went wrong');
-    })
-    .catch(error => console.error(error)); 
+      .catch((error) => console.error(error));
   };
   if (type == "title") {
     return (
       <View style={styles.box}>
         <Text
-          style={
-            time == "day"
-              ? styles.boxText
-              : [styles.boxText, { color: "#371B58" }]
-          }
+          style={time == "day"
+            ? styles.boxText
+            : [styles.boxText, { color: "#371B58" }]}
         >
           {text}
         </Text>
@@ -76,7 +74,8 @@ export const PartieField = ({ text, time, type, username, idGame, token }) => {
               paddingLeft: "20px",
             },
           ]}
-        ></TextInput>
+        >
+        </TextInput>
         <View style={styles.boxSendItem}>
           <ClickableImage source={rightArrow} onPress={handleSubmit} />
         </View>
