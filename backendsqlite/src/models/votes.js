@@ -18,18 +18,25 @@ const votes = db.define(
       unique: true
     }
   },
-  { timestamps: false }
+  {
+    timestamps: false
+    // indexes: [
+    //   {
+    //     unique: true,
+    //     fields: ['accusedIdPlayer', 'voterIdPlayer'],
+    //   }
+    // ]
+  }
 );
 
-playersInGame.belongsTo(players, {
+votes.belongsTo(playersInGame, {
   foreignKey: 'accusedIdPlayer',
   primaryKey: true,
   unique: true
 });
 
-playersInGame.belongsTo(players, {
+votes.belongsTo(playersInGame, {
   foreignKey: 'voterIdPlayer',
-  primaryKey: true,
   unique: true
 });
 
