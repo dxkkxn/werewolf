@@ -29,7 +29,7 @@ const votes = db.define(
 );
 
 votes.belongsTo(playersInGame, {
-  foreignKey: 'accusedIdPlayer',
+  foreignKey: 'accusedIdPlayer'
 });
 
 votes.belongsTo(playersInGame, {
