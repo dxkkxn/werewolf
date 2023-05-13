@@ -100,18 +100,26 @@ const validatePlayerAlive = async (req, res, next) => {
   next();
 };
 
-
 const validateRightRole = async (req, res, next) => {
   const idGame = req.params.idGame;
   const username = req.username;
   console.assert(username !== undefined);
   console.assert(idGame !== undefined);
-
-  const player = await PlayersInGame.findOne(
-    { include: [{ model: Players, where: { username, idGame } }] });
-
-  if (player.state === 'dead') {
-    throw new CodeError('Player is dead', status.BAD_REQUEST);
+  let gameTime = await Games.findOne({
+    attributes: ['gameTime'],
+    where: { idGame }
+  });
+  gameTime = gameTime.gameTime;
+  console.log(gameTime);
+  let playerRole = await PlayersInGame.findOne(
+    { attributes: ['role'], include: [{ model: Players, where: { username, idGame } }] });
+  playerRole = playerRole.role;
+  if (gameTime === 'night' && playerRole === 'human') {
+    const response = {
+      message: 'Humans cannot send messages during night',
+      status: status.FORBIDDEN
+    };
+    return res.status(response.status).json(response);
   }
   next();
 };
