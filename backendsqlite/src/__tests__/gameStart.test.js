@@ -1,7 +1,7 @@
 const app = require('../app');
 const request = require('supertest');
 const status = require('http-status');
-const { createUser, getToken, getAllGames, joinGame, getGame } = require('./helperFunctions.js');
+const { createUser, getToken, getAllGames, joinGame } = require('./helperFunctions.js');
 
 /* eslint-env jest */
 
@@ -39,6 +39,14 @@ describe('testing the start of game ', () => {
       }
     });
   });
+
+  async function getGame (token, idGame) {
+    const response = await request(app)
+      .get(`/game/${idGame}`)
+      .set({ 'x-access-token': token });
+    expect(response.body.message).toBe('returning game in the data property');
+    return JSON.parse(response.body.data);
+  }
 
   test('viardot joins the a game, game should start', async () => {
     await joinGame(viarToken, 'viardot', gameInfo.idGame);
