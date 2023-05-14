@@ -66,6 +66,7 @@ export function AvailableGame({ gameProps, username, token }) {
       .then((data) => {
         if (data.ok) {
           alert("partie démarrée avec succès !");
+          navigation.navigate("Partie", { idGame, username, token });
         } else if (data.status == 403) {
           alert("cette partie a déjà commencé !");
         } else {
@@ -73,8 +74,6 @@ export function AvailableGame({ gameProps, username, token }) {
         }
       })
       .catch((error) => console.error(error));
-
-    navigation.navigate("Partie", { idGame, username, token });
   };
   const joinGame = (idGame, username, token) => {
     fetch(`${url}/game/${idGame}`, {

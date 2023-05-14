@@ -12,7 +12,7 @@ export default function Partie({ time, route, onDataUpdate }) {
   const idGame = route.params.idGame;
   const token = route.params.token;
   // const gameData = route.params.jsonData;
-  const [stateOfGame, setStateOfGame] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [playersList, setPlayersList] = useState([]);
   useEffect(() => {
     fetch(`${url}/game/${idGame}/play`, {
@@ -27,19 +27,39 @@ export default function Partie({ time, route, onDataUpdate }) {
         const players = JSON.parse(data.data).players;
         setPlayersList(players);
       });
-    fetch(`${url}/game/${idGame}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": token,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const players = JSON.parse(data.data).players;
-        setPlayersList([...players]);
-      });
+    // fetch(`${url}/game/${idGame}`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "x-access-token": token,
+    //   },
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     const players = JSON.parse(data.data).players;
+    //     setPlayersList([...players]);
+    //   });
   }, []);
+  const fetchGameState = async (interval) => {
+    try {
+      const data = await fetch(`${url}/game/${idGame}/play`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": token,
+        },
+      });
+      const response = await data.json();
+      const gameState = JSON.parse(response.data);
+      const gameMessages = gameState.messages;
+      if (JSON.stringify(gameMessages) !== JSON.stringify(messages)) {
+        setMessages(gameMessages);
+      }
+    } catch(error) {
+      console.log(error);
+    }
+  } 
+  const interval = setInterval(()=>{fetchGameState(interval);}, 5000);
   return (
     <View style={styles.container}>
       <NavBarPartie time={time} />
@@ -48,6 +68,7 @@ export default function Partie({ time, route, onDataUpdate }) {
         time={time}
         username={username}
         idGame={idGame}
+        messages={messages}
         token={token}
       />
     </View>

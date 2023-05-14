@@ -41,10 +41,6 @@ const ClickableImage = ({ source, onPress }) => {
 
 export default function BodyPartie({ time, players }) {
   const [fetchedData, setFetchedData] = useState(null);
-  //TODO fetch avec axios
-  console.log("-------aqui-----------");
-  console.log(players);
-  console.log("-------aqui-----------");
   const users = [
     [avatar1, 1],
     [avatar2, 2],

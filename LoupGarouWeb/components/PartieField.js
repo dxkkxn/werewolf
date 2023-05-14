@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -17,6 +17,7 @@ const ClickableImage = ({ source, onPress }) => {
   );
 };
 export const PartieField = ({ text, time, type, username, idGame, token }) => {
+  const [message, setMessage] = useState(null);
   const [loaded] = useFonts({
     Poppins: require("../assets/fonts/Poppins-Regular.ttf"),
   });
@@ -25,9 +26,10 @@ export const PartieField = ({ text, time, type, username, idGame, token }) => {
     return null;
   }
   const url = `http://${window.location.hostname}:3000`;
-  const handleSubmit = (messageInput) => {
+  const handleSubmit = () => {
+    const messageInput = message;
     //post message
-    fetch(`${url}/${username}/${idGame}`, {
+    fetch(`${url}/game/${idGame}/message`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,8 +42,12 @@ export const PartieField = ({ text, time, type, username, idGame, token }) => {
       }),
     })
       .then((data) => {
-        if (data.status.created) console.log("message posted");
-        else console.log("something went wrong");
+        console.log(data);
+        if (data.ok) { 
+          console.log("message posted");
+        } else {
+          console.log("something went wrong");
+        }
       })
       .catch((error) => console.error(error));
   };
@@ -58,11 +64,11 @@ export const PartieField = ({ text, time, type, username, idGame, token }) => {
       </View>
     );
   } else {
-    console.log("hi");
     return (
       <View style={styles.boxSend}>
         <TextInput
           placeholder="      Entrez votre message"
+          onChangeText={(input) => setMessage(input)}
           style={[
             styles.boxText,
             {
