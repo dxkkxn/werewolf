@@ -59,8 +59,9 @@ const validateGameNotStarted = async (req, res, next) => {
 const validateUserInGame = async (req, res, next) => {
   const idGame = req.params.idGame;
   const username = req.username;
-  const inGame = Players.findOne({ where: { username, idGame } });
-  if (!inGame) throw new CodeError('player is not in requested game', status.BAD_REQUEST);
+  const player = await Players.findOne({ where: { username, idGame } });
+  if (!player) throw new CodeError('player is not in requested game', status.BAD_REQUEST);
+  req.idPlayer = player.idPlayer;
   next();
 };
 
@@ -103,7 +104,6 @@ const validatePlayerAlive = async (req, res, next) => {
   next();
 };
 
-
 const checkRightRole = async (username, idGame) => {
   console.assert(username !== undefined);
   console.assert(idGame !== undefined);
@@ -134,6 +134,27 @@ const validateRightRole = async (req, res, next) => {
   next();
 };
 
+const validateAccusedId = async (req, res, next) => {
+  const data = JSON.parse(req.body.data);
+  const idGame = req.params.idGame;
+  if (!has(data, 'accusedId')) {
+    return res.status(status.BAD_REQUEST).json({ message: 'You need to specify the accusedId' });
+  }
+  const accusedPlayer = await PlayersInGame.findOne({
+    include: [{ model: Players, where: { idGame } }],
+    where: { idPlayer: data.accusedId }
+  });
+  // we verify if the id exists
+  if (!accusedPlayer) {
+    return res.status(status.BAD_REQUEST).json({ message: 'Unknown player' });
+  }
+  if (accusedPlayer.state === 'dead') {
+    return res.status(status.BAD_REQUEST).json({ message: 'Player is already dead' });
+  }
+
+  next();
+};
+
 module.exports = {
   validateBodyHasData,
   validateBodyCreateGame,
@@ -145,6 +166,7 @@ module.exports = {
   validateUserNotAlreadyInGame,
   validatePlayerAlive,
   validateRightRole,
-  checkRightRole
+  checkRightRole,
+  validateAccusedId
 
 };
