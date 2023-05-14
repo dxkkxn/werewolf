@@ -136,16 +136,16 @@ function changeDayTime (idGame) {
       await PlayersInGame.update({
         state: 'dead'
       }, { where: { idPlayer } });
-      // we remove the votes now that we dont need them
-      const playersInGame = await PlayersInGame.findAll(
-        { include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
-      playersInGame.forEach((player) => {
-        Votes.destroy({ where: { voterIdPlayer: player.idPlayer } });
-      });
-      if (await checkGameEnd(idGame)) {
-        // game ended
-        clearTimeout(timeouts[idGame]);
-      }
+    }
+    // we remove the votes now that we dont need them
+    const playersInGame = await PlayersInGame.findAll(
+      { include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
+    playersInGame.forEach((player) => {
+      Votes.destroy({ where: { voterIdPlayer: player.idPlayer } });
+    });
+    if (await checkGameEnd(idGame)) {
+      // game ended
+      clearTimeout(timeouts[idGame]);
     }
   });
   if (game.gameTime === 'day') {

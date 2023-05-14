@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
   footerContainer: {
     display: "flex",
     flexDirection: "column",
-    height: "145px",
-    width: "360px",
+    height: "65%",
+    width: "80%",
     marginVertical: "10px",
     justifyContent: "center",
     // marginBottom: "20px",
