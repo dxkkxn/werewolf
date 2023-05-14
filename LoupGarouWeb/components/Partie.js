@@ -21,7 +21,7 @@ export default function Partie({ route, onDataUpdate }) {
   const [time, setTime] = useState('day');
   const [myRole, setMyRole] = useState();
   const [myIdPlayer, setMyIdPlayer] = useState();
-  const [log, setLog] = useState(['Bon jeu !']); // pour les messages d'information
+  const [log, setLog] = useState(['Bon jeu !', "Pour voter la mort d'un joueur, \ncliquez sur son avatar"]); // pour les messages d'information
   const [gameOver, setGameOver] = useState(false);
 
   async function fetchAvatarId(username) {
@@ -96,6 +96,11 @@ export default function Partie({ route, onDataUpdate }) {
     })
   };
   useEffect(() => {
+    if(myRole){
+      log.push(myRole === 'werewolf' ? 'Vous etes Loup-Garou' : 'Vous etes Humain');
+    }
+  }, [myRole]);
+  useEffect(() => {
     fetchInitial();
   }, []);
   const fetchGameState = async () => {
@@ -124,7 +129,12 @@ export default function Partie({ route, onDataUpdate }) {
         const gameMessages = gameState.messages;
         for (const player of gameState.players) {
           if(player.state === 'dead') {
-            isDead.push(player.idPlayer);
+            if(!isDead.includes(player.idPlayer)) {
+              // find username
+              isDead.push(player.idPlayer);
+              log.push(`${usersList[player.idPlayer]} a été tué`);
+              log.push(`Il était ${gameState.players[player.idPlayer].role === 'werewolf' ? 'Loup-Garou' : 'Humain'} !`);
+            }
           }
         }
         if (JSON.stringify(gameMessages) !== JSON.stringify(messages)) {
@@ -134,8 +144,10 @@ export default function Partie({ route, onDataUpdate }) {
     } catch(error) {
       console.log(error);
     }
-  }; 
-  setTimeout(()=>{fetchGameState();}, 1000);
+  };
+  useEffect(() => {
+    setInterval(()=>{fetchGameState();}, 1000);
+  }, [usersList]); // ne pas faire les fetch périodiques avant que le fetch initial soit ok
   // to be done in BodyPartie and FooterPartie
   if(usersList != null && avatarIdList != null) {
     return (
