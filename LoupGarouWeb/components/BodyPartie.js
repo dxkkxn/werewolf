@@ -80,22 +80,13 @@ export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time,
           setVotedFor(idPlayer);
         }
         else{
-          alert('une erreur est survenue');
+          console.log('une erreur est survenue');
         }
       })
       .catch(error => console.error(error))
     }
   };
 
-  const getAvatar = (user) => {
-    let index = users.find((element) => element[1] == user.avatarId);
-    console.log("heeeeeeeee0200202020020202020");
-    console.log(index);
-    console.log(user.idPlayer);
-    console.log("heeeeeeeee0200202020020202020");
-    return users[index][0];
-  };
-  // console.log(avatar1);
   return (
     <ScrollView>
       <View

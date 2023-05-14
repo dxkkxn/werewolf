@@ -16,7 +16,7 @@ const ClickableImage = ({ source, onPress }) => {
     </TouchableOpacity>
   );
 };
-export const PartieField = ({ text, time, type, username, idGame, token }) => {
+export const PartieField = ({ text, time, type, username, idGame, token, myRole }) => {
   const [message, setMessage] = useState(null);
   const [loaded] = useFonts({
     Poppins: require("../assets/fonts/Poppins-Regular.ttf"),
@@ -27,6 +27,7 @@ export const PartieField = ({ text, time, type, username, idGame, token }) => {
   }
   const url = `http://${window.location.hostname}:3000`;
   const handleSubmit = () => {
+    if ((time === 'day' || myRole === 'werewolf') && !isDead.includes(myIdPlayer)){
     const messageInput = message;
     //post message
     fetch(`${url}/game/${idGame}/message`, {
@@ -42,14 +43,12 @@ export const PartieField = ({ text, time, type, username, idGame, token }) => {
       }),
     })
       .then((data) => {
-        console.log(data);
-        if (data.ok) { 
-          console.log("message posted");
-        } else {
+        if (!data.ok) { 
           console.log("something went wrong");
         }
       })
       .catch((error) => console.error(error));
+    }
   };
   if (type == "title") {
     return (

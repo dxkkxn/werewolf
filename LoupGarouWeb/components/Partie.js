@@ -111,8 +111,6 @@ export default function Partie({ route, onDataUpdate }) {
         const gameMessages = gameState.messages;
         const votes = gameState.votes;
         setVotes(votes);
-        console.log(gameState.players);
-        console.log('votes : ', votes);
         for (const player of gameState.players) {
           if(player.state === 'dead') {
             isDead.push(player.idPlayer);
@@ -121,7 +119,6 @@ export default function Partie({ route, onDataUpdate }) {
         const hours = parseInt(gameState.gameHour.split(":")[0], 10);
         if(hours < 8 || hours > 21 ) setTime('night');
         else setTime('day');
-        console.log('h : ', hours);
         if (JSON.stringify(gameMessages) !== JSON.stringify(messages)) {
           setMessages(gameMessages);
         }
@@ -152,6 +149,7 @@ export default function Partie({ route, onDataUpdate }) {
           time={time}
           username={username}
           idGame={idGame}
+          myRole={myRole}
           token={token}
           messages={messages}
         />
