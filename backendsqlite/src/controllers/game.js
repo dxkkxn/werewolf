@@ -105,12 +105,18 @@ function changeDayTime (idGame) {
     messages.forEach((msg) => { msg.current = false; msg.save(); });
   });
 
+  voteIsValidated(idGame).then(async (idPlayer) => {
   // we check for lynched users
-  voteIsValidated(idGame).then((idPlayer) => {
     if (idPlayer !== undefined) {
-      PlayersInGame.update({
+      await PlayersInGame.update({
         state: 'dead'
       }, { where: { idPlayer } });
+      // we remove the votes now that we dont need them
+      const playersInGame = await PlayersInGame.findAll({
+        include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
+      playersInGame.forEach((player) => {
+        Votes.destroy({ where: { voterIdPlayer: player.idPlayer } });
+      });
     }
   });
   if (game.gameTime === 'day') {
