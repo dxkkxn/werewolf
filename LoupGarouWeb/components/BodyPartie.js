@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   middleBox: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#DAC9F2",
+    backgroundColor: "#371B58",
     display: "grid",
     gridTemplateColumns: "repeat(7,1fr)",
     // gridTemplateRows: "2fr",

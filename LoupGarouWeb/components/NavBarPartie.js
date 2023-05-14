@@ -12,8 +12,8 @@ export default function NavBarPartie({ time, myRole }) {
   const handleBurguerMenu = () => {
     console.log("burguer menu pressed");
   };
-  const textDay= (myRole === 'werewolf') ? "Jour - Place du village - Vous êtes un Loup " : "Jour - Place du village - Vous êtes un Humain";
-  const textNigth= (myRole === 'werewolf') ? "Nuit - Place du village - Vous êtes un Loup " : "Nuit - Place du village - Vous êtes un Humain";
+  const textDay= (myRole === 'werewolf') ? "Jour - Place du village Vous êtes un Loup " : "Jour - Place du village Vous êtes un Humain";
+  const textNigth= (myRole === 'werewolf') ? "Nuit - Place du village Vous êtes un Loup " : "Nuit - Place du village Vous êtes un Humain";
 
   return (
     <View
