@@ -13,9 +13,9 @@ export default function Partie({ time, route, onDataUpdate }) {
   const token = route.params.token;
   // const gameData = route.params.jsonData;
   const [messages, setMessages] = useState([]);
-  const [playersList, setPlayersList] = useState([]);
-  const [avatarIdList, setAvatarIdList] = useState(null); // a ne changer qu'une fois
-  const [usernameList, setUsernameList]= useState(null); //idem 
+  const [playersList, setPlayersList] = useState([]); // contains idPlayers
+  const [avatarIdList, setAvatarIdList] = useState(null); // a ne changer qu'une fois : avatarIdList[id] = avatarId
+  const [usersList, setUsersList]= useState(null); //idem  : usersList[idPlayer] = username
 
   async function fetchAvatarId(username) {
     try {
@@ -37,10 +37,17 @@ export default function Partie({ time, route, onDataUpdate }) {
   }
 
   async function fetchAvatarIds(players) {
-    console.log('fetching avatar ids');
-    const avatarPromises = players.map(player => fetchAvatarId(player.username));
-    const avatarIds = await Promise.all(avatarPromises);
-    return avatarIds;
+    const avatarPromises = players.reduce((acc, player) => {
+      acc[player.idPlayer] = fetchAvatarId(player.username);
+      return acc;
+    }, {});
+
+    const avatarIds = {};
+    await Promise.all(Object.entries(avatarPromises).map(async ([idPlayer, promise]) => {
+      avatarIds[idPlayer] = await promise;
+    }));
+
+  return avatarIds;
   }
 
   const fetchInitial = () => {
@@ -57,10 +64,14 @@ export default function Partie({ time, route, onDataUpdate }) {
       response.json()
       .then((data) => {
         players = JSON.parse(data.data).players; //ok
+        setPlayersList(players.map(player => player.idPlayer));
         (async () => {
           try {
             const avIdList = await fetchAvatarIds(players);
-            setUsernameList(players.map(player => player.username));
+            setUsersList(players.reduce((acc, player) => {
+              acc[player.idPlayer] = player.username;
+              return acc;
+            }, {})); // now we can use usersList[id] to get username
             setAvatarIdList(avIdList);
           } catch (error) {
             console.error(error);
@@ -94,13 +105,14 @@ export default function Partie({ time, route, onDataUpdate }) {
   }; 
   // const interval = setInterval(()=>{fetchGameState(interval);}, 5000);
   // to be done in BodyPartie and FooterPartie
-  if(usernameList != null && avatarIdList != null) {
+  if(usersList != null && avatarIdList != null) {
     return (
       <View style={styles.container}>
         <NavBarPartie time={time} />
         <BodyPartie 
           time={time} 
-          usernameList={usernameList}
+          playersList={playersList}
+          usersList={usersList}
           avatarIdList={avatarIdList} />
         <FooterPartie
           time={time}

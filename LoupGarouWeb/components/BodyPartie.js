@@ -40,8 +40,10 @@ const ClickableImage = ({ source, onPress }) => {
   );
 };
 
-export default function BodyPartie({ time, usernameList, players, avatarIdList }) {
-  console.log("players : ", usernameList);
+export default function BodyPartie({ time, playersList, usersList, avatarIdList }) {
+  console.log("usernames : ", usersList);
+  console.log('idPlayers  : ', playersList);
+  console.log('avatars : ', avatarIdList);
   const [fetchedData, setFetchedData] = useState(null);
   const avatars = [
     [avatar1, 1],
@@ -78,13 +80,13 @@ export default function BodyPartie({ time, usernameList, players, avatarIdList }
             : [styles.middleBox, { backgroundColor: "#371B58" }]
         }
       >
-        {usernameList.map((user, index) => (
+        {playersList.map((idPlayer, index) => (
           <View key={index} style={styles.container}>
           <ClickableImage
-            source={avatars[avatarIdList[index]][0]}
-            onPress={handleImage}
+            source={avatars[avatarIdList[idPlayer]-1][0]}
+            onPress={() => handleImage(idPlayer)}
           />
-          <Text> {user} </Text>
+          <Text> {usersList[idPlayer]} </Text>
           </View>
         ))}
       </View>
