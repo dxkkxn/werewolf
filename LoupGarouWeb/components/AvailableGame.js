@@ -50,10 +50,12 @@ export function AvailableGame({ gameProps, username, token }) {
   const hours = Math.floor(remainingTime.asHours()) > 0 ? Math.floor(remainingTime.asHours()) :0;
   const minutes = Math.floor(remainingTime.asMinutes() % 60 )> 0? Math.floor(remainingTime.asMinutes() % 60) : 0;
   const secondes = Math.floor(remainingTime.asSeconds() % 60 )> 0? Math.floor(remainingTime.asSeconds() % 60) : 0;
-
-  fetchAvatarId(gameProps.creatorUsername).then((icon) => {
-    setIcon(icon);
-  });
+  
+  if(icon == null){
+    fetchAvatarId(gameProps.creatorUsername).then((icon) => {
+      setIcon(icon);
+    });
+  }
   
   const joinGameCreator = (idGame, username, token) => {
     navigation.navigate('WaitingRoom', {idGame, username, token});
