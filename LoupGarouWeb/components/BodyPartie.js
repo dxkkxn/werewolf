@@ -41,7 +41,7 @@ const ClickableImage = ({ source, onPress }) => {
   );
 };
 
-export default function BodyPartie({ idGame, username, time, token, playersList, usersList, avatarIdList }) {
+export default function BodyPartie({ idGame, username, time, token, votes, playersList, usersList, avatarIdList }) {
   // get my id
   let myIdPlayer = -1;
   for(const idPlayer in usersList){
@@ -122,6 +122,7 @@ export default function BodyPartie({ idGame, username, time, token, playersList,
             onPress={() => handleImage(idPlayer)}
           />
           <Text> {usersList[idPlayer]} </Text>
+          { usersList[idPlayer] in votes ?  <Text>'votes : ' {votes[usersList[idPlayer]]}</Text> : null}
           </View>
         ))}
       </View>
