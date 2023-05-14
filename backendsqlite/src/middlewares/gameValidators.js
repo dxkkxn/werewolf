@@ -112,6 +112,7 @@ const checkRightRole = async (username, idGame) => {
     where: { idGame }
   });
   gameTime = gameTime.gameTime;
+  console.log(gameTime);
   let playerRole = await PlayersInGame.findOne(
     { attributes: ['role'], include: [{ model: Players, where: { username, idGame } }] });
   playerRole = playerRole.role;

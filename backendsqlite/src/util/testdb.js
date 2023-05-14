@@ -49,7 +49,7 @@ const bcrypt = require('bcrypt');
       // },
     };
     // create 10 users
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       const password = 'Robin777@';
       const isValidPassword = validator.isStrongPassword(password, options);
       if (isValidPassword) {
@@ -58,7 +58,7 @@ const bcrypt = require('bcrypt');
         await userModel.create({
           username: `user${i+1}`,
           password: hashedPassword,
-          avatarId: `${i+1}`,
+          avatarId: `${12-i}`,
         });
       }
     }
@@ -68,11 +68,13 @@ const bcrypt = require('bcrypt');
     const startingDate = dateOneHourLater//.toISOString().slice(0, 19).replace('T', ' ');
     await gameModel.create({
       creatorUsername: 'user5',
+      dayDuration: 1,
+      nightDuration: 1,
       startingDate
     });
     // ici on triche un peu : on sait que idGame = 0
     // les  10 users rejoignent la partie
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       await playerModel.create({
         idGame: '1',
         username: `user${i + 1}`

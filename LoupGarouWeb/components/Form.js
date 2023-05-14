@@ -80,7 +80,6 @@ export default function Form({route}) {
     const currentDate = moment();
     let startingDate = currentDate.add(heuresDebut, 'hours');
     startingDate = startingDate.add(minutesDebut, 'minutes');
-
     fetch(`${url}/game` ,{
       method: 'POST',
       headers: {
@@ -89,18 +88,10 @@ export default function Form({route}) {
       },
       body: JSON.stringify({
         data : JSON.stringify({
-          // startDay: jourDebut,
-          // startHour: heureDebut,
-          // minPlayers: nbPlayers[0],
-          // maxPlayers: nbPlayers[1],
-          // dayDuration: dureeJour,
-          // nightDuration: dureeNuit,
-          // werewolfProbability: portionLoups,
-          // seerProbability: probasPouvoirs[2],
-          // infectionProbability: probasPouvoirs[0],
-          // spiritismProbability: probasPouvoirs[3],
-          // insomniaProbability: probasPouvoirs[1]
-
+          seerProbability: probasPouvoirs[2],
+          infectionProbability: probasPouvoirs[0],
+          //spiritismProbability: probasPouvoirs[3],
+          insomniaProbability: probasPouvoirs[1],
           creatorUsername : username,
           startingDate : startingDate,
           minPlayers : nbPlayers[0],

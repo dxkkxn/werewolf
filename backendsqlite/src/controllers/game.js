@@ -6,6 +6,7 @@ const CodeError = require('../util/CodeError.js');
 const Players = require('../models/players.js');
 const PlayersInGame = require('../models/playersInGame.js');
 const Powers = require('../models/powers.js');
+const PowersProbabilities = require('../models/powersProbabilities.js');
 const PlayersPowers = require('../models/playersPowers.js');
 const Messages = require('../models/messages.js');
 const Votes = require('../models/votes.js');
@@ -39,7 +40,8 @@ const createGame = async (req, res) => {
   const creatorUsername = req.username;
   const {
     minPlayers, maxPlayers, dayDuration, nightDuration,
-    werewolfProbability, startingDate
+    werewolfProbability, startingDate, seerProbability,
+    insomniaProbability, infectionProbability
   } = JSON.parse(req.body.data);
   const newGame = await Games.create({
     creatorUsername,
@@ -56,6 +58,13 @@ const createGame = async (req, res) => {
   req.params.idGame = newGame.idGame;
   req.auto = true;
   timeouts[newGame.idGame] = setTimeout(startGame, time, req, res);
+  // create power probabilities
+  if (seerProbability > 0) {
+    const getPower = await Powers.findOne({ where: { name: 'voyant' } });
+    const powerproba = await PowersProbabilities.create({ idGame: newGame.idGame, probability: seerProbability, name: getPower.name });
+    console.log('power proba created');
+    console.log(powerproba);
+  }
   res.status(status.CREATED).json({ message: 'game created', data: newGame.idGame });
 };
 

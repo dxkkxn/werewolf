@@ -7,7 +7,7 @@ const powersProbabilities = db.define(
   'powersProbabilities',
   {
     probability: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       allowNull: false
     }
   },
@@ -15,5 +15,5 @@ const powersProbabilities = db.define(
 );
 
 games.belongsToMany(powers, { foreignKey: 'idGame', primaryKey: true, through: 'powersProbabilities' });
-powers.belongsToMany(games, { foreignKey: 'power', primaryKey: true, through: 'powersProbabilities' });
+powers.belongsToMany(games, { foreignKey: 'name', primaryKey: true, through: 'powersProbabilities' });
 module.exports = powersProbabilities;
