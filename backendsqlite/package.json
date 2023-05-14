@@ -10,7 +10,7 @@
         "doc": "node src/util/swagger.js",
         "start": "npm run doc && npm run testdb  && node src/server.js",
         "startdev": "npm run doc && nodemon src/server.js",
-        "test": "DB=bmttest.sqlite npm run updatedb && DB=bmttest.sqlite jest --verbose"
+        "test": "DB=bmttest.sqlite npm run updatedb && DB=bmttest.sqlite jest --forceExit"
     },
     "keywords": [
         "express",
