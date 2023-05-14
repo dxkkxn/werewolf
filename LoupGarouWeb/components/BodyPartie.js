@@ -43,9 +43,9 @@ const ClickableImage = ({ source, onPress, text, currentPlayer }) => {
   );
 };
 
-export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time, token, votes, isDead, playersList, usersList, avatarIdList }) {
+export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time, token, addLog, votes, isDead, playersList, usersList, avatarIdList }) {
   const [fetchedData, setFetchedData] = useState(null);
-
+  
   const [votedFor, setVotedFor] = useState(); // on ne revote pas pour la meme personne
 
   const [loaded] = useFonts({
@@ -73,29 +73,43 @@ export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time,
   const handleImage = (idPlayer) => {
       // annule vote => to do ??
       // if isAlive(idPlayer, myIdPlayer) and (day || ww) => to be implemented
-    if (votedFor !== idPlayer && (time === 'day' || myRole === 'werewolf') && !isDead.includes(myIdPlayer) && !isDead.includes(idPlayer)){
-      fetch(`${url}/game/${idGame}/vote`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': token
-        },
-        body: JSON.stringify({
-          data : JSON.stringify({
-            accusedId: idPlayer
-          })
+    if (votedFor === idPlayer) {
+      addLog('Vous avez déjà voté sur ce joueur');
+      return -1;
+    }
+    if (time === 'night' && myRole === 'human') {
+      addLog('Vous ne pouvez pas voter la nuit');
+      return -1;
+    }
+    if (isDead.includes(myIdPlayer)) {
+      addLog('Vous ne pouvez pas voter si vous êtes mort');
+      return -1;
+    }
+    if (isDead.includes(idPlayer)) {
+      addLog('Vous ne pouvez pas voter pour un joueur mort');
+      return -1;
+    }
+    fetch(`${url}/game/${idGame}/vote`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': token
+      },
+      body: JSON.stringify({
+        data : JSON.stringify({
+          accusedId: idPlayer
         })
       })
-      .then(data => {
-        if(data.ok){
-          setVotedFor(idPlayer);
-        }
-        else{
-          console.log('une erreur est survenue');
-        }
-      })
-      .catch(error => console.error(error))
-    }
+    })
+    .then(data => {
+      if(data.ok){
+        setVotedFor(idPlayer);
+      }
+      else{
+        addLog('Vous ne pouvez plus changer votre vote');
+      }
+    })
+    .catch(error => console.error(error))
   };
 
   return (

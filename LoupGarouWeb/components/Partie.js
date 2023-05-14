@@ -24,6 +24,10 @@ export default function Partie({ route, onDataUpdate }) {
   const [log, setLog] = useState(['Bon jeu !', "Pour voter la mort d'un joueur, \ncliquez sur son avatar"]); // pour les messages d'information
   const [gameOver, setGameOver] = useState(false);
 
+  const addLog = (msg) => {
+    log.push(msg);
+  };
+
   async function fetchAvatarId(username) {
     try {
       const response = await fetch(`${url}/users/${username}`, {
@@ -97,7 +101,7 @@ export default function Partie({ route, onDataUpdate }) {
   };
   useEffect(() => {
     if(myRole){
-      log.push(myRole === 'werewolf' ? 'Vous etes Loup-Garou' : 'Vous etes Humain');
+      addLog(myRole === 'werewolf' ? 'Vous etes Loup-Garou' : 'Vous etes Humain');
     }
   }, [myRole]);
   useEffect(() => {
@@ -117,7 +121,7 @@ export default function Partie({ route, onDataUpdate }) {
         const gameState = JSON.parse(response.data);
         if(gameState.gameEnded){
           setGameOver(true);
-          log.push('Game Over !');
+          addLog('Game Over !');
           // who won ?
           let winner = null;
           for (const player of gameState.players) {
@@ -126,7 +130,7 @@ export default function Partie({ route, onDataUpdate }) {
               break;
             }
           }
-          log.push(`les ${winner === 'werewolf' ? 'Loups-Garous' : 'Humains'} ont gagné !`);
+          addLog(`les ${winner === 'werewolf' ? 'Loups-Garous' : 'Humains'} ont gagné !`);
           clearInterval(interval);
         }
         else {
@@ -137,9 +141,8 @@ export default function Partie({ route, onDataUpdate }) {
               if(!isDead.includes(player.idPlayer)) {
                 // find username
                 isDead.push(player.idPlayer);
-                console.log('pushed : ', player.idPlayer);
-                log.push(`${usersList[player.idPlayer]} a été tué`);
-                log.push(`Il était ${gameState.players[player.idPlayer].role === 'werewolf' ? 'Loup-Garou' : 'Humain'} !`);
+                addLog(`${usersList[player.idPlayer]} a été tué`);
+                addLog(`Il était ${gameState.players[player.idPlayer].role === 'werewolf' ? 'Loup-Garou' : 'Humain'} !`);
               }
             }
           }
@@ -177,8 +180,10 @@ export default function Partie({ route, onDataUpdate }) {
           myRole={myRole}
           token={token}
           votes={votes}
+          addLog={addLog}
           avatarIdList={avatarIdList} />
         <FooterPartie
+          addLog={addLog}
           time={time}
           username={username}
           idGame={idGame}

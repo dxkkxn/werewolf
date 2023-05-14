@@ -16,7 +16,7 @@ const ClickableImage = ({ source, onPress }) => {
     </TouchableOpacity>
   );
 };
-export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, idGame, token, myRole }) => {
+export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, addLog, idGame, token, myRole }) => {
   const [message, setMessage] = useState(null);
   const [loaded] = useFonts({
     Poppins: require("../assets/fonts/Poppins-Regular.ttf"),
@@ -27,7 +27,14 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, id
   }
   const url = `http://${window.location.hostname}:3000`;
   const handleSubmit = () => {
-    if ((time === 'day' || myRole === 'werewolf') && !isDead.includes(myIdPlayer)){
+    if (time === 'night' && myRole === 'human'){
+      addLog('Vous ne pouvez pas discuter pendant la nuit');
+      return -1;
+    }
+    if(isDead.includes(myIdPlayer)) {
+      addLog('Vous ne pouvez pas envoyer de message en étant mort');
+      return -1;
+    }
     const messageInput = message;
     //post message
     fetch(`${url}/game/${idGame}/message`, {
@@ -42,13 +49,12 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, id
         }),
       }),
     })
-      .then((data) => {
-        if (!data.ok) { 
-          console.log("something went wrong");
-        }
-      })
-      .catch((error) => console.error(error));
-    }
+    .then((data) => {
+      if (!data.ok) { 
+        console.log("something went wrong");
+      }
+    })
+    .catch((error) => console.error(error));
   };
   if (type == "title") {
     return (
