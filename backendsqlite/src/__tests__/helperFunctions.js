@@ -32,10 +32,28 @@ async function getAllGames (token) {
   return games;
 }
 
+async function getGame (token, idGame) {
+  const response = await request(app)
+    .get(`/game/${idGame}`)
+    .set({ 'x-access-token': token });
+  expect(response.body.message).toBe('returning game in the data property');
+  return JSON.parse(response.body.data);
+}
+
+async function joinGame (token, username, idGame) {
+  const response = await request(app)
+    .post(`/game/${idGame}`)
+    .set({ 'x-access-token': token });
+  expect(response.body.message).toBe(`user: ${username} joined game with id: ${idGame}`);
+  expect(response.statusCode).toBe(status.OK);
+}
+
 module.exports = {
   createUser,
   getToken,
-  getAllGames
+  getAllGames,
+  joinGame,
+  getGame
 };
 
 test('helper', async () => { // added this to make pipeline not fail

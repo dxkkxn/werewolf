@@ -54,6 +54,7 @@ const createGame = async (req, res) => {
   await Players.create({ username: creatorUsername, idGame: newGame.idGame });
   const time = new Date(startingDate) - new Date();
   req.params.idGame = newGame.idGame;
+  req.auto = true;
   timeouts[newGame.idGame] = setTimeout(startGame, time, req, res);
   res.status(status.CREATED).json({ message: 'game created', data: newGame.idGame });
 };
@@ -82,9 +83,10 @@ const joinGame = async (req, res) => {
   }
   await Players.create({ username, idGame });
   if (currentPlayers + 1 === game.maxPlayers) {
+    req.auto = true;
     await startGame(req, res);
   }
-  res.status(status.OK).json({ message: `user: ${username} joined game with id: ${idGame}` });
+  return res.status(status.OK).json({ message: `user: ${username} joined game with id: ${idGame}` });
 };
 
 const getGameWithId = async (req, res) => {
@@ -232,7 +234,9 @@ const startGame = async (req, res) => {
   //  const power = Powers.findOne({ where: { name: 'spiritiste' } });
   //  PlayersPowers.create({ power, idPlayer });
   // }
-  res.status(status.CREATED).json({ message: 'game started' });
+  if (!req.auto) {
+    res.status(status.CREATED).json({ message: 'game started' });
+  }
 };
 
 function getGameHour (idGame) {
