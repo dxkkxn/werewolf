@@ -103,7 +103,7 @@ export default function Partie({ route, onDataUpdate }) {
   useEffect(() => {
     fetchInitial();
   }, []);
-  const fetchGameState = async () => {
+  const fetchGameState = async (interval) => {
     try {
       const data = await fetch(`${url}/game/${idGame}/play`, {
         method: "GET",
@@ -118,25 +118,36 @@ export default function Partie({ route, onDataUpdate }) {
         if(gameState.gameEnded){
           setGameOver(true);
           log.push('Game Over !');
+          // who won ?
+          let winner = null;
+          for (const player of gameState.players) {
+            if(player.state == 'alive'){
+              winner = player.role;
+              break;
+            }
+          }
+          log.push(`les ${winner === 'werewolf' ? 'Loups-Garous' : 'Humains'} ont gagné !`);
+          clearInterval(interval);
         }
         else {
           const votes = gameState.votes;
           setVotes(votes);
+          for (const player of gameState.players) {
+            if(player.state === 'dead') {
+              if(!isDead.includes(player.idPlayer)) {
+                // find username
+                isDead.push(player.idPlayer);
+                console.log('pushed : ', player.idPlayer);
+                log.push(`${usersList[player.idPlayer]} a été tué`);
+                log.push(`Il était ${gameState.players[player.idPlayer].role === 'werewolf' ? 'Loup-Garou' : 'Humain'} !`);
+              }
+            }
+          }
           const hours = parseInt(gameState.gameHour.split(":")[0], 10);
           if(hours < 8 || hours > 21 ) setTime('night');
           else setTime('day');
         }
         const gameMessages = gameState.messages;
-        for (const player of gameState.players) {
-          if(player.state === 'dead') {
-            if(!isDead.includes(player.idPlayer)) {
-              // find username
-              isDead.push(player.idPlayer);
-              log.push(`${usersList[player.idPlayer]} a été tué`);
-              log.push(`Il était ${gameState.players[player.idPlayer].role === 'werewolf' ? 'Loup-Garou' : 'Humain'} !`);
-            }
-          }
-        }
         if (JSON.stringify(gameMessages) !== JSON.stringify(messages)) {
           setMessages(gameMessages);
         }
@@ -146,7 +157,9 @@ export default function Partie({ route, onDataUpdate }) {
     }
   };
   useEffect(() => {
-    setInterval(()=>{fetchGameState();}, 1000);
+    if(usersList){
+      const interval = setInterval(()=>{fetchGameState(interval);}, 1000);
+    }
   }, [usersList]); // ne pas faire les fetch périodiques avant que le fetch initial soit ok
   // to be done in BodyPartie and FooterPartie
   if(usersList != null && avatarIdList != null) {
