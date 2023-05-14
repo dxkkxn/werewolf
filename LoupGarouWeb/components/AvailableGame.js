@@ -45,8 +45,9 @@ export function AvailableGame ({gameProps, username, token}) {
   const moment = require('moment');
   const currentDate = moment();
   const remainingTime = moment.duration(moment(gameProps.startingDate).diff(moment(currentDate)));
-  const hours = Math.floor(remainingTime.asHours());
-  const minutes = Math.floor(remainingTime.asMinutes() % 60);
+  const hours = Math.floor(remainingTime.asHours()) > 0 ? Math.floor(remainingTime.asHours()) :0;
+  const minutes = Math.floor(remainingTime.asMinutes() % 60 )> 0? Math.floor(remainingTime.asMinutes() % 60) : 0;
+  const secondes = Math.floor(remainingTime.asSeconds() % 60 )> 0? Math.floor(remainingTime.asSeconds() % 60) : 0;
 
   fetchAvatarId(gameProps.creatorUsername)
   .then(icon => {
@@ -101,7 +102,7 @@ export function AvailableGame ({gameProps, username, token}) {
       <View style={styles.rightPart}>
         <ul style={styles.paramList}>
           <li> Créée par {gameProps.creatorUsername} </li>
-          <li> Debut dans {hours}h {minutes}m</li>
+          <li> Debut dans {hours}h {minutes}m {secondes}s</li>
           <li> De {gameProps.minPlayers} à {gameProps.maxPlayers} joueurs</li>
           <li> Jour: {gameProps.dayDuration} min, Nuit: {gameProps.nightDuration} min </li>
           <li> C: {gameProps.infectionProbability}, I:{gameProps.insomniaProbability}, V:{gameProps.seerProbability}, S:{gameProps.spiritismProbability} </li>

@@ -100,7 +100,7 @@ export default function Form({route}) {
           // insomniaProbability: probasPouvoirs[1]
 
           creatorUsername : username,
-          startingDate : jourDebut,
+          startingDate : startingDate,
           minPlayers : nbPlayers[0],
           maxPlayers : nbPlayers[1],
           dayDuration : dureeJour,
@@ -112,7 +112,9 @@ export default function Form({route}) {
     .then(data => {
       if(data.ok){
         alert('partie créée avec succès !');
-        navigation.navigate('Welcome', {username : username, token: token});
+        data.json().then(result => 
+        navigation.navigate('WaitingRoom', { idGame: result.data, username: username, token: token }))
+
       }
       else if(data.status == 403){
         alert('vous ne pouvez pas rejoindre plusieurs parties simultanément');
@@ -141,6 +143,7 @@ export default function Form({route}) {
     setHeuresDebut(parseInt(heuresDebutInput));
   }
   const handleMinutesDebut = (minutesDebutInput) => {
+    setHeuresDebut(0);
     setMinutesDebut(parseInt(minutesDebutInput));
   }
   const handleProbasPouvoirs = (probasPouvoirsInput, index) => {
