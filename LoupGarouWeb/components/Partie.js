@@ -21,6 +21,8 @@ export default function Partie({ route, onDataUpdate }) {
   const [time, setTime] = useState('day');
   const [myRole, setMyRole] = useState();
   const [myIdPlayer, setMyIdPlayer] = useState();
+  const [log, setLog] = useState(['Bon jeu !']); // pour les messages d'information
+  const [gameOver, setGameOver] = useState(false);
 
   async function fetchAvatarId(username) {
     try {
@@ -108,17 +110,23 @@ export default function Partie({ route, onDataUpdate }) {
       const response = await data.json()
       .then((response) => {
         const gameState = JSON.parse(response.data);
+        if(gameState.gameEnded){
+          setGameOver(true);
+          log.push('Game Over !');
+        }
+        else {
+          const votes = gameState.votes;
+          setVotes(votes);
+          const hours = parseInt(gameState.gameHour.split(":")[0], 10);
+          if(hours < 8 || hours > 21 ) setTime('night');
+          else setTime('day');
+        }
         const gameMessages = gameState.messages;
-        const votes = gameState.votes;
-        setVotes(votes);
         for (const player of gameState.players) {
           if(player.state === 'dead') {
             isDead.push(player.idPlayer);
           }
         }
-        const hours = parseInt(gameState.gameHour.split(":")[0], 10);
-        if(hours < 8 || hours > 21 ) setTime('night');
-        else setTime('day');
         if (JSON.stringify(gameMessages) !== JSON.stringify(messages)) {
           setMessages(gameMessages);
         }
@@ -150,8 +158,11 @@ export default function Partie({ route, onDataUpdate }) {
           username={username}
           idGame={idGame}
           myRole={myRole}
+          myIdPlayer={myIdPlayer}
+          isDead={isDead}
           token={token}
           messages={messages}
+          log={log}
         />
       </View>
     );

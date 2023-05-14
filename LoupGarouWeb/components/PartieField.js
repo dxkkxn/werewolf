@@ -16,7 +16,7 @@ const ClickableImage = ({ source, onPress }) => {
     </TouchableOpacity>
   );
 };
-export const PartieField = ({ text, time, type, username, idGame, token, myRole }) => {
+export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, idGame, token, myRole }) => {
   const [message, setMessage] = useState(null);
   const [loaded] = useFonts({
     Poppins: require("../assets/fonts/Poppins-Regular.ttf"),

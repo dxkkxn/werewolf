@@ -115,7 +115,7 @@ export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time,
             source={avatars[avatarIdList[idPlayer]-1][0]}
             onPress={() => handleImage(idPlayer)}
           />
-          <Text style={[styles.textUser, usersList[idPlayer]==username ? styles.greenText : null]}>
+          <Text style={[styles.textUser, isDead.includes(idPlayer) ? styles.redText : (usersList[idPlayer]==username ? styles.greenText : null)]}>
           {usersList[idPlayer]}
           </Text>
           { usersList[idPlayer] in votes ?  <Text style={styles.vote} >{votes[usersList[idPlayer]]} votes</Text> : null}
@@ -181,5 +181,8 @@ const styles = StyleSheet.create({
   },
   greenText: {
     color: 'green',
+  },
+  redText: {
+    color: 'red',
   },
 });
