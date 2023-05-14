@@ -23,6 +23,7 @@ const avatar9 = require("../assets/images/avatar9.png");
 const avatar10 = require("../assets/images/avatar10.png");
 const avatar11 = require("../assets/images/avatar11.png");
 const avatar12 = require("../assets/images/avatar12.png");
+const url = `http://${window.location.hostname}:3000`;
 const ClickableImage = ({ source, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress}>
@@ -40,11 +41,20 @@ const ClickableImage = ({ source, onPress }) => {
   );
 };
 
-export default function BodyPartie({ time, playersList, usersList, avatarIdList }) {
-  console.log("usernames : ", usersList);
-  console.log('idPlayers  : ', playersList);
-  console.log('avatars : ', avatarIdList);
+export default function BodyPartie({ idGame, username, time, token, playersList, usersList, avatarIdList }) {
+  // get my id
+  let myIdPlayer = -1;
+  for(const idPlayer in usersList){
+    if(usersList[idPlayer] === username) {
+      myIdPlayer = idPlayer;
+      break ;
+    }
+  }
   const [fetchedData, setFetchedData] = useState(null);
+
+  // initialement, l'user n'a voté pour personne
+  const aVotePour = []; // a chaque vote, ajouter l'idPlayer ici
+  // a chaque passage jour/nuit, vider
   const avatars = [
     [avatar1, 1],
     [avatar2, 2],
@@ -59,9 +69,34 @@ export default function BodyPartie({ time, playersList, usersList, avatarIdList 
     [avatar11, 11],
     [avatar12, 12],
   ];
-  const handleImage = () => {
-    console.log("handle image");
+  const handleImage = (idPlayer) => {
+    if(! aVotePour.includes(idPlayer)){
+      // annule vote => to do ??
+      // if isAlive(idPlayer, myIdPlayer) and (day || ww) => to be implemented
+      fetch(`${url}/game/${idGame}/vote`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': token
+        },
+        body: JSON.stringify({
+          data : JSON.stringify({
+            accusedId: idPlayer
+          })
+        })
+      })
+      .then(data => {
+        if(data.ok){
+          console.log('vote pris en compte !');
+        }
+        else{
+          alert('une erreur est survenue');
+        }
+      })
+      .catch(error => console.error(error))
+    }
   };
+
   const getAvatar = (user) => {
     let index = users.find((element) => element[1] == user.avatarId);
     console.log("heeeeeeeee0200202020020202020");

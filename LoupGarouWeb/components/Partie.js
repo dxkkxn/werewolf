@@ -110,15 +110,19 @@ export default function Partie({ time, route, onDataUpdate }) {
       <View style={styles.container}>
         <NavBarPartie time={time} />
         <BodyPartie 
+          idGame={idGame}
+          username={username}
           time={time} 
           playersList={playersList}
           usersList={usersList}
+          token={token}
           avatarIdList={avatarIdList} />
         <FooterPartie
           time={time}
           username={username}
           idGame={idGame}
           token={token}
+          messages={messages}
         />
       </View>
     );
