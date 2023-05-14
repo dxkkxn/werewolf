@@ -269,7 +269,6 @@ const getStateOfGame = async (req, res) => {
   }
   // get current opened votes
   const openVotes = await getOpenVotes(idGame);
-  console.log(playersInGame);
   const state = { players: playersInGame, messages, gameHour: getGameHour(idGame), votes: openVotes };
   res.status(status.OK).json({ message: 'returning game state', data: JSON.stringify(state) });
 };
@@ -322,7 +321,6 @@ async function voteIsValidated (idGame) {
   players.forEach((player) => {
     if (openVotes[player.player.username] > half) idPlayer = player.player.idPlayer;
   });
-  console.log(idPlayer);
   return idPlayer;
 }
 
