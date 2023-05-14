@@ -52,6 +52,8 @@ const createGame = async (req, res) => {
   });
   // add creator as player also
   await Players.create({ username: creatorUsername, idGame: newGame.idGame });
+  const time = new Date(startingDate) - new Date();
+  timeouts[newGame.idGame] = setTimeout(startGame, time);
   res.status(status.CREATED).json({ message: 'game created', data: newGame.idGame });
 };
 
