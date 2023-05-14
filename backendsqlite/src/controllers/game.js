@@ -52,7 +52,7 @@ const createGame = async (req, res) => {
   });
   // add creator as player also
   await Players.create({ username: creatorUsername, idGame: newGame.idGame });
-  res.status(status.CREATED).json({ message: 'game created' });
+  res.status(status.CREATED).json({ message: 'game created',data : newGame.idGame});
 };
 
 const getGames = async (req, res) => {

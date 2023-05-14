@@ -36,6 +36,7 @@ function LoginReq(username, password, navigation){
     }
   })
   .then(data => {
+    console.log(data.token)
       navigation.navigate('Welcome', {username: username, token: data.token});
   })
   .catch(error => console.error(error)); 
@@ -122,7 +123,7 @@ function LockScreen() {
         <Text style={styles.textPressable}>Mot de passe oublié ?</Text>
       </Pressable>
     );
-    ConnexionButton = <MyButton onPress={()=>onPressCo(username, password, navigation)} label="Connexion" primary={false} />;
+    ConnexionButton = <MyButton onPress={()=>onPressCo(username, password, navigation)} label="Connexion" primary={"connectButton"} />;
   }
   // if (true) {
   //   return <Partie time={"day"} />;
@@ -147,7 +148,7 @@ function LockScreen() {
         {pwdConfirm}
       </View>
       {ConnexionButton}
-      <MyButton testid="create-account" label="Créer un compte" primary={true} onPress={onPressCreate} />
+      <MyButton label="Créer un compte" primary={"createButton"} onPress={onPressCreate} />
       {dejaInscrit}
       {pwdOublie}
     </View>

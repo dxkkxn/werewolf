@@ -28,11 +28,16 @@ export default function Join({ route }){
   };
 
   useEffect(() => {
-    if(gameData != null){
-      setGames(availableGames(gameData));
+    if(gameData!=null){
+      setGames(availableGames(gameData))
+      const intervalId = setInterval(() => {
+        setGames(availableGames(gameData));
+      }, 50);
+      return () => clearInterval(intervalId);
     }
+    
   }, [gameData]);
-
+  
   //getting games from db
   const fetchGames = async () => {
     try{
@@ -54,7 +59,7 @@ export default function Join({ route }){
   useEffect(() => {
     fetchGames();
   }, []);
-
+  
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });

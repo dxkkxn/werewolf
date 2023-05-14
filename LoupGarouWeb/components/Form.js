@@ -89,23 +89,34 @@ export default function Form({route}) {
       },
       body: JSON.stringify({
         data : JSON.stringify({
-          startingDate: startingDate,
-          minPlayers: nbPlayers[0],
-          maxPlayers: nbPlayers[1],
-          dayDuration: dureeJour,
-          nightDuration: dureeNuit,
-          werewolfProbability: portionLoups,
-          seerProbability: probasPouvoirs[2],
-          infectionProbability: probasPouvoirs[0],
-          spiritismProbability: probasPouvoirs[3],
-          insomniaProbability: probasPouvoirs[1]
+          // startDay: jourDebut,
+          // startHour: heureDebut,
+          // minPlayers: nbPlayers[0],
+          // maxPlayers: nbPlayers[1],
+          // dayDuration: dureeJour,
+          // nightDuration: dureeNuit,
+          // werewolfProbability: portionLoups,
+          // seerProbability: probasPouvoirs[2],
+          // infectionProbability: probasPouvoirs[0],
+          // spiritismProbability: probasPouvoirs[3],
+          // insomniaProbability: probasPouvoirs[1]
+
+          creatorUsername : username,
+          startingDate : startingDate,
+          minPlayers : nbPlayers[0],
+          maxPlayers : nbPlayers[1],
+          dayDuration : dureeJour,
+          nightDuration : dureeNuit,
+          werewolfProbability : portionLoups
         })
       })
     })
     .then(data => {
       if(data.ok){
         alert('partie créée avec succès !');
-        navigation.navigate('Welcome', {username : username, token: token});
+        data.json().then(result => 
+        navigation.navigate('WaitingRoom', { idGame: result.data, username: username, token: token }))
+
       }
       else if(data.status == 403){
         alert('vous ne pouvez pas rejoindre plusieurs parties simultanément');
@@ -134,6 +145,7 @@ export default function Form({route}) {
     setHeuresDebut(parseInt(heuresDebutInput));
   }
   const handleMinutesDebut = (minutesDebutInput) => {
+    setHeuresDebut(0);
     setMinutesDebut(parseInt(minutesDebutInput));
   }
   const handleProbasPouvoirs = (probasPouvoirsInput, index) => {

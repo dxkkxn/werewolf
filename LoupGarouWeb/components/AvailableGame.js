@@ -46,35 +46,18 @@ export function AvailableGame({ gameProps, username, token }) {
   }
   const moment = require("moment");
   const currentDate = moment();
-  const remainingTime = moment.duration(
-    moment(gameProps.startingDate).diff(moment(currentDate))
-  );
-  const hours = Math.floor(remainingTime.asHours());
-  const minutes = Math.floor(remainingTime.asMinutes() % 60);
+  const remainingTime = moment.duration(moment(gameProps.startingDate).diff(moment(currentDate)));
+  const hours = Math.floor(remainingTime.asHours()) > 0 ? Math.floor(remainingTime.asHours()) :0;
+  const minutes = Math.floor(remainingTime.asMinutes() % 60 )> 0? Math.floor(remainingTime.asMinutes() % 60) : 0;
+  const secondes = Math.floor(remainingTime.asSeconds() % 60 )> 0? Math.floor(remainingTime.asSeconds() % 60) : 0;
 
   fetchAvatarId(gameProps.creatorUsername).then((icon) => {
     setIcon(icon);
   });
-  const startGame = (idGame, username) => {
-    fetch(`${url}/game/${idGame}/play`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": token,
-      },
-    })
-      .then((data) => {
-        if (data.ok) {
-          alert("partie démarrée avec succès !");
-          navigation.navigate("Partie", { idGame, username, token });
-        } else if (data.status == 403) {
-          alert("cette partie a déjà commencé !");
-        } else {
-          alert("erreur interne");
-        }
-      })
-      .catch((error) => console.error(error));
-  };
+  
+  const joinGameCreator = (idGame, username, token) => {
+    navigation.navigate('WaitingRoom', {idGame, username, token});
+  }
   const joinGame = (idGame, username, token) => {
     fetch(`${url}/game/${idGame}`, {
       method: "POST",
@@ -103,10 +86,9 @@ export function AvailableGame({ gameProps, username, token }) {
   let styleArrowBox;
   if (username == gameProps.creatorUsername) {
     styleArrowBox = styles.arrowBoxStart;
-    onPress = () => {
-      startGame(gameProps.idGame, username, token);
-    };
-  } else {
+    onPress = ()=>{joinGameCreator(gameProps.idGame, username, token)};
+  }
+  else {
     styleArrowBox = styles.arrowBox;
     onPress = () => {
       joinGame(gameProps.idGame, username, token);
@@ -122,7 +104,7 @@ export function AvailableGame({ gameProps, username, token }) {
         <ul style={styles.paramList}>
           <li>Créée par {gameProps.creatorUsername}</li>
           <li>
-            Debut dans {hours}h {minutes}m
+            Debut dans {hours}h {minutes}m {secondes}s
           </li>
           <li>
             De {gameProps.minPlayers} à {gameProps.maxPlayers} joueurs
@@ -135,7 +117,7 @@ export function AvailableGame({ gameProps, username, token }) {
             C: {gameProps.infectionProbability}, I: {gameProps.insomniaProbability}, V: {gameProps.seerProbability}, S: {gameProps.spiritismProbability}
           </li>
           <li>Proportion de loups : {gameProps.werewolfProbability}</li>
-          <li>Joueurs actuels : {gameProps.currentPlayers}</li>
+          <li>Joueurs actuels : {gameProps.players.length}</li>
         </ul>
         {gameProps.currentPlayers == gameProps.maxPlayers ? (
           <Text style={styles.textPartieComplete}>Partie complète !</Text>
