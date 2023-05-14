@@ -418,6 +418,15 @@ describe('voting testing', () => {
     expect(response.statusCode).toBe(status.BAD_REQUEST);
   });
 
+  test('voting for unknown player', async () => {
+    const response = await request(app)
+      .post('/game/1/vote')
+      .set({ 'x-access-token': humanToken })
+      .send({ data: '{"accusedId": "100"}' });
+    expect(response.body.message).toBe('Unknown player');
+    expect(response.statusCode).toBe(status.BAD_REQUEST);
+  });
+
   test('human votes for player with id 1', async () => {
     const response = await request(app)
       .post('/game/1/vote')
@@ -433,8 +442,6 @@ describe('voting testing', () => {
       .set({ 'x-access-token': token });
     const data = JSON.parse(response.body.data);
     expect(data.votes).toBeDefined();
-    // expect(data.votes.testGame).toBe(1);
-    // expect(data.votes[0].voterIdPlayer).toBeDefined();
   });
 
   test('werewolf sucicides', async () => {

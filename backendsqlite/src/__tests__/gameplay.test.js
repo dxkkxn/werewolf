@@ -196,4 +196,14 @@ describe('full gameplay test', () => {
     expect(userInfo.juanpa.state).toBe('dead');
     expect(gameInfo.votes).toEqual({}); //becase gameTime changed
   });
+
+  test('voting for dead player ', async () => {
+    const response = await request(app)
+      .post(`/game/${gameInfo.idGame}/vote`)
+      .set({ 'x-access-token': userInfo[werewolfs[0].username].token })
+      .send({ data: `{"accusedId": "${userInfo.juanpa.idPlayer}"}` });
+    expect(response.body.message).toBe('Player is already dead');
+    expect(response.statusCode).toBe(status.BAD_REQUEST);
+  });
+
 });
