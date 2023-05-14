@@ -14,31 +14,63 @@ export default function Partie({ time, route, onDataUpdate }) {
   // const gameData = route.params.jsonData;
   const [messages, setMessages] = useState([]);
   const [playersList, setPlayersList] = useState([]);
-  useEffect(() => {
+  const [avatarIdList, setAvatarIdList] = useState(null); // a ne changer qu'une fois
+  const [usernameList, setUsernameList]= useState(null); //idem 
+
+  async function fetchAvatarId(username) {
+    try {
+      const response = await fetch(`${url}/users/${username}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Response was not ok");
+      }
+      const data = await response.json();
+      const avatarId = data.data.avatarId;
+      return avatarId;
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  }
+
+  async function fetchAvatarIds(players) {
+    console.log('fetching avatar ids');
+    const avatarPromises = players.map(player => fetchAvatarId(player.username));
+    const avatarIds = await Promise.all(avatarPromises);
+    return avatarIds;
+  }
+
+  const fetchInitial = () => {
+    // fetch the usernames and avatar ids once and for all, these wont have to be changed again
+    let players = {};
     fetch(`${url}/game/${idGame}/play`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         "x-access-token": token,
-      },
+      }
     })
-      .then((response) => response.json())
+    .then((response) => {
+      response.json()
       .then((data) => {
-        const players = JSON.parse(data.data).players;
-        setPlayersList(players);
-      });
-    // fetch(`${url}/game/${idGame}`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "x-access-token": token,
-    //   },
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     const players = JSON.parse(data.data).players;
-    //     setPlayersList([...players]);
-    //   });
+        players = JSON.parse(data.data).players; //ok
+        (async () => {
+          try {
+            const avIdList = await fetchAvatarIds(players);
+            setUsernameList(players.map(player => player.username));
+            setAvatarIdList(avIdList);
+          } catch (error) {
+            console.error(error);
+          }
+        })()
+      })
+    })
+  };
+  useEffect(() => {
+    fetchInitial();
   }, []);
   const fetchGameState = async (interval) => {
     try {
@@ -51,6 +83,7 @@ export default function Partie({ time, route, onDataUpdate }) {
       });
       const response = await data.json();
       const gameState = JSON.parse(response.data);
+      setPlayersList(gameState.players);
       const gameMessages = gameState.messages;
       if (JSON.stringify(gameMessages) !== JSON.stringify(messages)) {
         setMessages(gameMessages);
@@ -58,21 +91,26 @@ export default function Partie({ time, route, onDataUpdate }) {
     } catch(error) {
       console.log(error);
     }
-  } 
-  const interval = setInterval(()=>{fetchGameState(interval);}, 5000);
-  return (
-    <View style={styles.container}>
-      <NavBarPartie time={time} />
-      <BodyPartie time={time} players={playersList} />
-      <FooterPartie
-        time={time}
-        username={username}
-        idGame={idGame}
-        messages={messages}
-        token={token}
-      />
-    </View>
-  );
+  }; 
+  // const interval = setInterval(()=>{fetchGameState(interval);}, 5000);
+  // to be done in BodyPartie and FooterPartie
+  if(usernameList != null && avatarIdList != null) {
+    return (
+      <View style={styles.container}>
+        <NavBarPartie time={time} />
+        <BodyPartie 
+          time={time} 
+          usernameList={usernameList}
+          avatarIdList={avatarIdList} />
+        <FooterPartie
+          time={time}
+          username={username}
+          idGame={idGame}
+          token={token}
+        />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
