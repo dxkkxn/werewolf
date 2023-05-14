@@ -13,6 +13,7 @@ export default function Partie({ time, route, onDataUpdate }) {
   const token = route.params.token;
   // const gameData = route.params.jsonData;
   const [messages, setMessages] = useState([]);
+  const [votes, setVotes] = useState({});
   const [playersList, setPlayersList] = useState([]); // contains idPlayers
   const [avatarIdList, setAvatarIdList] = useState(null); // a ne changer qu'une fois : avatarIdList[id] = avatarId
   const [usersList, setUsersList]= useState(null); //idem  : usersList[idPlayer] = username
@@ -96,6 +97,9 @@ export default function Partie({ time, route, onDataUpdate }) {
       const gameState = JSON.parse(response.data);
       setPlayersList(gameState.players);
       const gameMessages = gameState.messages;
+      const votes = gameState.votes;
+      console.log('votes : ', votes);
+      setVotes(votes);
       if (JSON.stringify(gameMessages) !== JSON.stringify(messages)) {
         setMessages(gameMessages);
       }
@@ -103,22 +107,27 @@ export default function Partie({ time, route, onDataUpdate }) {
       console.log(error);
     }
   }; 
-  // const interval = setInterval(()=>{fetchGameState(interval);}, 5000);
+  // const interval = setInterval(()=>{fetchGameState(interval);}, 1000);
   // to be done in BodyPartie and FooterPartie
   if(usersList != null && avatarIdList != null) {
     return (
       <View style={styles.container}>
         <NavBarPartie time={time} />
         <BodyPartie 
+          idGame={idGame}
+          username={username}
           time={time} 
           playersList={playersList}
           usersList={usersList}
+          token={token}
+          votes={votes}
           avatarIdList={avatarIdList} />
         <FooterPartie
           time={time}
           username={username}
           idGame={idGame}
           token={token}
+          messages={messages}
         />
       </View>
     );
