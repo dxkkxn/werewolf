@@ -118,12 +118,12 @@ describe('full gameplay test', () => {
       .get(`/game/${gameInfo.idGame}/play`)
       .set({ 'x-access-token': userInfo.youssef.token });
     const data = JSON.parse(response.body.data);
+    gameInfo.votes = data.votes;
     data.players.forEach((player) => {
       userInfo[player.username].idPlayer = player.idPlayer;
       userInfo[player.username].role = player.role;
       userInfo[player.username].state = player.state;
     });
-    console.log(data.gameHour);
   }
   test('getting game information', async () => {
     await getGameInfo();
@@ -143,11 +143,8 @@ describe('full gameplay test', () => {
   });
 
   test('checking vote ', async () => {
-    const response = await request(app)
-      .get(`/game/${gameInfo.idGame}/play`)
-      .set({ 'x-access-token': userInfo.youssef.token });
-    const data = JSON.parse(response.body.data);
-    expect(data.votes).toEqual({
+    await getGameInfo();
+    expect(gameInfo.votes).toEqual({
       imad: 1
     });
   });
@@ -157,11 +154,8 @@ describe('full gameplay test', () => {
   });
 
   test('checking votes', async () => {
-    const response = await request(app)
-      .get(`/game/${gameInfo.idGame}/play`)
-      .set({ 'x-access-token': userInfo.youssef.token });
-    const data = JSON.parse(response.body.data);
-    expect(data.votes).toEqual({
+    await getGameInfo();
+    expect(gameInfo.votes).toEqual({
       juanpa: 1
     });
   });
@@ -200,5 +194,6 @@ describe('full gameplay test', () => {
     await getGameInfo();
     await getGameInfo(); // making 2 times getgame info to let some time for async funcs to finish
     expect(userInfo.juanpa.state).toBe('dead');
+    expect(gameInfo.votes).toEqual({}); //becase gameTime changed
   });
 });
