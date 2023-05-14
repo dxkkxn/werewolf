@@ -23,9 +23,19 @@ async function getToken (username) {
   return token;
 }
 
+async function getAllGames (token) {
+  const response = await request(app)
+    .get('/game')
+    .set({ 'x-access-token': token });
+  expect(response.body.message).toBe('returning games in the data property');
+  const games = JSON.parse(response.body.data);
+  return games;
+}
+
 module.exports = {
   createUser,
-  getToken
+  getToken,
+  getAllGames
 };
 
 test('helper', async () => { // added this to make pipeline not fail
