@@ -1,30 +1,11 @@
 const app = require('../app');
 const request = require('supertest');
 const status = require('http-status');
+const { createUser, getToken } = require('./helperFunctions.js');
 
 /* eslint-env jest */
 
 describe('full gameplay test', () => {
-  async function createUser (username) {
-    const response = await request(app)
-      .post('/signin')
-      .send({ data: `{"username": "${username}", "password": "1234"}` });
-
-    expect(response.statusCode).toBe(status.CREATED);
-    expect(response.body.message).toBe('user added');
-  }
-
-  async function getToken (username) {
-    const response = await request(app)
-      .post('/login')
-      .send({ data: `{"username": "${username}", "password": "1234"}` });
-    const token = response.body.token;
-    expect(response.statusCode).toBe(status.OK);
-    expect(response.body.message).toBe('logged succesfully');
-    expect(token).toBeDefined();
-    return token;
-  }
-
   test('creating 5 users ', async () => {
     await createUser('etienne');
     await createUser('juanpa');
