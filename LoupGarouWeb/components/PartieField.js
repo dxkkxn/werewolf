@@ -96,7 +96,7 @@ export default PartieField;
 const styles = StyleSheet.create({
   box: {
     boxSizing: "border-box",
-    height: "37px",
+    height: "70px",
     width: "201px",
     // margin: 5,
     backgroundColor: "#FFF",

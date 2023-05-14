@@ -43,27 +43,21 @@ const ClickableImage = ({ source, onPress }) => {
   );
 };
 
-export default function BodyPartie({ idGame, username, time, token, votes, playersList, usersList, avatarIdList }) {
+export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time, token, votes, isDead, playersList, usersList, avatarIdList }) {
+  const [fetchedData, setFetchedData] = useState(null);
+
+  const [votedFor, setVotedFor] = useState(); // on ne revote pas pour la meme personne
+
   const [loaded] = useFonts({
     Poppins: require("../assets/fonts/Poppins-Regular.ttf"),
   });
 
   
-  // get my id
-  let myIdPlayer = -1;
-  for(const idPlayer in usersList){
-    if(usersList[idPlayer] === username) {
-      myIdPlayer = idPlayer;
-      break ;
-    }
-  }
-  const [fetchedData, setFetchedData] = useState(null);
   if (!loaded) {
     return null;
   }
-  // initialement, l'user n'a voté pour personne
-  const aVotePour = []; // a chaque vote, ajouter l'idPlayer ici
-  // a chaque passage jour/nuit, vider
+
+
   const avatars = [
     [avatar1, 1],
     [avatar2, 2],
@@ -79,9 +73,9 @@ export default function BodyPartie({ idGame, username, time, token, votes, playe
     [avatar12, 12],
   ];
   const handleImage = (idPlayer) => {
-    if(! aVotePour.includes(idPlayer)){
       // annule vote => to do ??
       // if isAlive(idPlayer, myIdPlayer) and (day || ww) => to be implemented
+    if (votedFor !== idPlayer && (time === 'day' || myRole === 'werewolf') && !isDead.includes(myIdPlayer) && !isDead.includes(idPlayer)){
       fetch(`${url}/game/${idGame}/vote`, {
         method: "POST",
         headers: {
@@ -96,7 +90,7 @@ export default function BodyPartie({ idGame, username, time, token, votes, playe
       })
       .then(data => {
         if(data.ok){
-          console.log('vote pris en compte !');
+          setVotedFor(idPlayer);
         }
         else{
           alert('une erreur est survenue');
@@ -133,7 +127,7 @@ export default function BodyPartie({ idGame, username, time, token, votes, playe
           <Text style={[styles.textUser, usersList[idPlayer]==username ? styles.greenText : null]}>
           {usersList[idPlayer]}
           </Text>
-          { usersList[idPlayer] in votes ?  <Text style={styles.textUser} >'votes : ' {votes[usersList[idPlayer]]}</Text> : null}
+          { usersList[idPlayer] in votes ?  <Text style={styles.vote} >{votes[usersList[idPlayer]]} votes</Text> : null}
           </View>
         ))}
       </View>
@@ -183,6 +177,16 @@ const styles = StyleSheet.create({
     color: "white",
     position: "absolute",
     bottom: 0,
+  },
+  vote: {
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 700,
+    fontSize: 10,
+    paddingLeft: 20,
+    color: "white",
+    position: "absolute",
+    top: 0,
   },
   greenText: {
     color: 'green',

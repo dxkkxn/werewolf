@@ -6,7 +6,7 @@ import FooterPartie from "./FooterPartie";
 import { useNavigation } from "@react-navigation/native";
 const url = `http://${window.location.hostname}:3000`;
 
-export default function Partie({ time, route, onDataUpdate }) {
+export default function Partie({ route, onDataUpdate }) {
   const navigation = useNavigation();
   const username = route.params.username;
   const idGame = route.params.idGame;
@@ -14,9 +14,13 @@ export default function Partie({ time, route, onDataUpdate }) {
   // const gameData = route.params.jsonData;
   const [messages, setMessages] = useState([]);
   const [votes, setVotes] = useState({});
+  const [isDead, setIsDead] = useState([]); // array contenant les joueurs morts
   const [playersList, setPlayersList] = useState([]); // contains idPlayers
   const [avatarIdList, setAvatarIdList] = useState(null); // a ne changer qu'une fois : avatarIdList[id] = avatarId
   const [usersList, setUsersList]= useState(null); //idem  : usersList[idPlayer] = username
+  const [time, setTime] = useState('day');
+  const [myRole, setMyRole] = useState();
+  const [myIdPlayer, setMyIdPlayer] = useState();
 
   async function fetchAvatarId(username) {
     try {
@@ -64,11 +68,19 @@ export default function Partie({ time, route, onDataUpdate }) {
     .then((response) => {
       response.json()
       .then((data) => {
-        players = JSON.parse(data.data).players; //ok
+        players = JSON.parse(data.data).players;
         setPlayersList(players.map(player => player.idPlayer));
         (async () => {
           try {
             const avIdList = await fetchAvatarIds(players);
+            //get my id
+            for(const player of players) {
+              if (player.username === username){
+                setMyIdPlayer(player.idPlayer);
+                setMyRole(player.role);
+                break;
+              }
+            }
             setUsersList(players.reduce((acc, player) => {
               acc[player.idPlayer] = player.username;
               return acc;
@@ -84,7 +96,7 @@ export default function Partie({ time, route, onDataUpdate }) {
   useEffect(() => {
     fetchInitial();
   }, []);
-  const fetchGameState = async (interval) => {
+  const fetchGameState = async () => {
     try {
       const data = await fetch(`${url}/game/${idGame}/play`, {
         method: "GET",
@@ -92,33 +104,47 @@ export default function Partie({ time, route, onDataUpdate }) {
           "Content-Type": "application/json",
           "x-access-token": token,
         },
-      });
-      const response = await data.json();
-      const gameState = JSON.parse(response.data);
-      setPlayersList(gameState.players);
-      const gameMessages = gameState.messages;
-      const votes = gameState.votes;
-      console.log('votes : ', votes);
-      setVotes(votes);
-      if (JSON.stringify(gameMessages) !== JSON.stringify(messages)) {
-        setMessages(gameMessages);
-      }
+      })
+      const response = await data.json()
+      .then((response) => {
+        const gameState = JSON.parse(response.data);
+        const gameMessages = gameState.messages;
+        const votes = gameState.votes;
+        setVotes(votes);
+        console.log(gameState.players);
+        console.log('votes : ', votes);
+        for (const player of gameState.players) {
+          if(player.state === 'dead') {
+            isDead.push(player.idPlayer);
+          }
+        }
+        const hours = parseInt(gameState.gameHour.split(":")[0], 10);
+        if(hours < 8 || hours > 21 ) setTime('night');
+        else setTime('day');
+        console.log('h : ', hours);
+        if (JSON.stringify(gameMessages) !== JSON.stringify(messages)) {
+          setMessages(gameMessages);
+        }
+      })
     } catch(error) {
       console.log(error);
     }
   }; 
-  // const interval = setInterval(()=>{fetchGameState(interval);}, 1000);
+  setTimeout(()=>{fetchGameState();}, 1000);
   // to be done in BodyPartie and FooterPartie
   if(usersList != null && avatarIdList != null) {
     return (
       <View style={styles.container}>
-        <NavBarPartie time={time} />
+        <NavBarPartie time={time} myRole={myRole}/>
         <BodyPartie 
           idGame={idGame}
           username={username}
+          isDead={isDead}
           time={time} 
           playersList={playersList}
           usersList={usersList}
+          myIdPlayer={myIdPlayer}
+          myRole={myRole}
           token={token}
           votes={votes}
           avatarIdList={avatarIdList} />

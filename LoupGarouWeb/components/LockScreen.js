@@ -36,8 +36,7 @@ function LoginReq(username, password, navigation){
     }
   })
   .then(data => {
-    console.log(data.token)
-      navigation.navigate('Welcome', {username: username, token: data.token});
+    navigation.navigate('Welcome', {username: username, token: data.token});
   })
   .catch(error => console.error(error)); 
 };

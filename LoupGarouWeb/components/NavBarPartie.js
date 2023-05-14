@@ -5,13 +5,14 @@ import ClickableImage from "./ClickableImage";
 const leftArrow = require("../assets/images/leftArrow.png");
 const burguerMenu = require("../assets/images/burguerMenu.png");
 
-export default function NavBarPartie({ time }) {
+export default function NavBarPartie({ time, myRole }) {
   const handleLeftArrow = () => {
     console.log("left arrow pressed");
   };
   const handleBurguerMenu = () => {
     console.log("burguer menu pressed");
   };
+  const text= (myRole === 'werewolf') ? "Jour X - Place du village - Vous êtes un Loup Garou" : "Jour X - Place du village - Vous êtes un Humain";
   return (
     <View
       style={
@@ -26,7 +27,7 @@ export default function NavBarPartie({ time }) {
         symbol={"leftArrow"}
       />
       <PartieField
-        text={"Jour X - Place du village"}
+        text={text}
         time={time}
         type={"title"}
       />
@@ -41,7 +42,7 @@ export default function NavBarPartie({ time }) {
 // module.exports = NavBarPartie;
 const styles = StyleSheet.create({
   flexContainer: {
-    height: "60px",
+    height: "120px",
     width: "100%",
     display: "flex",
     flexDirection: "row",
