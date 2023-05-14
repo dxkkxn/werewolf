@@ -84,7 +84,7 @@ export default function Partie({ time, route, onDataUpdate }) {
   useEffect(() => {
     fetchInitial();
   }, []);
-  const fetchGameState = async (interval) => {
+  const fetchGameState = async () => {
     try {
       const data = await fetch(`${url}/game/${idGame}/play`, {
         method: "GET",
@@ -95,7 +95,6 @@ export default function Partie({ time, route, onDataUpdate }) {
       });
       const response = await data.json();
       const gameState = JSON.parse(response.data);
-      setPlayersList(gameState.players);
       const gameMessages = gameState.messages;
       const votes = gameState.votes;
       console.log('votes : ', votes);
@@ -107,7 +106,7 @@ export default function Partie({ time, route, onDataUpdate }) {
       console.log(error);
     }
   }; 
-  // const interval = setInterval(()=>{fetchGameState(interval);}, 1000);
+  setTimeout(()=>{fetchGameState();}, 1000);
   // to be done in BodyPartie and FooterPartie
   if(usersList != null && avatarIdList != null) {
     return (
