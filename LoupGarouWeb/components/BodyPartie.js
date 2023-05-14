@@ -122,7 +122,7 @@ export default function BodyPartie({ idGame, username, time, token, votes, playe
             onPress={() => handleImage(idPlayer)}
           />
           <Text> {usersList[idPlayer]} </Text>
-          { usersList[idPlayer] in votes ?  <Text>'votes : ' {votes[usersList[idPlayer]]}</Text> : null}
+          { usersList[idPlayer] in votes ?  <Text>{votes[usersList[idPlayer]]} votes</Text> : null}
           </View>
         ))}
       </View>
