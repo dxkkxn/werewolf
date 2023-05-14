@@ -7,6 +7,7 @@ import {
 } from "react-native-web";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
+import { Text } from 'react-native';
 // const LinearGradient = require("react-native-linear-gradient");
 // <Text style={styles.textBoxImage}>{username}</Text>
 // const image1 = require("../assets/images/avatar1.png");
@@ -39,9 +40,12 @@ const ClickableImage = ({ source, onPress }) => {
   );
 };
 
-export default function BodyPartie({ time, players }) {
+export default function BodyPartie({ time, playersList, usersList, avatarIdList }) {
+  console.log("usernames : ", usersList);
+  console.log('idPlayers  : ', playersList);
+  console.log('avatars : ', avatarIdList);
   const [fetchedData, setFetchedData] = useState(null);
-  const users = [
+  const avatars = [
     [avatar1, 1],
     [avatar2, 2],
     [avatar3, 3],
@@ -76,12 +80,14 @@ export default function BodyPartie({ time, players }) {
             : [styles.middleBox, { backgroundColor: "#371B58" }]
         }
       >
-        {players.map((user, index) => (
+        {playersList.map((idPlayer, index) => (
+          <View key={index} style={styles.container}>
           <ClickableImage
-            key={user.idPlayer}
-            source={users[index][0]}
-            onPress={handleImage}
+            source={avatars[avatarIdList[idPlayer]-1][0]}
+            onPress={() => handleImage(idPlayer)}
           />
+          <Text> {usersList[idPlayer]} </Text>
+          </View>
         ))}
       </View>
     </ScrollView>

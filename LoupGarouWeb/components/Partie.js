@@ -13,32 +13,75 @@ export default function Partie({ time, route, onDataUpdate }) {
   const token = route.params.token;
   // const gameData = route.params.jsonData;
   const [messages, setMessages] = useState([]);
-  const [playersList, setPlayersList] = useState([]);
-  useEffect(() => {
+  const [playersList, setPlayersList] = useState([]); // contains idPlayers
+  const [avatarIdList, setAvatarIdList] = useState(null); // a ne changer qu'une fois : avatarIdList[id] = avatarId
+  const [usersList, setUsersList]= useState(null); //idem  : usersList[idPlayer] = username
+
+  async function fetchAvatarId(username) {
+    try {
+      const response = await fetch(`${url}/users/${username}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Response was not ok");
+      }
+      const data = await response.json();
+      const avatarId = data.data.avatarId;
+      return avatarId;
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  }
+
+  async function fetchAvatarIds(players) {
+    const avatarPromises = players.reduce((acc, player) => {
+      acc[player.idPlayer] = fetchAvatarId(player.username);
+      return acc;
+    }, {});
+
+    const avatarIds = {};
+    await Promise.all(Object.entries(avatarPromises).map(async ([idPlayer, promise]) => {
+      avatarIds[idPlayer] = await promise;
+    }));
+
+  return avatarIds;
+  }
+
+  const fetchInitial = () => {
+    // fetch the usernames and avatar ids once and for all, these wont have to be changed again
+    let players = {};
     fetch(`${url}/game/${idGame}/play`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         "x-access-token": token,
-      },
+      }
     })
-      .then((response) => response.json())
+    .then((response) => {
+      response.json()
       .then((data) => {
-        const players = JSON.parse(data.data).players;
-        setPlayersList(players);
-      });
-    // fetch(`${url}/game/${idGame}`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "x-access-token": token,
-    //   },
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     const players = JSON.parse(data.data).players;
-    //     setPlayersList([...players]);
-    //   });
+        players = JSON.parse(data.data).players; //ok
+        setPlayersList(players.map(player => player.idPlayer));
+        (async () => {
+          try {
+            const avIdList = await fetchAvatarIds(players);
+            setUsersList(players.reduce((acc, player) => {
+              acc[player.idPlayer] = player.username;
+              return acc;
+            }, {})); // now we can use usersList[id] to get username
+            setAvatarIdList(avIdList);
+          } catch (error) {
+            console.error(error);
+          }
+        })()
+      })
+    })
+  };
+  useEffect(() => {
+    fetchInitial();
   }, []);
   const fetchGameState = async (interval) => {
     try {
@@ -51,6 +94,7 @@ export default function Partie({ time, route, onDataUpdate }) {
       });
       const response = await data.json();
       const gameState = JSON.parse(response.data);
+      setPlayersList(gameState.players);
       const gameMessages = gameState.messages;
       if (JSON.stringify(gameMessages) !== JSON.stringify(messages)) {
         setMessages(gameMessages);
@@ -58,21 +102,27 @@ export default function Partie({ time, route, onDataUpdate }) {
     } catch(error) {
       console.log(error);
     }
-  } 
-  const interval = setInterval(()=>{fetchGameState(interval);}, 5000);
-  return (
-    <View style={styles.container}>
-      <NavBarPartie time={time} />
-      <BodyPartie time={time} players={playersList} />
-      <FooterPartie
-        time={time}
-        username={username}
-        idGame={idGame}
-        messages={messages}
-        token={token}
-      />
-    </View>
-  );
+  }; 
+  // const interval = setInterval(()=>{fetchGameState(interval);}, 5000);
+  // to be done in BodyPartie and FooterPartie
+  if(usersList != null && avatarIdList != null) {
+    return (
+      <View style={styles.container}>
+        <NavBarPartie time={time} />
+        <BodyPartie 
+          time={time} 
+          playersList={playersList}
+          usersList={usersList}
+          avatarIdList={avatarIdList} />
+        <FooterPartie
+          time={time}
+          username={username}
+          idGame={idGame}
+          token={token}
+        />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

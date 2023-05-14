@@ -114,9 +114,7 @@ export function AvailableGame({ gameProps, username, token }) {
             min
           </li>
           <li>
-            C: {gameProps.infectionProbability}, I:
-            {gameProps.insomniaProbability}, V:{gameProps.seerProbability}, S:
-            {gameProps.spiritismProbability}
+            C: {gameProps.infectionProbability}, I: {gameProps.insomniaProbability}, V: {gameProps.seerProbability}, S: {gameProps.spiritismProbability}
           </li>
           <li>Proportion de loups : {gameProps.werewolfProbability}</li>
           <li>Joueurs actuels : {gameProps.players.length}</li>

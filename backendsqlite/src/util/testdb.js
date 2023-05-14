@@ -18,7 +18,6 @@ const bcrypt = require('bcrypt');
 (async () => {
   // Regénère la base de données
   await require('../models/database.js').sync({ force: true });
-  console.log('Base de données créée.');
   // Initialise la base avec quelques données
   // console.log(passhash)
   // await userModel.create({
