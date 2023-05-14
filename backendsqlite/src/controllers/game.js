@@ -112,8 +112,8 @@ function changeDayTime (idGame) {
         state: 'dead'
       }, { where: { idPlayer } });
       // we remove the votes now that we dont need them
-      const playersInGame = await PlayersInGame.findAll({
-        include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
+      const playersInGame = await PlayersInGame.findAll(
+        { include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
       playersInGame.forEach((player) => {
         Votes.destroy({ where: { voterIdPlayer: player.idPlayer } });
       });
@@ -286,9 +286,11 @@ const addMessage = async (req, res) => {
   }
   const body = data.message;
   const idPlayer = req.idPlayer;
+  const idGame = req.params.idGame;
 
   const time = new Date(); // time gets now timestamp
-  const gameTime = 'day';
+  let gameTime = await Games.findOne({ where: { idGame }, attributes: ['gameTime'] });
+  gameTime = gameTime.gameTime;
   Messages.create({ idPlayer, time, body, gameTime });
   res.status(status.CREATED).json({ message: 'message sent' });
 };
