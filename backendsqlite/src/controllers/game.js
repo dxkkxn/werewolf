@@ -53,7 +53,8 @@ const createGame = async (req, res) => {
   // add creator as player also
   await Players.create({ username: creatorUsername, idGame: newGame.idGame });
   const time = new Date(startingDate) - new Date();
-  timeouts[newGame.idGame] = setTimeout(startGame, time);
+  req.params.idGame = newGame.idGame;
+  timeouts[newGame.idGame] = setTimeout(startGame, time, req, res);
   res.status(status.CREATED).json({ message: 'game created', data: newGame.idGame });
 };
 
@@ -80,6 +81,9 @@ const joinGame = async (req, res) => {
     throw new CodeError('maximum number of players reached', status.FORBIDDEN);
   }
   await Players.create({ username, idGame });
+  if (currentPlayers + 1 === game.maxPlayers) {
+    await startGame(req, res);
+  }
   res.status(status.OK).json({ message: `user: ${username} joined game with id: ${idGame}` });
 };
 
@@ -150,8 +154,6 @@ function changeDayTime (idGame) {
 
 const startGame = async (req, res) => {
   const idGame = req.params.idGame;
-  const username = req.username;
-  console.assert(username !== undefined);
   console.assert(idGame !== undefined);
   const game = await Games.findOne({ where: { idGame } });
   // change started to true
