@@ -48,7 +48,7 @@ export default function NavBarPartie({ time, myRole }) {
 // module.exports = NavBarPartie;
 const styles = StyleSheet.create({
   flexContainer: {
-    height: "70px",
+    height: "15%",
     width: "100%",
     display: "flex",
     flexDirection: "row",

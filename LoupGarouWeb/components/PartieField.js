@@ -53,11 +53,7 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, id
   if (type == "title") {
     return (
       <View style={styles.box}>
-        <Text
-          style={time == "day"
-            ? styles.boxText
-            : [styles.boxText, { color: "#371B58" }]}
-        >
+        <Text style={[styles.boxText, {textAlign: 'center', width: "90%"}]}>
           {text}
         </Text>
       </View>
@@ -66,17 +62,14 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, id
     return (
       <View style={styles.boxSend}>
         <TextInput
-          placeholder="      Entrez votre message"
+          placeholder="Entrez votre message"
           onChangeText={(input) => setMessage(input)}
           style={[
             styles.boxText,
             {
-              width: "300px",
-              height: "40px",
-              justifyContent: "flex-start",
-              // placeholder: "Entrez votre message",
+              paddingLeft: 20,
               placeholderTextColor: "#000",
-              paddingLeft: "20px",
+              width: "90%",
             },
           ]}
         >
@@ -127,8 +120,7 @@ const styles = StyleSheet.create({
     marginRight: "10px",
   },
   boxText: {
-    width: "169px",
-    height: "21px",
+    // height: "21px",
     fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: "400px",

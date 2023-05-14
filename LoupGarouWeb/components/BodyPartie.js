@@ -9,7 +9,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { Text } from 'react-native';
 import { useFonts } from "expo-font";
-
 // const LinearGradient = require("react-native-linear-gradient");
 // <Text style={styles.textBoxImage}>{username}</Text>
 // const image1 = require("../assets/images/avatar1.png");
@@ -26,19 +25,20 @@ const avatar10 = require("../assets/images/avatar10.png");
 const avatar11 = require("../assets/images/avatar11.png");
 const avatar12 = require("../assets/images/avatar12.png");
 const url = `http://${window.location.hostname}:3000`;
-const ClickableImage = ({ source, onPress }) => {
+const ClickableImage = ({ source, onPress, text, currentPlayer }) => {
+  const borderWidth = currentPlayer ? 3 : 0;
   return (
-    <TouchableOpacity onPress={onPress}>
-      <LinearGradient
+    <TouchableOpacity onPress={onPress} style={{borderWidth: borderWidth, borderColor: "#7858A6", borderRadius: 25, padding: 2}}>
+      <ImageBackground
+        source={source}
         style={styles.middleBoxItem}
-        colors={["purple", "#000000"]}
-        locations={[0, 1]}
       >
-        <ImageBackground
-          source={source}
-          style={styles.middleBoxItem}
-        ></ImageBackground>
-      </LinearGradient>
+        <LinearGradient colors={['transparent', "#000000"]} locations={[0.5, 1]} style={styles.linearGradient}>
+          <View style={styles.textContainer}>
+            <Text style={styles.text}>{text}</Text>
+          </View>
+        </LinearGradient>
+      </ImageBackground>
     </TouchableOpacity>
   );
 };
@@ -49,14 +49,12 @@ export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time,
   const [votedFor, setVotedFor] = useState(); // on ne revote pas pour la meme personne
 
   const [loaded] = useFonts({
-    Poppins: require("../assets/fonts/Poppins-Regular.ttf"),
+    Poppins: require("../assets/fonts/Poppins-Medium.ttf"),
   });
 
-  
   if (!loaded) {
     return null;
   }
-
 
   const avatars = [
     [avatar1, 1],
@@ -101,24 +99,19 @@ export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time,
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={ time== "day" ? {backgroundColor: "#DAC9F2"} : { backgroundColor: "#371B58" }}>
       <View
-        style={
-          time == "day"
-            ? styles.middleBox
-            : [styles.middleBox, { backgroundColor: "#371B58" }]
-        }
+        style={styles.middleBox}
       >
         {playersList.map((idPlayer, index) => (
           <View key={index} style={styles.container}>
           <ClickableImage
             source={avatars[avatarIdList[idPlayer]-1][0]}
             onPress={() => handleImage(idPlayer)}
+            text={usersList[idPlayer]}
+            currentPlayer={usersList[idPlayer] == username}
           />
-          <Text style={[styles.textUser, isDead.includes(idPlayer) ? styles.redText : (usersList[idPlayer]==username ? styles.greenText : null)]}>
-          {usersList[idPlayer]}
-          </Text>
-          { usersList[idPlayer] in votes ?  <Text style={styles.vote} >{votes[usersList[idPlayer]]} votes</Text> : null}
+          { usersList[idPlayer] in votes ?  <Text>{votes[usersList[idPlayer]]} votes</Text> : null}
           </View>
         ))}
       </View>
@@ -129,9 +122,9 @@ const styles = StyleSheet.create({
   middleBox: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#371B58",
+    // backgroundColor: "#DAC9F2",
     display: "grid",
-    gridTemplateColumns: "repeat(7,1fr)",
+    gridTemplateColumns: "repeat(3,1fr)",
     // gridTemplateRows: "2fr",
     padding: "15px",
     gap: "15px",
@@ -142,47 +135,31 @@ const styles = StyleSheet.create({
     width: "100px",
     height: "100px",
     borderRadius: "20px",
-    linearGradient: "rgba(0,0,0,0)",
     // display: "block",
     // padding: "15px",
   },
-  boxImageContainer: {
-    width: "120px",
-    height: "120px",
-    display: "flex",
-    flexDirection: "column",
-    borderRadius: "20px",
-    linearGradient: "rgba(0,0,0,0)",
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textBoxImage: {
     width: "20px",
     height: "20px",
     color: "white",
   },
-  textUser: {
-    fontFamily: "Poppins",
-    fontStyle: "normal",
-    fontWeight: 700,
-    fontSize: 10,
-    paddingLeft: 20,
-    color: "white",
-    position: "absolute",
-    bottom: 0,
+  linearGradient: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    borderRadius: "20px",
   },
-  vote: {
-    fontFamily: "Poppins",
-    fontStyle: "normal",
-    fontWeight: 700,
-    fontSize: 10,
-    paddingLeft: 20,
-    color: "white",
-    position: "absolute",
-    top: 0,
+  text: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontFamily: 'Poppins',
   },
-  greenText: {
-    color: 'green',
-  },
-  redText: {
-    color: 'red',
-  },
+  textContainer: {
+    textAlign: 'center',
+    marginBottom: 5,
+  }
 });

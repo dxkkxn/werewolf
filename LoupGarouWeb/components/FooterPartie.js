@@ -34,16 +34,16 @@ export default function FooterPartie({ time, log, isDead, myIdPlayer, username, 
 const styles = StyleSheet.create({
   bottomBox: {
     width: "100%",
-    height: "225px",
+    height: "30%",
     backgroundColor: "#7858A6",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
+    // display: "flex",
+    // flexDirection: "column",
+    justifyContent: "space-around",
     alignItems: "center",
   },
-  bottomBoxMiddleBox: {
-    // height: "320px",
-    // height: "320px",
-    height: "185px",
-  },
+  // bottomBoxMiddleBox: {
+  //   // height: "320px",
+  //   // height: "320px",
+  //   height: "185px",
+  // },
 });
