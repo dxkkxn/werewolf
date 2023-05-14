@@ -105,7 +105,7 @@ function changeDayTime (idGame) {
     messages.forEach((msg) => { msg.current = false; msg.save(); });
   });
 
-  voteIsValidated(idGame).then(async (idPlayer) => {
+  voteIsValidated(idGame, game.gameTime).then(async (idPlayer) => {
   // we check for lynched users
     if (idPlayer !== undefined) {
       await PlayersInGame.update({
@@ -300,8 +300,7 @@ const addMessage = async (req, res) => {
   const idGame = req.params.idGame;
 
   const time = new Date(); // time gets now timestamp
-  let gameTime = await Games.findOne({ where: { idGame }, attributes: ['gameTime'] });
-  gameTime = gameTime.gameTime;
+  let gameTime = await getGameTime(idGame);
   Messages.create({ idPlayer, time, body, gameTime });
   res.status(status.CREATED).json({ message: 'message sent' });
 };
@@ -330,13 +329,29 @@ async function getOpenVotes (idGame) {
   }
   return openVotes;
 }
-async function voteIsValidated (idGame) {
+
+async function getNumberOfWerewolfs (idGame) {
+  const werewolfs = await PlayersInGame.findAll({
+    include: [{ model: Players, where: { idGame } }], where: { role: 'werewolf'}
+  });
+  return werewolfs.length;
+}
+
+async function getGameTime(idGame) {
+  const gameTime = await Games.findOne({ where: { idGame }, attributes: ['gameTime'] });
+  return gameTime.gameTime;
+}
+
+async function voteIsValidated (idGame, gameTime) {
   const openVotes = await getOpenVotes(idGame);
   const players = await PlayersInGame.findAll({
     include: [{ model: Players, where: { idGame } }]
   });
+  let half
+  if (gameTime === 'day') half = players.length / 2;
+  else half = await getNumberOfWerewolfs(idGame) / 2;
+
   let idPlayer;
-  const half = players.length / 2;
   players.forEach((player) => {
     if (openVotes[player.player.username] > half) idPlayer = player.player.idPlayer;
   });
@@ -353,7 +368,7 @@ const votePlayer = async (req, res) => {
   const idGame = req.params.idGame;
   console.assert(idPlayer !== undefined);
   const hav = await hasAlreadyVoted(username);
-  const viv = await voteIsValidated(idGame);
+  const viv = await voteIsValidated(idGame, await getGameTime(idGame));
   if (hav && !viv) {
     // player has already voted and vote is not validated so he can change his vote
     // we supress old vote from the table
