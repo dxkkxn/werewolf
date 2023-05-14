@@ -58,7 +58,7 @@ export default function WaitingRoom({ route }) {
         />
       </View>
       <View style={styles.textContainer}>
-			  <Text style={styles.title}>Salle d'attente de la partie {idGame} to start...</Text>
+			  <Text style={styles.title}>Salle d'attente de la partie {idGame}</Text>
       </View>
 		</View>
 	);
