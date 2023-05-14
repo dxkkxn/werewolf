@@ -25,10 +25,11 @@ const avatar10 = require("../assets/images/avatar10.png");
 const avatar11 = require("../assets/images/avatar11.png");
 const avatar12 = require("../assets/images/avatar12.png");
 const url = `http://${window.location.hostname}:3000`;
-const ClickableImage = ({ source, onPress, text, currentPlayer }) => {
-  const borderWidth = currentPlayer ? 3 : 0;
+const ClickableImage = ({ source, onPress, text, currentPlayer, isDead }) => {
+  const borderWidth = currentPlayer || isDead ? 3 : 0;
+  const borderColor = isDead ? 'red' : "#7858A6";
   return (
-    <TouchableOpacity onPress={onPress} style={{borderWidth: borderWidth, borderColor: "#7858A6", borderRadius: 25, padding: 2}}>
+    <TouchableOpacity onPress={onPress} style={{borderWidth: borderWidth, borderColor: borderColor, borderRadius: 25, padding: 2}}>
       <ImageBackground
         source={source}
         style={styles.middleBoxItem}
@@ -110,6 +111,7 @@ export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time,
             onPress={() => handleImage(idPlayer)}
             text={usersList[idPlayer]}
             currentPlayer={usersList[idPlayer] == username}
+            isDead={isDead.includes(idPlayer)}
           />
           { usersList[idPlayer] in votes ?  <Text>{votes[usersList[idPlayer]]} votes</Text> : null}
           </View>
