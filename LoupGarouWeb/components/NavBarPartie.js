@@ -12,7 +12,9 @@ export default function NavBarPartie({ time, myRole }) {
   const handleBurguerMenu = () => {
     console.log("burguer menu pressed");
   };
-  const text= (myRole === 'werewolf') ? "Jour X - Place du village - Vous êtes un Loup Garou" : "Jour X - Place du village - Vous êtes un Humain";
+  const textDay= (myRole === 'werewolf') ? "Jour - Place du village Vous êtes un Loup " : "Jour - Place du village Vous êtes un Humain";
+  const textNigth= (myRole === 'werewolf') ? "Nuit - Place du village Vous êtes un Loup " : "Nuit - Place du village Vous êtes un Humain";
+
   return (
     <View
       style={
@@ -27,7 +29,11 @@ export default function NavBarPartie({ time, myRole }) {
         symbol={"leftArrow"}
       />
       <PartieField
-        text={text}
+        text={
+          time == "day"
+          ? textDay
+          : textNigth
+        }
         time={time}
         type={"title"}
       />

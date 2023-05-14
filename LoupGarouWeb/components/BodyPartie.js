@@ -8,6 +8,8 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { Text } from 'react-native';
+import { useFonts } from "expo-font";
+
 // const LinearGradient = require("react-native-linear-gradient");
 // <Text style={styles.textBoxImage}>{username}</Text>
 // const image1 = require("../assets/images/avatar1.png");
@@ -43,7 +45,18 @@ const ClickableImage = ({ source, onPress }) => {
 
 export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time, token, votes, isDead, playersList, usersList, avatarIdList }) {
   const [fetchedData, setFetchedData] = useState(null);
+
   const [votedFor, setVotedFor] = useState(); // on ne revote pas pour la meme personne
+
+  const [loaded] = useFonts({
+    Poppins: require("../assets/fonts/Poppins-Regular.ttf"),
+  });
+
+  
+  if (!loaded) {
+    return null;
+  }
+
 
   const avatars = [
     [avatar1, 1],
@@ -102,8 +115,10 @@ export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time,
             source={avatars[avatarIdList[idPlayer]-1][0]}
             onPress={() => handleImage(idPlayer)}
           />
-          <Text> {usersList[idPlayer]} </Text>
-          { usersList[idPlayer] in votes ?  <Text>{votes[usersList[idPlayer]]} votes</Text> : null}
+          <Text style={[styles.textUser, usersList[idPlayer]==username ? styles.greenText : null]}>
+          {usersList[idPlayer]}
+          </Text>
+          { usersList[idPlayer] in votes ?  <Text style={styles.vote} >{votes[usersList[idPlayer]]} votes</Text> : null}
           </View>
         ))}
       </View>
@@ -114,9 +129,9 @@ const styles = StyleSheet.create({
   middleBox: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#DAC9F2",
+    backgroundColor: "#371B58",
     display: "grid",
-    gridTemplateColumns: "repeat(3,1fr)",
+    gridTemplateColumns: "repeat(7,1fr)",
     // gridTemplateRows: "2fr",
     padding: "15px",
     gap: "15px",
@@ -143,5 +158,28 @@ const styles = StyleSheet.create({
     width: "20px",
     height: "20px",
     color: "white",
+  },
+  textUser: {
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 700,
+    fontSize: 10,
+    paddingLeft: 20,
+    color: "white",
+    position: "absolute",
+    bottom: 0,
+  },
+  vote: {
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: 700,
+    fontSize: 10,
+    paddingLeft: 20,
+    color: "white",
+    position: "absolute",
+    top: 0,
+  },
+  greenText: {
+    color: 'green',
   },
 });
