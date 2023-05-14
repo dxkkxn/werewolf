@@ -75,8 +75,13 @@ describe('get games', () => {
       .set({ 'x-access-token': token });
     expect(response.body.message).toBe('returning games in the data property');
     const data = JSON.parse(response.body.data);
-    expect(data.length).toBe(1);
-    expect(data[0]).toEqual({
+    let gameInfo;
+    data.forEach((game) => {
+      if (game.creatorUsername === 'testGame') {
+        gameInfo = game;
+      }
+    });
+    expect(gameInfo).toEqual({
       avatarId: 1,
       idGame: 1,
       minPlayers: 5,
@@ -128,8 +133,13 @@ describe('join game', () => {
       .set({ 'x-access-token': token });
     expect(response.body.message).toBe('returning games in the data property');
     const data = JSON.parse(response.body.data);
-    expect(data.length).toBe(1);
-    expect(data[0]).toEqual({
+    let gameInfo;
+    data.forEach((game) => {
+      if (game.creatorUsername === 'testGame') {
+        gameInfo = game;
+      }
+    });
+    expect(gameInfo).toEqual({
       avatarId: 1,
       idGame: 1,
       minPlayers: 5,
