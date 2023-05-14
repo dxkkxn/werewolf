@@ -52,7 +52,7 @@ const createGame = async (req, res) => {
   });
   // add creator as player also
   await Players.create({ username: creatorUsername, idGame: newGame.idGame });
-  res.status(status.CREATED).json({ message: 'game created',data : newGame.idGame});
+  res.status(status.CREATED).json({ message: 'game created', data: newGame.idGame });
 };
 
 const getGames = async (req, res) => {
@@ -91,6 +91,14 @@ const getGameWithId = async (req, res) => {
 };
 
 const gameStates = {};
+const timeouts = {};
+
+async function checkGameEnd (idGame) {
+  const alivePlayers = await PlayersInGame.findAll(
+    { include: [{ model: Players, where: { idGame } }], where: { state: 'alive' } });
+  const role = alivePlayers[0].role;
+  return alivePlayers.every((player) => player.role === role);
+}
 
 function changeDayTime (idGame) {
   const { game } = gameStates[idGame];
@@ -117,19 +125,23 @@ function changeDayTime (idGame) {
       playersInGame.forEach((player) => {
         Votes.destroy({ where: { voterIdPlayer: player.idPlayer } });
       });
+      if (await checkGameEnd(idGame)) {
+        // game ended
+        clearTimeout(timeouts[idGame]);
+      }
     }
   });
   if (game.gameTime === 'day') {
     const time = game.nightDuration * 60 * 1000;
     game.gameTime = 'night';
     gameStates[idGame].timeoutTime = time;
-    setTimeout(changeDayTime, time, idGame);
+    timeouts[idGame] = setTimeout(changeDayTime, time, idGame);
   } else {
     console.assert(game.gameTime === 'night');
     const time = game.dayDuration * 60 * 1000;
     gameStates[idGame].timeoutTime = time;
     game.gameTime = 'day';
-    setTimeout(changeDayTime, time, idGame);
+    timeouts[idGame] = setTimeout(changeDayTime, time, idGame);
   }
   game.save();
 }
@@ -166,7 +178,8 @@ const startGame = async (req, res) => {
   game.gameTime = 'day';
   const time = game.dayDuration * 60 * 1000;
   gameStates[idGame] = { game, timeoutStart: currentDate, timeoutTime: time };
-  setTimeout(changeDayTime, time, idGame);
+  clearTimeout(timeouts[idGame]); // timeout of start of game
+  timeouts[idGame] = setTimeout(changeDayTime, time, idGame);
   game.save();
 
   // assign role contaminant
@@ -246,10 +259,23 @@ async function playerIsDead (idPlayer, idGame) {
     { include: [{ model: Players, where: { idGame } }], where: { idPlayer } });
   return player.state === 'dead';
 }
+
+function clearMessagesOutput (messages) {
+  return messages.map((msg) => {
+    console.assert(msg.playersInGame);
+    msg = msg.toJSON();
+    const username = msg.playersInGame.player.username;
+    msg.username = username;
+    delete msg.playersInGame;
+    return msg;
+  });
+}
+
 const getStateOfGame = async (req, res) => {
   const idGame = req.params.idGame;
   const idPlayer = req.idPlayer;
   console.assert(idGame !== undefined);
+
   let playersInGame = await PlayersInGame.findAll({ include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
   // clearing json object to send
   playersInGame = playersInGame.map((player) => {
@@ -259,6 +285,20 @@ const getStateOfGame = async (req, res) => {
     delete player.player;
     return player;
   });
+
+  if (await checkGameEnd(idGame)) {
+    // game ended
+    const messages = await Messages.findAll({
+      include: [{
+        model: PlayersInGame,
+        required: true,
+        include: [{ model: Players, required: true, where: { idGame } }]
+      }]
+    });
+    // messages = clearMessagesOutput(messages); // prettier format
+    const state = { players: playersInGame, messages, gameEnded: true };
+    return res.status(status.OK).json({ message: 'returning game state', data: JSON.stringify(state) });
+  }
   // checking gameTime and role
   // if role is human and gameTime is night returning no messages
   let messages = [];
@@ -268,25 +308,23 @@ const getStateOfGame = async (req, res) => {
     messages = await Messages.findAll({
       include: [{
         model: PlayersInGame,
-        include: [{ model: Players, where: { idGame } }]
+        required: true,
+        include: [{ model: Players, required: true, where: { idGame } }]
       }],
       where: { current: true }
     });
     // clearing messages output
-    messages = messages.map((msg) => {
-      // if (msg.playersInGame) {
-        console.assert(msg.playersInGame);
-        msg = msg.toJSON();
-        const username = msg.playersInGame.player.username;
-        msg.username = username;
-        delete msg.playersInGame;
-        return msg;
-      // }
-    });
+    messages = clearMessagesOutput(messages); // prettier format
   }
   // get current opened votes
   const openVotes = await getOpenVotes(idGame);
-  const state = { players: playersInGame, messages, gameHour: getGameHour(idGame), votes: openVotes };
+  const state = {
+    players: playersInGame,
+    messages,
+    gameHour: getGameHour(idGame),
+    votes: openVotes,
+    gameEnded: false
+  };
   res.status(status.OK).json({ message: 'returning game state', data: JSON.stringify(state) });
 };
 
@@ -300,7 +338,7 @@ const addMessage = async (req, res) => {
   const idGame = req.params.idGame;
 
   const time = new Date(); // time gets now timestamp
-  let gameTime = await getGameTime(idGame);
+  const gameTime = await getGameTime(idGame);
   Messages.create({ idPlayer, time, body, gameTime });
   res.status(status.CREATED).json({ message: 'message sent' });
 };
@@ -330,29 +368,30 @@ async function getOpenVotes (idGame) {
   return openVotes;
 }
 
-async function getNumberOfWerewolfs (idGame) {
-  const werewolfs = await PlayersInGame.findAll({
-    include: [{ model: Players, where: { idGame } }], where: { role: 'werewolf'}
-  });
-  return werewolfs.length;
-}
-
-async function getGameTime(idGame) {
+async function getGameTime (idGame) {
   const gameTime = await Games.findOne({ where: { idGame }, attributes: ['gameTime'] });
   return gameTime.gameTime;
 }
 
 async function voteIsValidated (idGame, gameTime) {
   const openVotes = await getOpenVotes(idGame);
-  const players = await PlayersInGame.findAll({
-    include: [{ model: Players, where: { idGame } }]
+
+  const alivePlayers = await PlayersInGame.findAll({
+    include: [{ model: Players, where: { idGame } }],
+    where: { state: 'alive' }
   });
-  let half
-  if (gameTime === 'day') half = players.length / 2;
-  else half = await getNumberOfWerewolfs(idGame) / 2;
+
+  const aliveWerewolfs = await PlayersInGame.findAll({
+    include: [{ model: Players, where: { idGame } }],
+    where: { role: 'werewolf', state: 'alive' }
+  });
+
+  let half;
+  if (gameTime === 'day') half = alivePlayers.length / 2;
+  else half = aliveWerewolfs.length / 2;
 
   let idPlayer;
-  players.forEach((player) => {
+  alivePlayers.forEach((player) => {
     if (openVotes[player.player.username] > half) idPlayer = player.player.idPlayer;
   });
   return idPlayer;
