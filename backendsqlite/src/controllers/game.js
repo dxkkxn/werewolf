@@ -241,8 +241,14 @@ function getGameHour (idGame) {
   return `${hours}:${minutes}`;
 }
 
+async function playerIsDead (idPlayer, idGame) {
+  const player = await PlayersInGame.findOne(
+    { include: [{ model: Players, where: { idGame } }], where: { idPlayer } });
+  return player.state === 'dead';
+}
 const getStateOfGame = async (req, res) => {
   const idGame = req.params.idGame;
+  const idPlayer = req.idPlayer;
   console.assert(idGame !== undefined);
   let playersInGame = await PlayersInGame.findAll({ include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
   // clearing json object to send
@@ -256,7 +262,9 @@ const getStateOfGame = async (req, res) => {
   // checking gameTime and role
   // if role is human and gameTime is night returning no messages
   let messages = [];
-  if (await checkRightRole(req.username, idGame)) {
+  // const crr = await checkRightRole(req.username, idGame);
+  // const pid = await playerIsDead(idPlayer, idGame);
+  if (await checkRightRole(req.username, idGame) || await playerIsDead(idPlayer, idGame)) {
     messages = await Messages.findAll({
       include: [{
         model: PlayersInGame,
@@ -266,11 +274,14 @@ const getStateOfGame = async (req, res) => {
     });
     // clearing messages output
     messages = messages.map((msg) => {
-      msg = msg.toJSON();
-      const username = msg.playersInGame.player.username;
-      msg.username = username;
-      delete msg.playersInGame;
-      return msg;
+      // if (msg.playersInGame) {
+        console.assert(msg.playersInGame);
+        msg = msg.toJSON();
+        const username = msg.playersInGame.player.username;
+        msg.username = username;
+        delete msg.playersInGame;
+        return msg;
+      // }
     });
   }
   // get current opened votes
