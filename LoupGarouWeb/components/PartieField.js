@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -17,6 +17,7 @@ const ClickableImage = ({ source, onPress }) => {
   );
 };
 export const PartieField = ({ text, time, type, username, idGame, token }) => {
+  const [message, setMessage] = useState(null);
   const [loaded] = useFonts({
     Poppins: require("../assets/fonts/Poppins-Regular.ttf"),
   });
@@ -25,46 +26,49 @@ export const PartieField = ({ text, time, type, username, idGame, token }) => {
     return null;
   }
   const url = `http://${window.location.hostname}:3000`;
-  const handleSubmit = (messageInput) => {
+  const handleSubmit = () => {
+    const messageInput = message;
     //post message
-    fetch(`${url}/${username}/${idGame}` ,{
-      method: 'POST',
+    fetch(`${url}/game/${idGame}/message`, {
+      method: "POST",
       headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': token
+        "Content-Type": "application/json",
+        "x-access-token": token,
       },
       body: JSON.stringify({
-        data : JSON.stringify({
-          message: messageInput
-        })
+        data: JSON.stringify({
+          message: messageInput,
+        }),
+      }),
+    })
+      .then((data) => {
+        console.log(data);
+        if (data.ok) { 
+          console.log("message posted");
+        } else {
+          console.log("something went wrong");
+        }
       })
-    })
-    .then(data => {
-      if(data.status.created) console.log('message posted');
-      else console.log('something went wrong');
-    })
-    .catch(error => console.error(error)); 
+      .catch((error) => console.error(error));
   };
   if (type == "title") {
     return (
       <View style={styles.box}>
         <Text
-          style={
-            time == "day"
-              ? styles.boxText
-              : [styles.boxText, { color: "#371B58" }]
-          }
+          style={time == "day"
+            ? styles.boxText
+            : [styles.boxText, { color: "#371B58" }]}
         >
           {text}
         </Text>
       </View>
     );
   } else {
-    console.log("hi");
     return (
       <View style={styles.boxSend}>
         <TextInput
           placeholder="      Entrez votre message"
+          onChangeText={(input) => setMessage(input)}
           style={[
             styles.boxText,
             {
@@ -76,7 +80,8 @@ export const PartieField = ({ text, time, type, username, idGame, token }) => {
               paddingLeft: "20px",
             },
           ]}
-        ></TextInput>
+        >
+        </TextInput>
         <View style={styles.boxSendItem}>
           <ClickableImage source={rightArrow} onPress={handleSubmit} />
         </View>

@@ -4,12 +4,15 @@ import {useState, useEffect} from 'react';
 import { StyleSheet, Text, View ,ScrollView} from 'react-native';
 import {AvailableGame} from './AvailableGame.js'
 import { useNavigation } from '@react-navigation/native';
+import ClickableImage from './ClickableImage.js';
 const url = `http://${window.location.hostname}:3000`
+const leftArrow = require("../assets/images/leftArrow.png");
 
 
 export default function Join({ route }){
   const [gameData, setGameData] = useState(null);
   const [games, setGames] = useState(null);
+  const navigation = useNavigation();
   const username = route.params.username;
   const token = route.params.token;
   const availableGames = (propsArray) => {
@@ -25,11 +28,16 @@ export default function Join({ route }){
   };
 
   useEffect(() => {
-    if(gameData != null){
-      setGames(availableGames(gameData));
+    if(gameData!=null){
+      setGames(availableGames(gameData))
+      const intervalId = setInterval(() => {
+        setGames(availableGames(gameData));
+      }, 50);
+      return () => clearInterval(intervalId);
     }
+    
   }, [gameData]);
-
+  
   //getting games from db
   const fetchGames = async () => {
     try{
@@ -51,7 +59,7 @@ export default function Join({ route }){
   useEffect(() => {
     fetchGames();
   }, []);
-
+  
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
@@ -61,7 +69,14 @@ export default function Join({ route }){
 
     return (
       <View style={styles.container}>
-        <Text style={styles.title}> Rejoindre une partie </Text>
+        <View style={styles.header}>
+          <ClickableImage
+          source={leftArrow}
+          onPress={() => navigation.navigate('Welcome', {username: username, token: token})}
+          symbol={"leftArrow"}
+          />
+          <Text style={styles.title}> Rejoindre une partie </Text>
+        </View>
         <ScrollView>
           <View style={styles.container}>
           {games}
@@ -77,7 +92,7 @@ const styles = StyleSheet.create({
   title: {
     margin: 18,
     color: '#ffffff',
-    fontSize: 28,
+    fontSize: 26,
     fontFamily: 'Poppins'
   },
   container: {
@@ -89,4 +104,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: "space-between",
+  }
 });

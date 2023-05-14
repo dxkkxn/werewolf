@@ -9,7 +9,8 @@ const {
   validateBodyHasData,
   validateGameNotStarted, validateBodyCreateGame, validateUserInGame,
   validateIdGame, validateUserIsCreator, validateGameStarted,
-  validateUserNotAlreadyInGame, validatePlayerAlive, validateRightRole
+  validateUserNotAlreadyInGame, validatePlayerAlive, validateRightRole,
+  validateAccusedId
 } = require('../middlewares/gameValidators.js');
 
 router.get('/game', validateToken, getGames);
@@ -30,5 +31,5 @@ router.post('/game/:idGame/message', validateToken, validateBodyHasData, validat
   validateGameStarted, validatePlayerAlive, validateRightRole, addMessage);
 
 router.post('/game/:idGame/vote', validateToken, validateBodyHasData, validateUserInGame,
-  validateGameStarted, validatePlayerAlive, validateRightRole, votePlayer);
+  validateGameStarted, validatePlayerAlive, validateRightRole, validateAccusedId, votePlayer);
 module.exports = router;

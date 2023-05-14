@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from "react-native-web";
 
-export default function PartieMessage({ id, text }) {
+export default function PartieMessage({ username, text }) {
   return (
     <View style={styles.messageBox}>
-      <Text style={styles.messageId}>{id}:</Text>
+      <Text style={styles.messageId}>{username}:</Text>
       <Text style={styles.messageContent}>{text}</Text>
     </View>
   );

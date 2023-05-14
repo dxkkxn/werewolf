@@ -92,7 +92,6 @@ const getGameWithId = async (req, res) => {
 
 const gameStates = {};
 
-
 function changeDayTime (idGame) {
   const { game } = gameStates[idGame];
   gameStates[idGame].timeoutStart = new Date();
@@ -105,9 +104,21 @@ function changeDayTime (idGame) {
   }).then((messages) => {
     messages.forEach((msg) => { msg.current = false; msg.save(); });
   });
-  // console.log("before", messages)
-  // console.log("after", messages)
 
+  voteIsValidated(idGame).then(async (idPlayer) => {
+  // we check for lynched users
+    if (idPlayer !== undefined) {
+      await PlayersInGame.update({
+        state: 'dead'
+      }, { where: { idPlayer } });
+      // we remove the votes now that we dont need them
+      const playersInGame = await PlayersInGame.findAll({
+        include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
+      playersInGame.forEach((player) => {
+        Votes.destroy({ where: { voterIdPlayer: player.idPlayer } });
+      });
+    }
+  });
   if (game.gameTime === 'day') {
     const time = game.nightDuration * 60 * 1000;
     game.gameTime = 'night';
@@ -207,12 +218,12 @@ const startGame = async (req, res) => {
   res.status(status.CREATED).json({ message: 'game started' });
 };
 
-function getGameHour(idGame) {
+function getGameHour (idGame) {
   const { game, timeoutStart, timeoutTime } = gameStates[idGame]; // timeoutTime in ms
   const currentDate = new Date();
   console.assert(timeoutStart >= currentDate);
   const gamePercent = (currentDate - timeoutStart) / timeoutTime; // percent of game time elapsed
-  console.assert(0 <= gamePercent && gamePercent <= 1);
+  console.assert(gamePercent >= 0 && gamePercent <= 1);
   const start = 8 * 3600 * 1000; // in ms
   const end = 22 * 3600 * 1000; // in ms
   let currentGameHour;
@@ -229,8 +240,6 @@ function getGameHour(idGame) {
   if (minutes < 10) { minutes = `0${minutes}`; }
   return `${hours}:${minutes}`;
 }
-
-
 
 const getStateOfGame = async (req, res) => {
   const idGame = req.params.idGame;
@@ -265,17 +274,7 @@ const getStateOfGame = async (req, res) => {
     });
   }
   // get current opened votes
-  const openVotes = await Votes.findAll({
-    include: [{
-      model: PlayersInGame,
-      include: [{
-        model: Players,
-        where: { idGame }
-      }],
-      attributes: []
-    }],
-    attributes: ['accusedIdPlayer', 'voterIdPlayer']
-  });
+  const openVotes = await getOpenVotes(idGame);
   const state = { players: playersInGame, messages, gameHour: getGameHour(idGame), votes: openVotes };
   res.status(status.OK).json({ message: 'returning game state', data: JSON.stringify(state) });
 };
@@ -286,10 +285,7 @@ const addMessage = async (req, res) => {
     throw new CodeError('You need to pass a message in the body data', status.BAD_REQUEST);
   }
   const body = data.message;
-  const username = req.username;
-  let idPlayer = await Players.findAll({ attributes: ['idPlayer'], where: { username } });
-  console.assert(idPlayer.length === 1);
-  idPlayer = idPlayer[0].idPlayer;
+  const idPlayer = req.idPlayer;
 
   const time = new Date(); // time gets now timestamp
   const gameTime = 'day';
@@ -297,17 +293,65 @@ const addMessage = async (req, res) => {
   res.status(status.CREATED).json({ message: 'message sent' });
 };
 
+async function hasAlreadyVoted (username) {
+  const player = await Players.findOne({ where: { username } });
+  const votes = await Votes.findOne({
+    where: { voterIdPlayer: player.idPlayer }
+  });
+  return votes;
+}
+
+async function getOpenVotes (idGame) {
+  const playersInGame = await PlayersInGame.findAll({
+    include: [{ model: Players, where: { idGame } }]
+  });
+  const openVotes = {};
+  for (const player of playersInGame) {
+    const votes = await Votes.findAll({
+      attributes: ['voterIdPlayer'],
+      where: { accusedIdPlayer: player.idPlayer }
+    });
+    if (votes.length > 0) {
+      openVotes[player.player.username] = votes.length;
+    }
+  }
+  return openVotes;
+}
+async function voteIsValidated (idGame) {
+  const openVotes = await getOpenVotes(idGame);
+  const players = await PlayersInGame.findAll({
+    include: [{ model: Players, where: { idGame } }]
+  });
+  let idPlayer;
+  const half = players.length / 2;
+  players.forEach((player) => {
+    if (openVotes[player.player.username] > half) idPlayer = player.player.idPlayer;
+  });
+  return idPlayer;
+}
+
 const votePlayer = async (req, res) => {
-  const username = req.username;
   const data = JSON.parse(req.body.data);
   if (!has(data, 'accusedId')) {
     return res.status(status.BAD_REQUEST).json({ message: 'You need to specify the accusedId' });
   }
+  const username = req.username;
+  const idPlayer = req.idPlayer;
+  const idGame = req.params.idGame;
+  console.assert(idPlayer !== undefined);
+  const hav = await hasAlreadyVoted(username);
+  const viv = await voteIsValidated(idGame);
+  if (hav && !viv) {
+    // player has already voted and vote is not validated so he can change his vote
+    // we supress old vote from the table
+    await Votes.destroy({ where: { voterIdPlayer: idPlayer } });
+  } else if (hav && viv) {
+    // player has already voted and vote is not validated
+    // so he can't change his vote
+    return res.status(status.BAD_REQUEST).json({ message: 'You can\'t change your vote' });
+  }
   const { accusedId } = data;
-  const idPlayer = await Players.findOne({ attributes: ['idPlayer'], where: { username } });
-  // console.log(accusedId, idPlayer.idPlayer, username);
-  await Votes.create({ accusedIdPlayer: accusedId, voterIdPlayer: idPlayer.idPlayer });
-
+  await Votes.create({ accusedIdPlayer: accusedId, voterIdPlayer: idPlayer });
   return res.status(status.CREATED).json({ message: 'Your vote has been recorded' });
 };
 

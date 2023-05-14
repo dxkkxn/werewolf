@@ -5,6 +5,8 @@ import { useFonts } from 'expo-font';
 import InputField from './InputField';
 import { MyButton } from './MyButton';
 import { useNavigation } from '@react-navigation/native';
+import ClickableImage from './ClickableImage';
+const leftArrow = require("../assets/images/leftArrow.png");
 
 export default function Form({route}) {
   const [nbPlayers, setNbPlayers] = useState([5, 20]);
@@ -156,7 +158,14 @@ export default function Form({route}) {
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Configurer la partie</Text>
+      <View style={styles.header}>
+        <ClickableImage
+          source={leftArrow}
+          onPress={() => navigation.navigate('Welcome', {username: username, token: token})}
+          symbol={"leftArrow"}
+        />
+        <Text style={styles.title}>Configurer la partie</Text>
+      </View>
       <View style={styles.formContainer}>
         <Text style={styles.question}>Nombre ou fourchette de joueurs :</Text>
         <InputField placeholder="Ex : 5 (nombre fixe), 5-10 (fourchette)" secureTextEntry={false} onChangeText={handleNbPlayers} />
@@ -205,11 +214,17 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#ffffff",
-    fontSize: 28,
+    fontSize: 26,
     fontFamily: 'Poppins',
+    marginLeft: 18,
   },
   formContainer: {
     width: 300,
     // height: 550,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: "space-between",
   }
 })

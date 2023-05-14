@@ -1,43 +1,14 @@
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native-web";
 import PartieMessage from "./PartieMessage";
-export default function FooterMessageField() {
-  const messages = [
-    { id: "juan Pablo", text: "probando id 1" },
-    {
-      id: "miguel angel",
-      text: "probando id 2",
-    },
-    { id: "juan Pablo", text: "probando id 1" },
-    {
-      id: "miguel angel",
-      text: "probando id 2",
-    },
-    { id: "juan Pablo", text: "probando id 1" },
-    {
-      id: "miguel angel",
-      text: "probando id 2",
-    },
-    { id: "juan Pablo", text: "probando id 1" },
-    {
-      id: "miguel angel",
-      text: "probando id 2",
-    },
-    { id: "juan Pablo", text: "probando id 1" },
-    {
-      id: "miguel angel",
-      text: "probando id 2",
-    },
-    { id: "juan Pablo", text: "probando id 1" },
-    {
-      id: "miguel angel",
-      text: "probando id 2",
-    },
-  ];
+export default function FooterMessageField({ messages }) {
+  // const [messages, setMessages] = useState([]);
+  console.log(messages);
   return (
     <View style={styles.footerContainer}>
       <ScrollView styles={styles.scroller}>
         {messages.map((message, index) => {
-          return <PartieMessage key={index} id={message.id} text={message.text} />;
+          return <PartieMessage key={message.idMessage} username={message.username} text={message.body} />;
         })}
       </ScrollView>
     </View>

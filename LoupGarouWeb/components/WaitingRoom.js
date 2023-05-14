@@ -5,6 +5,9 @@ import { MyButton } from "./MyButton.js";
 import {AvailableGame} from './AvailableGame.js'
 import { useFonts } from 'expo-font';
 import { useNavigation } from '@react-navigation/native';
+import ClickableImage from './ClickableImage';
+const leftArrow = require("../assets/images/leftArrow.png");
+
 const url = `http://${window.location.hostname}:3000`;
 
 
@@ -154,54 +157,124 @@ export default function WaitingRoom({ route }) {
   
   
 	return (
-		<View style={styles.container}>
+    
+		<View >
       {Creator==username ? (
-        <View style={styles.innerContainer}>
-        <AvailableGame username={username} token={token} gameProps={gameData} />
-        <Text style={styles.title}>Joueurs actuels : {currentPlayers} </Text>
-        {currentPlayers < gameData.minPlayers && remainingTime.asSeconds()>=0 ? (
-        <MyButton  label="Attente de joueurs .." primary={"createButton"}/>  
-          ) : currentPlayers < gameData.maxPlayers && remainingTime.asSeconds()>=0? (
-        <MyButton  label="Commencer" primary={"startButton"} onPress={onPress} />
-          ) : gameData.started === false ?(
-            <View>
-            <Text style={styles.title}>La partie commence dans : {timeDebut} </Text>
-            {timeDebut == 0 ? (
-              <View>
-              {onPress()}
-              </View>
-            )
-            : null}
+        <View >
+          <View style={styles.headerContainer}>
+            <View style={styles.header}>
+            <ClickableImage
+            source={leftArrow}
+            onPress={() => navigation.navigate('Join', {username: username, token : token})}
+            symbol={"leftArrow"}
+            />
             </View>
-        ):null }
-
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Partie {idGame} </Text>
+            </View>
+          </View>
+          <View style={styles.innerContainer}>
+            <AvailableGame username={username} token={token} gameProps={gameData} />
+            <Text style={styles.title}>Joueurs actuels : {currentPlayers} </Text>
+            {currentPlayers < gameData.minPlayers && remainingTime.asSeconds()>=0 ? (
+            <MyButton  label="Attente de joueurs .." primary={"createButton"}/>  
+            ) : currentPlayers < gameData.maxPlayers && remainingTime.asSeconds()>=0? (
+            <MyButton  label="Commencer" primary={"startButton"} onPress={onPress} />
+            ) : gameData.started === false ?(
+            <View>
+              <Text style={styles.title}>La partie commence dans : {timeDebut} </Text>
+              {timeDebut == 0 ? (
+              <View>
+                {onPress()}
+              </View>
+              )
+              : null}
+            </View>
+            ):null }
+          </View>
         </View>
       ) : (
-      <View>
-        <View style={styles.innerContainer}>
-        <Text style={styles.title}>Waiting for game {idGame} to start...</Text>
+        <View style={styles.textContainer}>
+        <Text style={styles.title}>Salle d'attente de la partie {idGame}</Text>
+        <Text style={styles.title}>Joueurs actuels : {currentPlayers} </Text>
         </View>
-      </View>
         )}
 		</View>
 	);
 }
-
 const styles = StyleSheet.create({
-  container: {
-    height: "80%",
-    top: 64,
+
+
+  headerContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  header: {
+    position: 'absolute',
+    left: '40%',
+    zIndex: 1,
+  },
+  titleContainer: {
+    textAlign:'center',
   },
   innerContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 130,
+  },
+  textContainer: {
+    height: "90%",
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: "center",
+    textAlign: 'center',
+    paddingTop: 300,
   },
+
   title: {
-    color: '#ffffff',
-    fontSize: 28,
-    fontFamily: 'Poppins'
-  },
-  
-})
+          color: '#ffffff',
+          fontSize: 28,
+          fontFamily: 'Poppins',
+          paddingLeft: 50,
+  }
+});
+// const styles = StyleSheet.create({
+//   container: {
+//     display: 'flex',
+//     width: '100%',
+//     flex:1,
+//     height: '90%',
+//     backgroundColor: '#371b58',
+//     alignItems: 'center',
+//     justifyContent: 'space-around',
+//   },
+
+//   innerContainer: {
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     paddingTop: 130,
+//   },
+//   headerContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     paddingTop: 10,
+//     paddingBottom: 10,
+//     paddingLeft: 50,
+//   },
+
+//   titleContainer: {
+//     flex: 1,
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+//   title: {
+//       color: '#ffffff',
+//       fontSize: 28,
+//       fontFamily: 'Poppins',
+//       paddingLeft: 50,
+//   }
+// })
