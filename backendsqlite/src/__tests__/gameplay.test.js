@@ -122,6 +122,7 @@ describe('full gameplay test', () => {
     const data = JSON.parse(response.body.data);
     gameInfo.votes = data.votes;
     gameInfo.messages = data.messages;
+    gameInfo.gameHour = data.gameHour;
     data.players.forEach((player) => {
       userInfo[player.username].idPlayer = player.idPlayer;
       userInfo[player.username].role = player.role;
@@ -274,5 +275,18 @@ describe('full gameplay test', () => {
     expect(gameInfo.messages[1].current).toBe(true);
     expect(gameInfo.messages[1].gameTime).toBe('night');
     expect(gameInfo.messages[1].username).toBe(werewolfs[1]);
+  });
+
+  test('werewolfs killing human 1', async () => {
+    await voteFor(werewolfs[0], humans[1]);
+    await voteFor(werewolfs[1], humans[1]);
+    await getGameInfo(werewolfs[0]);
+  });
+
+  test('checking human is dead', async () => {
+    jest.advanceTimersByTime(2 * 60 * 1000); // jumping to day
+    await getGameInfo(humans[0]);
+    await getGameInfo(humans[0]); // 2 calls bc of async nature of timeout
+    expect(userInfo[humans[1]].state).toBe('dead');
   });
 });
