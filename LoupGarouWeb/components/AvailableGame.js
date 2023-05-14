@@ -34,7 +34,7 @@ async function fetchAvatarId(username) {
   }
 }
 
-export function AvailableGame({ gameProps, username, token }) {
+export function AvailableGame({ gameProps, username, waiting, token }) {
   const navigation = useNavigation();
   const [icon, setIcon] = useState(null);
   const [loaded] = useFonts({
@@ -124,7 +124,7 @@ export function AvailableGame({ gameProps, username, token }) {
         {gameProps.currentPlayers == gameProps.maxPlayers ? (
           <Text style={styles.textPartieComplete}>Partie complète !</Text>
         ) : (
-          <TouchableOpacity style={styleArrowBox} onPress={onPress}>
+          <TouchableOpacity style={waiting ? {display: 'none'} : styleArrowBox} onPress={onPress}>
             <Image style={styles.arrowStyle} source={arrow} />
           </TouchableOpacity>
         )}

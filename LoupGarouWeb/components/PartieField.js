@@ -17,7 +17,7 @@ const ClickableImage = ({ source, onPress }) => {
   );
 };
 export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, idGame, token, myRole }) => {
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState("");
   const [loaded] = useFonts({
     Poppins: require("../assets/fonts/Poppins-Regular.ttf"),
   });
@@ -46,6 +46,7 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, id
         if (!data.ok) { 
           console.log("something went wrong");
         }
+        setMessage("");
       })
       .catch((error) => console.error(error));
     }
@@ -53,7 +54,7 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, id
   if (type == "title") {
     return (
       <View style={styles.box}>
-        <Text style={[styles.boxText, {textAlign: 'center', width: "90%"}]}>
+        <Text style={[styles.boxText, {textAlign: 'center', width: "90%x"}]}>
           {text}
         </Text>
       </View>
@@ -64,6 +65,7 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, id
         <TextInput
           placeholder="Entrez votre message"
           onChangeText={(input) => setMessage(input)}
+          value={message}
           style={[
             styles.boxText,
             {
