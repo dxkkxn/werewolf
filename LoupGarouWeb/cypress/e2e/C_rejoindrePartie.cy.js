@@ -1,3 +1,4 @@
+import { screen, configure } from '@testing-library/react'
 describe('joining a game', () => {
   it('passes', () => {
     cy.visit('http://localhost:19006/')
@@ -11,8 +12,16 @@ describe('joining a game', () => {
     // joining
     cy.contains('Consulter les parties').click()
     // assert only one game
-    expect(cy.get('TouchableOpacityi:visible')).to.have.lengthOf(1)
-    cy.get('Touchable Opacity:visible').click()
+    expect(screen.getByTestId('0')).toBeDefined();
+    expect(screen.getByTestId('1')).toBeDefined();
+    cy.get('[data-test-id="0"]')
+    // check parameters are displayed correctly
+    cy.contains('Créée par cypress')
+    cy.contains('De 2 à 12 joueurs')
+    cy.contains('Jour: 4 min, Nuit: 3 min')
+    cy.contains('C: 0, I: 1, V: 0.5, S: 0.3')
+    cy.contains('Proportion de loups : 0.3')
+    cy.contains('Joueurs actuels : 1')
     cy.contains("Salle d'attente de la partie 1")
   })
 })

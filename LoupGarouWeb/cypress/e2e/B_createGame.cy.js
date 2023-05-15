@@ -11,7 +11,7 @@ describe('creating a new game', () => {
     cy.contains('Connexion').click()
     // create game
     cy.contains('Créer une partie').click()
-    cy.get('input:visible').eq(0).type('8-12')
+    cy.get('input:visible').eq(0).type('5-12')
     cy.get('input:visible').eq(1).type('4')
     cy.get('input:visible').eq(2).type('3')
     cy.get('input:visible').eq(3).type('0')
@@ -21,6 +21,7 @@ describe('creating a new game', () => {
     cy.get('input:visible').eq(7).type('0.5')
     cy.get('input:visible').eq(8).type('0.3')
     cy.get('input:visible').eq(9).type('0.3')
-    cy.contains('Créer la partie')
+    cy.contains('Créer la partie').click()
+    // on est redirigé vers la salle d'attente avec un bouton start
   })
 })

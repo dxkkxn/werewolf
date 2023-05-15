@@ -5,7 +5,13 @@ const powers = require('./powers.js');
 
 const playersPowers = db.define(
   'playersPowers',
-  {},
+  {
+    canBeUsed: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+      allowNull: false
+    }
+  },
   { timestamps: false }
 );
 

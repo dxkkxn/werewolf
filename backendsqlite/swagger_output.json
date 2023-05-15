@@ -246,6 +246,20 @@
         ],
         "responses": {}
       }
+    },
+    "/game/{idGame}/power": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "idGame",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
     }
   }
 }

@@ -232,8 +232,6 @@ const startGame = async (req, res) => {
   if (nbWerewolves === 0) nbWerewolves = 1;
   const { indexWerewolves, indexHumans } = getRandomNumbers(nbWerewolves, players.length);
   // assign wws
-  console.log(indexWerewolves);
-  console.log(indexHumans);
   for (const i of indexWerewolves) {
     const idPlayer = players[i].idPlayer;
     await PlayersInGame.create({ role: 'werewolf', idPlayer }); // default value for state is alive
@@ -345,6 +343,20 @@ function clearMessagesOutput (messages) {
     delete msg.playersInGame;
     return msg;
   });
+}
+
+const doesNotSleep = async (idPlayer) => {
+  const power = await PlayersPowers.findOne({ where: { idPlayer, name: 'insomniaque' } });
+  if (power) return true;
+  return false;
+};
+
+const getRole = async (req, res) => {
+  const data = JSON.parse(req.body.data);
+  const targetId = data.targetId;
+  const player = await Players.findOne({ where: { idPlayer: targetId } });
+  const role = player.role;
+  res.status(status.OK).json({ message: 'returning role', data: role });
 }
 
 const getStateOfGame = async (req, res) => {
@@ -520,6 +532,7 @@ module.exports = {
   joinGame,
   startGame,
   getStateOfGame,
+  getRole,
   addMessage,
   votePlayer
 };

@@ -4,6 +4,7 @@ const has = require('has-keys');
 const CodeError = require('../util/CodeError.js');
 const Games = require('../models/games.js');
 const PlayersInGame = require('../models/playersInGame.js');
+const PlayersPowers = require('../models/playersPowers.js');
 
 const validateBodyHasData = async (req, res, next) => {
   if (!has(req.body, ['data'])) {
@@ -98,6 +99,8 @@ const validatePlayerAlive = async (req, res, next) => {
   const player = await PlayersInGame.findOne(
     { include: [{ model: Players, where: { username, idGame } }] });
 
+  req.idPlayer = player.idGame;
+
   if (player.state === 'dead') {
     throw new CodeError('Player is dead', status.BAD_REQUEST);
   }
@@ -135,6 +138,29 @@ const validateRightRole = async (req, res, next) => {
   next();
 };
 
+const validateTargetId = async (req, res, next) => {
+  // can a player be targeted by seer / infection (/spiritist)
+  // I thin this should be factorised w/ validateAccusedId but I'm not taking a risk
+  const data = JSON.parse(req.body.data);
+  const idGame = req.params.idGame;
+  if (!has(data, 'targetId')) {
+    return res.status(status.BAD_REQUEST).json({ message: 'You need to specify a targetId' });
+  }
+  const targetPlayer = await PlayersInGame.findOne({
+    include: [{ model: Players, where: { idGame } }],
+    where: { idPlayer: data.targetId }
+  });
+  // we verify if the id exists
+  if (!targetPlayer) {
+    return res.status(status.BAD_REQUEST).json({ message: 'Unknown player' });
+  }
+  if (targetPlayer.state === 'dead') {
+    return res.status(status.BAD_REQUEST).json({ message: 'Player is already dead' });
+  }
+
+  next();
+};
+
 const validateAccusedId = async (req, res, next) => {
   const data = JSON.parse(req.body.data);
   const idGame = req.params.idGame;
@@ -156,6 +182,15 @@ const validateAccusedId = async (req, res, next) => {
   next();
 };
 
+const validateSeer = async (req, res, next) => {
+  const idPlayer = req.idPlayer;
+  const idGame = req.idGame;
+  console.log(idPlayer, idGame);
+  const power = await PlayersPowers.findOne({ where: { idPlayer, name: 'insomniaque' } });
+  if (power) next();
+  else return res.status(status.BAD_REQUEST).json({ message: 'Player is not seer' });
+};
+
 module.exports = {
   validateBodyHasData,
   validateBodyCreateGame,
@@ -168,6 +203,8 @@ module.exports = {
   validatePlayerAlive,
   validateRightRole,
   checkRightRole,
+  validateTargetId,
+  validateSeer,
   validateAccusedId
 
 };
