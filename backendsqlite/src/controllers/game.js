@@ -259,11 +259,9 @@ const startGame = async (req, res) => {
   const powerC = await PowersProbabilities.findOne({ attributes: ['probability'], where: { name: 'contaminant' } });
   let indexCont = -1;
   if (powerC) {
-    console.log('adding contaminant');
     if (Math.random() < powerC.probability) {
     // pick one among ww
       indexCont = Math.floor(Math.random() * indexWerewolves.length);
-      console.log('id : ', players[indexWerewolves[indexCont]]);
       // requires playerInGame
       await PlayersPowers.create({ name: 'contaminant', idPlayer: players[indexWerewolves[indexCont]].idPlayer });
     }
@@ -292,7 +290,6 @@ const startGame = async (req, res) => {
     const index = Math.floor(Math.random() * players.length);
     const player = players[index];
     const idPlayer = player.idPlayer;
-    console.log('adding voyant : ', idPlayer);
     players.splice(index, 1); // ensures a same player has one power only
     await PlayersPowers.create({ name: 'voyant', idPlayer });
   }
