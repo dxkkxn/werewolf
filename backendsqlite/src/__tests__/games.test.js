@@ -89,6 +89,10 @@ describe('get games', () => {
       dayDuration: 3,
       nightDuration: 2,
       werewolfProbability: 0.33,
+      seerProba: 0,
+      infectionProba: 0,
+      spiritismProba: 0,
+      insomniaProba: 0,
       creatorUsername: 'testGame',
       players: ['testGame'],
       started: false,
@@ -150,6 +154,10 @@ describe('join game', () => {
       creatorUsername: 'testGame',
       players: ['testGame', 'testGame2'],
       started: false,
+      seerProba: 0,
+      infectionProba: 0,
+      spiritismProba: 0,
+      insomniaProba: 0,
       startingDate,
       gameTime: null
     });
