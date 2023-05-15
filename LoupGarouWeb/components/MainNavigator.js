@@ -11,16 +11,16 @@ import Partie from './Partie.js';
 const Stack = createNativeStackNavigator();
 
 export function MainNavigator() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="LockScreen" component={LockScreen} options={{headerShown: false}} />
-      <Stack.Screen name="Avatars" component={Avatars} options={{headerShown: false}} />
-      <Stack.Screen name="Welcome" component={Welcome} options={{headerShown: false}} />
-      <Stack.Screen name="Form" component={Form} options={{headerShown: false}} />
-      <Stack.Screen name="Join" component={Join} options={{headerShown: false}} />
-      <Stack.Screen name="Partie" component={Partie} options={{headerShown: false}} />
-      <Stack.Screen name="WaitingRoom" component={WaitingRoom} options={{headerShown: false}} />
-    </Stack.Navigator>
-  );
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="LockScreen" component={LockScreen} options={{headerShown: false}} />
+            <Stack.Screen name="Avatars" component={Avatars} options={{headerShown: false}} />
+            <Stack.Screen name="Welcome" component={Welcome} options={{headerShown: false}} />
+            <Stack.Screen name="Form" component={Form} options={{headerShown: false}} />
+            <Stack.Screen name="Join" component={Join} options={{headerShown: false}} />
+            <Stack.Screen name="Partie" component={Partie} options={{headerShown: false}} />
+            <Stack.Screen name="WaitingRoom" component={WaitingRoom} options={{headerShown: false}} />
+        </Stack.Navigator>
+    );
 }
 

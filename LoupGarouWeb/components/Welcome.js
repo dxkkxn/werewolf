@@ -4,73 +4,73 @@ import {useEffect, useState} from 'react';
 import { useFonts } from 'expo-font';
 import { useNavigation } from '@react-navigation/native';
 import Card from './Card.js';
-const URL = "https://ensi-werewolf.osc-fr1.scalingo.io";
+const URL = 'https://ensi-werewolf.osc-fr1.scalingo.io';
 
-const ruler = require("../assets/ruler&pen.svg");
-const add = require("../assets/add-circle.svg");
+const ruler = require('../assets/ruler&pen.svg');
+const add = require('../assets/add-circle.svg');
 
 export default function Welcome({ route }) {
-  const navigation = useNavigation();
-  const username = route.params.username;
-  const token = route.params.token;
+    const navigation = useNavigation();
+    const username = route.params.username;
+    const token = route.params.token;
   
-  // if user is waiting for a game to start, redirect him to waiting room
-  useEffect( () => {
-    async function fetchGames() {
-      try{
-        const data = await fetch(`${URL}/game` ,{
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': token
-          }
-        });
-        if (!data.ok) {
-          // something went wrong => disconnect user
-          navigation.navigate('LockScreen');
-        }
-        else {
-          const response = await data.json();
-          for (const game of JSON.parse(response.data)){
-            if(game.players.includes(username) && (game.started || game.creatorUsername !== username)){
-              navigation.navigate('WaitingRoom', {idGame: game.idGame, username, token});
+    // if user is waiting for a game to start, redirect him to waiting room
+    useEffect( () => {
+        async function fetchGames() {
+            try{
+                const data = await fetch(`${URL}/game` ,{
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-access-token': token
+                    }
+                });
+                if (!data.ok) {
+                    // something went wrong => disconnect user
+                    navigation.navigate('LockScreen');
+                }
+                else {
+                    const response = await data.json();
+                    for (const game of JSON.parse(response.data)){
+                        if(game.players.includes(username) && (game.started || game.creatorUsername !== username)){
+                            navigation.navigate('WaitingRoom', {idGame: game.idGame, username, token});
+                        }
+                    }
+                }
+            } catch(error) {
+                console.log(error);
             }
-          }
         }
-      } catch(error) {
-        console.log(error);
-      }
-    };
-    fetchGames();
-  }, [] );
+        fetchGames();
+    }, [] );
 
-  const [loaded] = useFonts({
-    'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
-  });
+    const [loaded] = useFonts({
+        'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
+    });
 
-  if (!loaded) {
-    return null;
-  }
+    if (!loaded) {
+        return null;
+    }
 
-	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>Bonjour {username}</Text>
-      <Card icon={ruler} text="Créer une partie" onPress={()=>navigation.navigate('Form', {username : username, token: token})}/>
-      <Card icon={add} text="Consulter les parties" onPress={()=>navigation.navigate('Join', {username: username, token : token})} />
-		</View>
-	);
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>Bonjour {username}</Text>
+            <Card icon={ruler} text="Créer une partie" onPress={()=>navigation.navigate('Form', {username : username, token: token})}/>
+            <Card icon={add} text="Consulter les parties" onPress={()=>navigation.navigate('Join', {username: username, token : token})} />
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: "80%",
-    top: 64,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  title: {
-    color: '#ffffff',
-    fontSize: 28,
-    fontFamily: 'Poppins'
-  },
-})
+    container: {
+        height: '80%',
+        top: 64,
+        alignItems: 'center',
+        justifyContent: 'space-around',
+    },
+    title: {
+        color: '#ffffff',
+        fontSize: 28,
+        fontFamily: 'Poppins'
+    },
+});
