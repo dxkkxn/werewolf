@@ -109,7 +109,6 @@ const getGames = async (req, res) => {
     if (infectionPromise) infectionProba = infectionPromise.probability;
     if (spiritismPromise) spiritismProba = spiritismPromise.probability;
     if (insomniaPromise) insomniaProba = insomniaPromise.probability;
-    console.log('passing seer Proba : ', seerProba);
     players = players.map(player => player.username);
     avatarId = avatarId.avatarId;
     return { ...game.toJSON(), players, avatarId, seerProba, infectionProba, spiritismProba, insomniaProba };
@@ -138,9 +137,29 @@ const joinGame = async (req, res) => {
 const getGameWithId = async (req, res) => {
   const { idGame } = req.params;
   const game = await Games.findOne({ where: { idGame } });
+  const seerProbaPromise = PowersProbabilities.findOne({ attributes: ['probability'], where: { idGame: game.idGame, name: 'voyant' } });
+  const infectionProbaPromise = PowersProbabilities.findOne({ attributes: ['probability'], where: { idGame: game.idGame, name: 'contaminant' } });
+  const spiritismProbaPromise = PowersProbabilities.findOne({ attributes: ['probability'], where: { idGame: game.idGame, name: 'spiritiste' } });
+  const insomniaProbaPromise = PowersProbabilities.findOne({ attributes: ['probability'], where: { idGame: game.idGame, name: 'insomniaque' } });
+
+  // Wait for all promises to resolve
+  const [seerPromise, infectionPromise, spiritismPromise, insomniaPromise] = await Promise.all([
+    seerProbaPromise,
+    infectionProbaPromise,
+    spiritismProbaPromise,
+    insomniaProbaPromise
+  ]);
+  let insomniaProba = 0;
+  let infectionProba = 0;
+  let spiritismProba = 0;
+  let seerProba = 0;
+  if (seerPromise) seerProba = seerPromise.probability;
+  if (infectionPromise) infectionProba = infectionPromise.probability;
+  if (spiritismPromise) spiritismProba = spiritismPromise.probability;
+  if (insomniaPromise) insomniaProba = insomniaPromise.probability;
   let players = await Players.findAll({ attributes: ['username'], where: { idGame } });
   players = players.map(player => player.username);
-  const gameWithPlayers = { ...game.toJSON(), players };
+  const gameWithPlayers = { ...game.toJSON(), players , seerProba, infectionProba, spiritismProba, insomniaProba };
   res.status(status.OK).json({ message: 'returning game in the data property', data: JSON.stringify(gameWithPlayers) });
 };
 
@@ -213,6 +232,8 @@ const startGame = async (req, res) => {
   if (nbWerewolves === 0) nbWerewolves = 1;
   const { indexWerewolves, indexHumans } = getRandomNumbers(nbWerewolves, players.length);
   // assign wws
+  console.log(indexWerewolves);
+  console.log(indexHumans);
   for (const i of indexWerewolves) {
     const idPlayer = players[i].idPlayer;
     await PlayersInGame.create({ role: 'werewolf', idPlayer }); // default value for state is alive
@@ -239,35 +260,39 @@ const startGame = async (req, res) => {
   let indexCont = -1;
   if (powerC) {
     console.log('adding contaminant');
-    console.log(powerC.probability);
     if (Math.random() < powerC.probability) {
     // pick one among ww
       indexCont = Math.floor(Math.random() * indexWerewolves.length);
+      console.log('id : ', players[indexWerewolves[indexCont]]);
       // requires playerInGame
-      await PlayersPowers.create({ name: 'contaminant', idPlayer: indexWerewolves[indexCont] });
+      await PlayersPowers.create({ name: 'contaminant', idPlayer: players[indexWerewolves[indexCont]].idPlayer });
     }
   }
   // assign role insomnie
   let indexIns = -1;
   const powerI = await PowersProbabilities.findOne({ attributes: ['probability'], where: { name: 'insomniaque' } });
-  if (Math.random() < game.insomniaProbability) {
+  if (Math.random() < powerI.probability) {
     // pick one among humans
     indexIns = Math.floor(Math.random() * indexHumans.length);
-    await PlayersPowers.create({ name: 'insomniaque', idPlayer: indexHumans[indexCont] });
+    const player = players[indexHumans[indexIns]];
+    const idPlayer = player.idPlayer;
+    await PlayersPowers.create({ name: 'insomniaque', idPlayer });
   }
 
   // on enlève l'insomniaque et le contaminant de l'array players
   // ça casse la correspondance entre indexWerewolves, indexHumans
   // et les roles réellement distribués,
   // c'est pour ça qu'on ne le fait pas avant
-  if (indexCont !== -1) players.splice(indexCont, 1);
-  if (indexIns !== -1) players.splice(indexIns, 1);
+  if (indexCont !== -1) players.splice(indexWerewolves[indexCont], 1);
+  if (indexIns !== -1) players.splice(indexHumans[indexIns], 1);
 
   // distribue le roles de voyant
-  if (Math.random() < game.seerProbability && players.length > 0) {
+  const powerV = await PowersProbabilities.findOne({ attributes: ['probability'], where: { name: 'voyant' } });
+  if (Math.random() < powerV.probability && players.length > 0) {
     const index = Math.floor(Math.random() * players.length);
     const player = players[index];
     const idPlayer = player.idPlayer;
+    console.log('adding voyant : ', idPlayer);
     players.splice(index, 1); // ensures a same player has one power only
     await PlayersPowers.create({ name: 'voyant', idPlayer });
   }
@@ -456,6 +481,15 @@ async function voteIsValidated (idGame, gameTime) {
   return idPlayer;
 }
 
+const getMyPower = async (req, res) => {
+  const idPlayer = req.idPlayer;
+  console.assert(idPlayer !== undefined);
+  let power = await PlayersPowers.findOne({ attributes: ['name'], where: { idPlayer } });
+  if (power) power = power.name;
+  else power = 'none';
+  return res.status(status.CREATED).json({ data: power });
+};
+
 const votePlayer = async (req, res) => {
   const data = JSON.parse(req.body.data);
   if (!has(data, 'accusedId')) {
@@ -484,6 +518,7 @@ const votePlayer = async (req, res) => {
 module.exports = {
   createGame,
   getGames,
+  getMyPower,
   getGameWithId,
   joinGame,
   startGame,

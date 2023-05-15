@@ -71,7 +71,7 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, ad
         <TextInput
           placeholder="Entrez votre message"
           onChangeText={(input) => setMessage(input)}
-          value={message}
+          value={(message ? message : '')} // value should not be null
           style={[
             styles.boxText,
             {

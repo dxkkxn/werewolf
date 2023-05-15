@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
-  createGame, getGames, getGameWithId,
+  createGame, getGames, getGameWithId, getMyPower,
   joinGame, addMessage, startGame, getStateOfGame, votePlayer
 } = require('../controllers/game.js');
 const { validateToken } = require('../middlewares/userValidators.js');
@@ -32,4 +32,13 @@ router.post('/game/:idGame/message', validateToken, validateBodyHasData, validat
 
 router.post('/game/:idGame/vote', validateToken, validateBodyHasData, validateUserInGame,
   validateGameStarted, validatePlayerAlive, validateRightRole, validateAccusedId, votePlayer);
+
+// powers
+//
+// get my power
+//
+router.get('/game/:idGame/power', validateToken, validateUserInGame, validateGameStarted, getMyPower);
+
+console.log(router);
+
 module.exports = router;
