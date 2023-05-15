@@ -115,7 +115,6 @@ const checkRightRole = async (username, idGame) => {
     where: { idGame }
   });
   gameTime = gameTime.gameTime;
-  console.log(gameTime);
   let playerRole = await PlayersInGame.findOne(
     { attributes: ['role'], include: [{ model: Players, where: { username, idGame } }] });
   playerRole = playerRole.role;
@@ -185,7 +184,6 @@ const validateAccusedId = async (req, res, next) => {
 const validateSeer = async (req, res, next) => {
   const idPlayer = req.idPlayer;
   const idGame = req.idGame;
-  console.log(idPlayer, idGame);
   const power = await PlayersPowers.findOne({ where: { idPlayer, name: 'insomniaque' } });
   if (power) next();
   else return res.status(status.BAD_REQUEST).json({ message: 'Player is not seer' });

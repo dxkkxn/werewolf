@@ -430,7 +430,6 @@ const addMessage = async (req, res) => {
   const time = new Date(); // time gets now timestamp
   const gameTime = await getGameTime(idGame);
   const message = await Messages.create({ idPlayer, time, body, gameTime });
-  console.log(message);
   res.status(status.CREATED).json({ message: 'message sent' });
 };
 
