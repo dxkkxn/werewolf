@@ -41,7 +41,7 @@ const createGame = async (req, res) => {
   const {
     minPlayers, maxPlayers, dayDuration, nightDuration,
     werewolfProbability, startingDate, seerProbability,
-    insomniaProbability, infectionProbability
+    insomniaProbability, infectionProbability, spiritismProbability
   } = JSON.parse(req.body.data);
   const newGame = await Games.create({
     creatorUsername,
@@ -54,18 +54,32 @@ const createGame = async (req, res) => {
   });
   // add creator as player also
   await Players.create({ username: creatorUsername, idGame: newGame.idGame });
-  const time = new Date(startingDate) - new Date();
-  req.params.idGame = newGame.idGame;
-  req.auto = true;
-  timeouts[newGame.idGame] = setTimeout(startGame, time, req, res);
   // create power probabilities
   if (seerProbability > 0) {
     const getPower = await Powers.findOne({ where: { name: 'voyant' } });
-    const powerproba = await PowersProbabilities.create({ idGame: newGame.idGame, probability: seerProbability, name: getPower.name });
-    console.log('power proba created');
-    console.log(powerproba);
+    const pp = await PowersProbabilities.create({ idGame: newGame.idGame, probability: seerProbability, name: getPower.name });
+    console.log('created \n', pp);
   }
-  res.status(status.CREATED).json({ message: 'game created', data: newGame.idGame });
+  if (spiritismProbability > 0) {
+    const getPower = await Powers.findOne({ where: { name: 'spiritiste' } });
+    await PowersProbabilities.create({ idGame: newGame.idGame, probability: spiritismProbability, name: getPower.name });
+  }
+  if (infectionProbability > 0) {
+    const getPower = await Powers.findOne({ where: { name: 'contaminant' } });
+    await PowersProbabilities.create({ idGame: newGame.idGame, probability: infectionProbability, name: getPower.name });
+  }
+  if (insomniaProbability > 0) {
+    const getPower = await Powers.findOne({ where: { name: 'insomniaque' } });
+    await PowersProbabilities.create({ idGame: newGame.idGame, probability: insomniaProbability, name: getPower.name });
+  }
+  // Wait for the creation of PowersProbabilities records to finish before proceeding
+  const time = new Date(startingDate) - new Date();
+  req.params.idGame = newGame.idGame;
+  req.auto = true;
+  await Promise.all([
+    timeouts[newGame.idGame] = setTimeout(startGame, time, req, res),
+    res.status(status.CREATED).json({ message: 'game created', data: newGame.idGame })
+  ]);
 };
 
 const getGames = async (req, res) => {
@@ -73,9 +87,30 @@ const getGames = async (req, res) => {
   const gamesWithPlayers = await Promise.all(games.map(async (game) => {
     let players = await Players.findAll({ attributes: ['username'], where: { idGame: game.idGame } });
     let avatarId = await Users.findOne({ attributes: ['avatarId'], where: { username: game.creatorUsername } });
+    const seerProbaPromise = PowersProbabilities.findOne({ attributes: ['probability'], where: { idGame: game.idGame, name: 'voyant' } });
+    const infectionProbaPromise = PowersProbabilities.findOne({ attributes: ['probability'], where: { idGame: game.idGame, name: 'contaminant' } });
+    const spiritismProbaPromise = PowersProbabilities.findOne({ attributes: ['probability'], where: { idGame: game.idGame, name: 'spiritiste' } });
+    const insomniaProbaPromise = PowersProbabilities.findOne({ attributes: ['probability'], where: { idGame: game.idGame, name: 'insomniaque' } });
+
+    // Wait for all promises to resolve
+    const [seerPromise, infectionPromise, spiritismPromise, insomniaPromise] = await Promise.all([
+      seerProbaPromise,
+      infectionProbaPromise,
+      spiritismProbaPromise,
+      insomniaProbaPromise
+    ]);
+    let insomniaProba = 0;
+    let infectionProba = 0;
+    let spiritismProba = 0;
+    let seerProba = 0;
+    if (seerPromise) seerProba = seerPromise.probability;
+    if (infectionPromise) infectionProba = infectionPromise.probability;
+    if (spiritismPromise) spiritismProba = spiritismPromise.probability;
+    if (insomniaPromise) insomniaProba = insomniaPromise.probability;
+    console.log('passing seer Proba : ', seerProba);
     players = players.map(player => player.username);
     avatarId = avatarId.avatarId;
-    return { ...game.toJSON(), players, avatarId };
+    return { ...game.toJSON(), players, avatarId, seerProba, infectionProba, spiritismProba, insomniaProba };
   }));
   res.status(status.OK).json({ message: 'returning games in the data property', data: JSON.stringify(gamesWithPlayers) });
 };
@@ -136,16 +171,16 @@ function changeDayTime (idGame) {
       await PlayersInGame.update({
         state: 'dead'
       }, { where: { idPlayer } });
-    }
-    // we remove the votes now that we dont need them
-    const playersInGame = await PlayersInGame.findAll(
-      { include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
-    playersInGame.forEach((player) => {
-      Votes.destroy({ where: { voterIdPlayer: player.idPlayer } });
-    });
-    if (await checkGameEnd(idGame)) {
-      // game ended
-      clearTimeout(timeouts[idGame]);
+      // we remove the votes now that we dont need them
+      const playersInGame = await PlayersInGame.findAll(
+        { include: [{ model: Players, where: { idGame } }] }); //, where: { idGame } });
+      playersInGame.forEach((player) => {
+        Votes.destroy({ where: { voterIdPlayer: player.idPlayer } });
+      });
+      if (await checkGameEnd(idGame)) {
+        // game ended
+        clearTimeout(timeouts[idGame]);
+      }
     }
   });
   if (game.gameTime === 'day') {

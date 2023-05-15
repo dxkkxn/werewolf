@@ -90,7 +90,7 @@ export default function Form({route}) {
         data : JSON.stringify({
           seerProbability: probasPouvoirs[2],
           infectionProbability: probasPouvoirs[0],
-          //spiritismProbability: probasPouvoirs[3],
+          spiritismProbability: probasPouvoirs[3],
           insomniaProbability: probasPouvoirs[1],
           creatorUsername : username,
           startingDate : startingDate,

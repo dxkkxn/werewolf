@@ -96,6 +96,10 @@ export function AvailableGame({ gameProps, username, token }) {
       joinGame(gameProps.idGame, username, token);
     };
   }
+  const seerProba = gameProps.seerProba;
+  const infectionProba = gameProps.infectionProba;
+  const spiritismProba = gameProps.spiritismProba;
+  const insomniaProba = gameProps.insomniaProba;
   return (
     <View style={styles.rectangle}>
       <View style={styles.leftPart}>
@@ -116,7 +120,7 @@ export function AvailableGame({ gameProps, username, token }) {
             min
           </li>
           <li>
-            C: {gameProps.infectionProbability}, I: {gameProps.insomniaProbability}, V: {gameProps.seerProbability}, S: {gameProps.spiritismProbability}
+            C: {infectionProba}, I: {insomniaProba}, V: {seerProba}, S: {spiritismProba}
           </li>
           <li>Proportion de loups : {gameProps.werewolfProbability}</li>
           <li>Joueurs actuels : {gameProps.players.length}</li>

@@ -64,7 +64,7 @@ export default function Join({ route }){
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
   if (!loaded) {
-    // return null;
+    return null;
   }
 
     return (

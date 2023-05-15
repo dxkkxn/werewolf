@@ -181,6 +181,7 @@ export default function Partie({ route, onDataUpdate }) {
           token={token}
           votes={votes}
           addLog={addLog}
+          addLog={addLog}
           avatarIdList={avatarIdList} />
         <FooterPartie
           addLog={addLog}
