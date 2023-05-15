@@ -99,7 +99,7 @@ const validatePlayerAlive = async (req, res, next) => {
   const player = await PlayersInGame.findOne(
     { include: [{ model: Players, where: { username, idGame } }] });
 
-  req.idPlayer = player.idGame;
+  req.idPlayer = player.idPlayer;
 
   if (player.state === 'dead') {
     throw new CodeError('Player is dead', status.BAD_REQUEST);
