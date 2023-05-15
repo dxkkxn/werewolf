@@ -8,12 +8,7 @@ import { useFonts } from 'expo-font';
 import { useNavigation } from '@react-navigation/native';
 import Partie from '../components/Partie.js';
 
-// require('mandatoryenv').load(['URL'])
-// const { URL } = process.env.REACT_APP_API_URL;
-// console.log(URL);
-console.log(process.env.REACT_APP_API_URL);
-console.log(process.env);
-
+const URL = 'https://ensi-werewolf.osc-fr1.scalingo.io';
 
 function LoginReq(username, password, navigation){
     if(password === '' || username === ''){
