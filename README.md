@@ -25,4 +25,7 @@ If token is not valid returns 401 in all requests
 
 
 
-À chaque étape, assurez-vous de vérifier que les tests passent et ajoutez un nouveau fichier de tests pour chaque partie testée.
+#### Lancement de l'application
+Il faut aller dans le répertoire LoupGarouWeb/ et lancer la commande npm run start
+Pour lancer en local, il faut d'abord changer la variable url, et puis aller dans backendsqlite et lancer npm run start.
+A noter que pour faire des tests, une base de données exemple est crée, avec des utilisateur dont le username est user1, user2, ...., user5 et le même mot de passe Robin777@. Par défaut un jeu est créé par user5, et pour le lancer il suffit de se connecter en tant que user5, cliquer sur rejoindre une partie, et puis la lancer (Comme expliqué dans le manuel utilisateur lorsqu'on affiche la liste des jeu, le jeu créé par l'utilisateur connecté a un boutton vert au lieu de violet).
