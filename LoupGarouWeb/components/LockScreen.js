@@ -122,7 +122,7 @@ function LockScreen() {
         <Text style={styles.textPressable}>Mot de passe oublié ?</Text>
       </Pressable>
     );
-    ConnexionButton = <MyButton onPress={()=>onPressCo(username, password, navigation)} label="Connexion" primary={"connectButton"} />;
+    ConnexionButton = <MyButton onPress={()=>onPressCo(username, password, navigation)} label="Connexion" primary={false} />;
   }
   // if (true) {
   //   return <Partie time={"day"} />;
@@ -146,8 +146,10 @@ function LockScreen() {
         />
         {pwdConfirm}
       </View>
-      {ConnexionButton}
-      <MyButton label="Créer un compte" primary={"createButton"} onPress={onPressCreate} />
+      <View style={styles.buttonsContainer}>
+        {ConnexionButton}
+        <MyButton label="Créer un compte" primary={true} onPress={onPressCreate} />
+      </View>
       {dejaInscrit}
       {pwdOublie}
     </View>

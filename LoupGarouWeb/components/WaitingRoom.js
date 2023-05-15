@@ -158,28 +158,28 @@ export default function WaitingRoom({ route }) {
   
 	return (
     
-		<View >
+		<View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <View style={styles.header}>
+        <ClickableImage
+        source={leftArrow}
+        onPress={() => navigation.navigate('Join', {username: username, token : token})}
+        symbol={"leftArrow"}
+        />
+        </View>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Partie {idGame} </Text>
+        </View>
+      </View>
       {Creator==username ? (
-        <View >
-          <View style={styles.headerContainer}>
-            <View style={styles.header}>
-            <ClickableImage
-            source={leftArrow}
-            onPress={() => navigation.navigate('Join', {username: username, token : token})}
-            symbol={"leftArrow"}
-            />
-            </View>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>Partie {idGame} </Text>
-            </View>
-          </View>
+        <View>
           <View style={styles.innerContainer}>
-            <AvailableGame username={username} token={token} gameProps={gameData} />
+            <AvailableGame username={username} token={token} gameProps={gameData} waiting={true}/>
             <Text style={styles.title}>Joueurs actuels : {currentPlayers} </Text>
             {currentPlayers < gameData.minPlayers && remainingTime.asSeconds()>=0 ? (
-            <MyButton  label="Attente de joueurs .." primary={"createButton"}/>  
+            <MyButton  label="Attente de joueurs .." primary={true}/>  
             ) : currentPlayers < gameData.maxPlayers && remainingTime.asSeconds()>=0? (
-            <MyButton  label="Commencer" primary={"startButton"} onPress={onPress} />
+            <MyButton  label="Commencer" primary={true} onPress={onPress} />
             ) : gameData.started === false ?(
             <View>
               <Text style={styles.title}>La partie commence dans : {timeDebut} </Text>
@@ -195,8 +195,8 @@ export default function WaitingRoom({ route }) {
         </View>
       ) : (
         <View style={styles.textContainer}>
-        <Text style={styles.title}>Salle d'attente de la partie {idGame}</Text>
-        <Text style={styles.title}>Joueurs actuels : {currentPlayers} </Text>
+          <Text style={styles.title}>Salle d'attente</Text>
+          <Text style={styles.title}>Joueurs actuels : {currentPlayers} </Text>
         </View>
         )}
 		</View>
@@ -209,35 +209,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 10,
-    paddingBottom: 10,
+    width: "90%"
   },
   header: {
-    position: 'absolute',
-    left: '40%',
-    zIndex: 1,
+    marginLeft: 20,
+    // position: 'absolute',
+    // left: '40%',
+    // zIndex: 1,
   },
   titleContainer: {
     textAlign:'center',
+    margin: 'auto',
   },
   innerContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: 130,
+        marginTop: "20%",
   },
   textContainer: {
     height: "90%",
+    width: "90%",
     alignItems: 'center',
     justifyContent: "center",
     textAlign: 'center',
-    paddingTop: 300,
   },
 
   title: {
           color: '#ffffff',
           fontSize: 28,
           fontFamily: 'Poppins',
-          paddingLeft: 50,
+          // paddingLeft: 50,
+  },
+  container: {
+    height: "80%",
+    top: 10,
+    alignItems: 'center',
   }
 });
 // const styles = StyleSheet.create({

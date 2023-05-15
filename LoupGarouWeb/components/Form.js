@@ -20,7 +20,7 @@ export default function Form({route}) {
   const username = route.params.username;
   const token = route.params.token;
 
-  const moment = require('moment');
+  // const moment = require('moment');
   const [loaded] = useFonts({
     'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
   });
@@ -77,9 +77,9 @@ export default function Form({route}) {
       return -1;
     }
     // startingDate : timestamp
-    const currentDate = moment();
-    let startingDate = currentDate.add(heuresDebut, 'hours');
-    startingDate = startingDate.add(minutesDebut, 'minutes');
+    const currentDate = new Date();
+    let startingDate = new Date(currentDate.getTime() + (heuresDebut * 60 * 60 * 1000) + (minutesDebut * 60 * 1000));
+
     fetch(`${url}/game` ,{
       method: 'POST',
       headers: {
@@ -99,6 +99,10 @@ export default function Form({route}) {
           dayDuration : dureeJour,
           nightDuration : dureeNuit,
           werewolfProbability : portionLoups
+          // infectionProbability : probasPouvoirs[0],
+          // insomniaProbability : probasPouvoirs[1],
+          // seerProbability : probasPouvoirs[2],
+          // spiritsmProbability: probasPouvoirs[3]
         })
       })
     })
@@ -136,7 +140,6 @@ export default function Form({route}) {
     setHeuresDebut(parseInt(heuresDebutInput));
   }
   const handleMinutesDebut = (minutesDebutInput) => {
-    setHeuresDebut(0);
     setMinutesDebut(parseInt(minutesDebutInput));
   }
   const handleProbasPouvoirs = (probasPouvoirsInput, index) => {
@@ -180,7 +183,7 @@ export default function Form({route}) {
           <InputField placeholder="Spiritisme" secureTextEntry={false} onChangeText={(event) => handleProbasPouvoirs(event, 3)} width={140} />
         </View>
         <Text style={styles.question}>Proportion Initiale des loups-garous :</Text>
-        <InputField placeholder="Ex : 0.3" secureTextEntry={false} onChangeText={handlePortionLoups} />
+        <InputField placeholder="Ex : 0.3" secureTextEntry={false} onChangeText={handlePortionLoups} value={portionLoups} />
       </View>
       <MyButton label="Créer la partie" primary={true} onPress={createGame}/>
     </View>

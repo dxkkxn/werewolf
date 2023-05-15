@@ -73,7 +73,10 @@ const createGame = async (req, res) => {
     await PowersProbabilities.create({ idGame: newGame.idGame, probability: insomniaProbability, name: getPower.name });
   }
   // Wait for the creation of PowersProbabilities records to finish before proceeding
-  const time = new Date(startingDate) - new Date();
+  const currentDate = new Date();
+  const start = new Date(startingDate);
+  // const time = new Date(startingDate) - new Date();
+  const time = start.getTime() - currentDate.getTime();
   req.params.idGame = newGame.idGame;
   req.auto = true;
   await Promise.all([

@@ -53,13 +53,14 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, ad
       if (!data.ok) { 
         console.log("something went wrong");
       }
+      setMessage("");
     })
     .catch((error) => console.error(error));
   };
   if (type == "title") {
     return (
       <View style={styles.box}>
-        <Text style={[styles.boxText, {textAlign: 'center', width: "90%"}]}>
+        <Text style={[styles.boxText, {textAlign: 'center', width: "90%x"}]}>
           {text}
         </Text>
       </View>
@@ -70,6 +71,7 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, ad
         <TextInput
           placeholder="Entrez votre message"
           onChangeText={(input) => setMessage(input)}
+          value={message}
           style={[
             styles.boxText,
             {
