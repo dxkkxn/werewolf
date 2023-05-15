@@ -23,6 +23,7 @@ export default function Partie({ route, onDataUpdate }) {
   const [myIdPlayer, setMyIdPlayer] = useState();
   const [log, setLog] = useState(['Bon jeu !', "Pour voter la mort d'un joueur, \ncliquez sur son avatar"]); // pour les messages d'information
   const [gameOver, setGameOver] = useState(false);
+  const [myPower, setMyPower] = useState(false);
 
   const addLog = (msg) => {
     log.push(msg);
@@ -57,9 +58,15 @@ export default function Partie({ route, onDataUpdate }) {
     await Promise.all(Object.entries(avatarPromises).map(async ([idPlayer, promise]) => {
       avatarIds[idPlayer] = await promise;
     }));
-
-  return avatarIds;
+    return avatarIds;
   }
+
+
+  useEffect(() => {
+    if(myPower) {
+      if(myPower !== 'none') addLog(`Votre pouvoir : ${myPower}`);
+    }
+  }, [myPower]);
 
   const fetchInitial = () => {
     // fetch the usernames and avatar ids once and for all, these wont have to be changed again
@@ -96,6 +103,21 @@ export default function Partie({ route, onDataUpdate }) {
             console.error(error);
           }
         })()
+      })
+    })
+
+    // get my power
+    fetch(`${url}/game/${idGame}/power`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token,
+      }
+    })
+    .then((response) => {
+      response.json()
+      .then((data) => {
+        setMyPower(data.data);
       })
     })
   };
