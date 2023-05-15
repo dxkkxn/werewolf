@@ -49,7 +49,7 @@ const bcrypt = require('bcrypt');
       // },
     };
     // create 10 users
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       const password = 'Robin777@';
       const isValidPassword = validator.isStrongPassword(password, options);
       if (isValidPassword) {

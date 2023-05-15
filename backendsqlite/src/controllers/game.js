@@ -52,7 +52,10 @@ const createGame = async (req, res) => {
   });
   // add creator as player also
   await Players.create({ username: creatorUsername, idGame: newGame.idGame });
-  const time = new Date(startingDate) - new Date();
+  const currentDate = new Date();
+  const start = new Date(startingDate);
+  // const time = new Date(startingDate) - new Date();
+  const time = start.getTime() - currentDate.getTime();
   req.params.idGame = newGame.idGame;
   req.auto = true;
   timeouts[newGame.idGame] = setTimeout(startGame, time, req, res);
