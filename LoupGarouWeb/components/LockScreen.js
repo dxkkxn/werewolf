@@ -52,7 +52,6 @@ function SignInReq(username, password, passwordConf, navigation){
         return -1;
     }
     if(password.length < 8){
-        console.log(URL);
         alert('mot de passe trop court');
         return -1;
     }
