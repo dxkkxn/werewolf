@@ -18,7 +18,7 @@ describe('testing the start of game ', () => {
     viarToken = await getToken('viardot');
   });
 
-  let gameInfo
+  let gameInfo;
   test('seb creates a game', async () => {
     console.log(sebToken, viarToken);
     // jest.useFakeTimers();

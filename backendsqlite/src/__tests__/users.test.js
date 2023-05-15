@@ -44,7 +44,7 @@ describe('Log In', () => {
     const response = await request(app)
       .post('/login')
       .send({ data: '{"username": "test", "password": "1234"}' });
-    let { token } = response.body;
+    const { token } = response.body;
     expect(response.statusCode).toBe(status.OK);
     expect(response.body.message).toBe('logged succesfully');
     expect(token).toBeDefined();

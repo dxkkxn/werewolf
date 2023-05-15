@@ -421,13 +421,13 @@ describe('messages testing', () => {
   });
   // jest
 
-    // jest.useRealTimers();
+  // jest.useRealTimers();
 });
 
 describe('voting testing', () => {
   test('error no data', async () => {
     jest.useFakeTimers();
-    jest.advanceTimersByTime(2 * 60 * 1000); //jump to day
+    jest.advanceTimersByTime(2 * 60 * 1000); // jump to day
     const response = await request(app)
       .post('/game/1/vote')
       .set({ 'x-access-token': humanToken });
@@ -487,6 +487,4 @@ describe('voting testing', () => {
     expect(data.votes).toBeDefined();
     // expect(data.votes.testGame).toBe(2);
   });
-
-
 });

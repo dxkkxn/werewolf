@@ -28,8 +28,8 @@ const bcrypt = require('bcrypt');
   // await userModel.create({ username: 'pradamej' });
   // await tagsModel.create({ name: 'Javascript', userId: essalihn.id });
   //
-    const powers = ['contaminant', 'insomniaque', 'voyant', 'spiritiste'];
-    powers.forEach(async (power) => await Powers.create({ name: power }));
+  const powers = ['contaminant', 'insomniaque', 'voyant', 'spiritiste'];
+  powers.forEach(async (power) => await Powers.create({ name: power }));
 
   try {
     const options = {
@@ -37,7 +37,7 @@ const bcrypt = require('bcrypt');
       minLowercase: 1, // Minimum number of lowercase letters (default: 1)
       minUppercase: 1, // Minimum number of uppercase letters (default: 1)
       minNumbers: 1, // Minimum number of numeric digits (default: 1)
-      minSymbols: 1, // Minimum number of special characters (default: 1)
+      minSymbols: 1 // Minimum number of special characters (default: 1)
       // returnScore: false, // Whether to return the password strength score (default: false)
       // pointsPerUnique: 1, // Number of points for each unique character in the password (default: 1)
       // pointsPerRepeat: 0.5, // Number of points for each repeated character in the password (default: 0.5)
@@ -58,26 +58,26 @@ const bcrypt = require('bcrypt');
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         await userModel.create({
-          username: `user${i+1}`,
+          username: `user${i + 1}`,
           password: hashedPassword,
-          avatarId: `${12-i}`,
+          avatarId: `${12 - i}`
         });
       }
     }
     // user 5 creates game with defalut values except probas = 0.5
     const currentDate = new Date();
     const dateOneHourLater = new Date(currentDate.getTime() + (60 * 60 * 1000));
-    const startingDate = dateOneHourLater//.toISOString().slice(0, 19).replace('T', ' ');
+    const startingDate = dateOneHourLater;// .toISOString().slice(0, 19).replace('T', ' ');
     const getPower = await Powers.findOne({ where: { name: 'contaminant' } });
     await gameModel.create({
       creatorUsername: 'user5',
       dayDuration: 1,
       nightDuration: 1,
       startingDate
-    })
+    });
     // ici on triche un peu : on sait que idGame = 1
     // les  10 users rejoignent la partie
-    let player = null;
+    const player = null;
     for (let i = 0; i < 5; i++) {
       await playerModel.create({
         idGame: '1',

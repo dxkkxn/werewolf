@@ -1,12 +1,12 @@
-require("mandatoryenv").load(["DB"]);
+require('mandatoryenv').load(['DB']);
 const { DB } = process.env;
 
-const Sequelize = require("sequelize");
+const Sequelize = require('sequelize');
 const db = new Sequelize({
-  dialect: "sqlite",
+  dialect: 'sqlite',
   storage: DB,
   // logging: (...msg) => console.log(msg)
 
-  logging: false,
+  logging: false
 });
 module.exports = db;

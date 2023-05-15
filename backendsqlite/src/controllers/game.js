@@ -159,7 +159,7 @@ const getGameWithId = async (req, res) => {
   if (insomniaPromise) insomniaProba = insomniaPromise.probability;
   let players = await Players.findAll({ attributes: ['username'], where: { idGame } });
   players = players.map(player => player.username);
-  const gameWithPlayers = { ...game.toJSON(), players , seerProba, infectionProba, spiritismProba, insomniaProba };
+  const gameWithPlayers = { ...game.toJSON(), players, seerProba, infectionProba, spiritismProba, insomniaProba };
   res.status(status.OK).json({ message: 'returning game in the data property', data: JSON.stringify(gameWithPlayers) });
 };
 
@@ -266,7 +266,7 @@ const startGame = async (req, res) => {
   // assign role insomnie
   let indexIns = -1;
   const powerI = await PowersProbabilities.findOne({ attributes: ['probability'], where: { name: 'insomniaque' } });
-  if(powerI) {
+  if (powerI) {
     if (Math.random() < powerI.probability) {
       // pick one among humans
       indexIns = Math.floor(Math.random() * indexHumans.length);
@@ -285,7 +285,7 @@ const startGame = async (req, res) => {
 
   // distribue le roles de voyant
   const powerV = await PowersProbabilities.findOne({ attributes: ['probability'], where: { name: 'voyant' } });
-  if(powerV) {
+  if (powerV) {
     if (Math.random() < powerV.probability && players.length > 0) {
       const index = Math.floor(Math.random() * players.length);
       const player = players[index];
@@ -359,7 +359,7 @@ const getRole = async (req, res) => {
   const player = await Players.findOne({ where: { idPlayer: targetId } });
   const role = player.role;
   res.status(status.OK).json({ message: 'returning role', data: role });
-}
+};
 
 const getStateOfGame = async (req, res) => {
   const idGame = req.params.idGame;
@@ -436,9 +436,7 @@ const addMessage = async (req, res) => {
 async function hasAlreadyVoted (username) {
   const player = await Players.findOne({ where: { username } });
 
-
-  //powers
- 
+  // powers
 
   const votes = await Votes.findOne({
     where: { voterIdPlayer: player.idPlayer }

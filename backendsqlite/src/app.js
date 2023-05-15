@@ -49,5 +49,4 @@ app.use('*', (req, res) => {
     .json({ status: false, message: 'Endpoint Not Found' });
 });
 
-
 module.exports = app;

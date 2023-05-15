@@ -99,7 +99,7 @@ describe('full gameplay test', () => {
   async function getGameInfo (username = 'youssef') {
     const response = await request(app)
       .get(`/game/${gameInfo.idGame}/play`)
-      .set({ 'x-access-token': userInfo[username].token })
+      .set({ 'x-access-token': userInfo[username].token });
     const data = JSON.parse(response.body.data);
     gameInfo.votes = data.votes;
     gameInfo.messages = data.messages;
@@ -159,7 +159,7 @@ describe('full gameplay test', () => {
 
   test('checking votes', async () => {
     await getGameInfo();
-    const expected = {}
+    const expected = {};
     expected[humans[0]] = 1;
     expect(gameInfo.votes).toEqual(expected);
   });
@@ -174,7 +174,7 @@ describe('full gameplay test', () => {
       .get(`/game/${gameInfo.idGame}/play`)
       .set({ 'x-access-token': userInfo.youssef.token });
     const data = JSON.parse(response.body.data);
-    const expected = {}
+    const expected = {};
     expected[humans[0]] = 3;
     expect(data.votes).toEqual(expected);
   });

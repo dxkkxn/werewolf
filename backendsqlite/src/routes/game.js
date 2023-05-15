@@ -40,7 +40,7 @@ router.post('/game/:idGame/vote', validateToken, validateBodyHasData, validateUs
 //
 router.get('/game/:idGame/power', validateToken, validateUserInGame, validateGameStarted, getMyPower);
 
-//router.post('/game/:idGame/see', validateToken, validateUserInGame, validateGameStarted,
-  //validateBodyHasData, validatePlayerAlive, validateTargetId, validateSeer, validateNotUsed, getRole)
+// router.post('/game/:idGame/see', validateToken, validateUserInGame, validateGameStarted,
+// validateBodyHasData, validatePlayerAlive, validateTargetId, validateSeer, validateNotUsed, getRole)
 
 module.exports = router;
