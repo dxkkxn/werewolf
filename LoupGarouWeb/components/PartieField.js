@@ -25,7 +25,7 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, ad
   if (!loaded) {
     return null;
   }
-  const url = `http://${window.location.hostname}:3000`;
+  const URL = "https://ensi-werewolf.osc-fr1.scalingo.io";
   const handleSubmit = () => {
     if (time === 'night' && myRole === 'human'){
       addLog('Vous ne pouvez pas discuter pendant la nuit');
@@ -37,7 +37,7 @@ export const PartieField = ({ isDead, text, time, type, username, myIdPlayer, ad
     }
     const messageInput = message;
     //post message
-    fetch(`${url}/game/${idGame}/message`, {
+    fetch(`${URL}/game/${idGame}/message`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

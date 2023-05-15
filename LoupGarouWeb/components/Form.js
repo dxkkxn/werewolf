@@ -28,7 +28,7 @@ export default function Form({route}) {
   if (!loaded) {
     return null;
   }
-  const url = `http://${window.location.hostname}:3000`;
+  const URL = "https://ensi-werewolf.osc-fr1.scalingo.io";
 
   const createGame = () => {
     //verifications
@@ -80,7 +80,7 @@ export default function Form({route}) {
     const currentDate = new Date();
     let startingDate = new Date(currentDate.getTime() + (heuresDebut * 60 * 60 * 1000) + (minutesDebut * 60 * 1000));
 
-    fetch(`${url}/game` ,{
+    fetch(`${URL}/game` ,{
       method: 'POST',
       headers: {
             'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ import BodyPartie from "./BodyPartie";
 import { useEffect, useState } from "react";
 import FooterPartie from "./FooterPartie";
 import { useNavigation } from "@react-navigation/native";
-const url = `http://${window.location.hostname}:3000`;
+const URL = "https://ensi-werewolf.osc-fr1.scalingo.io";
 
 export default function Partie({ route, onDataUpdate }) {
   const navigation = useNavigation();
@@ -31,7 +31,7 @@ export default function Partie({ route, onDataUpdate }) {
 
   async function fetchAvatarId(username) {
     try {
-      const response = await fetch(`${url}/users/${username}`, {
+      const response = await fetch(`${URL}/users/${username}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +71,7 @@ export default function Partie({ route, onDataUpdate }) {
   const fetchInitial = () => {
     // fetch the usernames and avatar ids once and for all, these wont have to be changed again
     let players = {};
-    fetch(`${url}/game/${idGame}/play`, {
+    fetch(`${URL}/game/${idGame}/play`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -107,7 +107,7 @@ export default function Partie({ route, onDataUpdate }) {
     })
 
     // get my power
-    fetch(`${url}/game/${idGame}/power`, {
+    fetch(`${URL}/game/${idGame}/power`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -131,7 +131,7 @@ export default function Partie({ route, onDataUpdate }) {
   }, []);
   const fetchGameState = async (interval) => {
     try {
-      const data = await fetch(`${url}/game/${idGame}/play`, {
+      const data = await fetch(`${URL}/game/${idGame}/play`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

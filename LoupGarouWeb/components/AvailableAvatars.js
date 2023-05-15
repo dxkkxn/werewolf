@@ -7,7 +7,7 @@ import Card from './Card.js';
 import Avatar from './Avatar.js'
 import { MyButton } from "./MyButton.js";
 
-const url = `http://${window.location.hostname}:3000`
+const URL = "https://ensi-werewolf.osc-fr1.scalingo.io";
 
 const avatar1 = require("../assets/images/avatar1.png"); 
 const avatar2 = require("../assets/images/avatar2.png");
@@ -58,7 +58,7 @@ export default function Avatars({ route }) {
     setClicked(newClicked)
   };
   const handleContinue = (avatarId) => {
-    fetch(`${url}/signin` ,{
+    fetch(`${URL}/signin` ,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 import { useFonts } from 'expo-font';
 import { useNavigation } from '@react-navigation/native';
 import Card from './Card.js';
-const url = `http://${window.location.hostname}:3000`
+const URL = "https://ensi-werewolf.osc-fr1.scalingo.io";
 
 const ruler = require("../assets/ruler&pen.svg");
 const add = require("../assets/add-circle.svg");
@@ -18,7 +18,7 @@ export default function Welcome({ route }) {
   useEffect( () => {
     async function fetchGames() {
       try{
-        const data = await fetch(`${url}/game` ,{
+        const data = await fetch(`${URL}/game` ,{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

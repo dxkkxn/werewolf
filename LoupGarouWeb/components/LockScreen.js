@@ -8,14 +8,19 @@ import { useFonts } from "expo-font";
 import { useNavigation } from '@react-navigation/native';
 import Partie from "../components/Partie.js";
 
-const url = `http://${window.location.hostname}:3000`
+// require('mandatoryenv').load(['URL'])
+// const { URL } = process.env.REACT_APP_API_URL;
+// console.log(URL);
+console.log(process.env.REACT_APP_API_URL);
+console.log(process.env);
+
 
 function LoginReq(username, password, navigation){
   if(password === '' || username === ''){
     alert("renseignez tous les champs");
     return -1;
   }
-  fetch(`${url}/login` ,{
+  fetch(`${URL}/login` ,{
     method: 'POST',
     headers: {
           'Content-Type': 'application/json'
@@ -52,6 +57,7 @@ function SignInReq(username, password, passwordConf, navigation){
   return -1;
   }
   if(password.length < 8){
+    console.log(URL)
     alert("mot de passe trop court");
     return -1;
   }

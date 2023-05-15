@@ -24,7 +24,7 @@ const avatar9 = require("../assets/images/avatar9.png");
 const avatar10 = require("../assets/images/avatar10.png");
 const avatar11 = require("../assets/images/avatar11.png");
 const avatar12 = require("../assets/images/avatar12.png");
-const url = `http://${window.location.hostname}:3000`;
+const URL = "https://ensi-werewolf.osc-fr1.scalingo.io";
 const ClickableImage = ({ source, onPress, text, currentPlayer, isDead }) => {
   const borderWidth = currentPlayer || isDead ? 3 : 0;
   const borderColor = isDead ? 'red' : "#7858A6";
@@ -90,7 +90,7 @@ export default function BodyPartie({ idGame, myRole, myIdPlayer, username, time,
       addLog('Vous ne pouvez pas voter pour un joueur mort');
       return -1;
     }
-    fetch(`${url}/game/${idGame}/vote`, {
+    fetch(`${URL}/game/${idGame}/vote`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',

@@ -5,7 +5,7 @@ import { StyleSheet, Text, View ,ScrollView} from 'react-native';
 import {AvailableGame} from './AvailableGame.js'
 import { useNavigation } from '@react-navigation/native';
 import ClickableImage from './ClickableImage.js';
-const url = `http://${window.location.hostname}:3000`
+const URL = "https://ensi-werewolf.osc-fr1.scalingo.io";
 const leftArrow = require("../assets/images/leftArrow.png");
 
 
@@ -41,7 +41,7 @@ export default function Join({ route }){
   //getting games from db
   const fetchGames = async () => {
     try{
-      const response = await fetch(`${url}/game` ,{
+      const response = await fetch(`${URL}/game` ,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

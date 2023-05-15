@@ -3,7 +3,7 @@ import { useFonts } from "expo-font";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-const url = `http://${window.location.hostname}:3000`;
+const URL = "https://ensi-werewolf.osc-fr1.scalingo.io";
 const arrow = require("../assets/images/rightArrow.png");
 
 function importAll(r) {
@@ -16,7 +16,7 @@ function importAll(r) {
 
 async function fetchAvatarId(username) {
   try {
-    const response = await fetch(`${url}/users/${username}`, {
+    const response = await fetch(`${URL}/users/${username}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export function AvailableGame({ gameProps, username, waiting, token }) {
     navigation.navigate('WaitingRoom', {idGame, username, token});
   }
   const joinGame = (idGame, username, token) => {
-    fetch(`${url}/game/${idGame}`, {
+    fetch(`${URL}/game/${idGame}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

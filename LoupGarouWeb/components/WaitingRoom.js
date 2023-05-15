@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import ClickableImage from './ClickableImage';
 const leftArrow = require("../assets/images/leftArrow.png");
 
-const url = `http://${window.location.hostname}:3000`;
+const URL = "https://ensi-werewolf.osc-fr1.scalingo.io";
 
 
 export default function WaitingRoom({ route }) {
@@ -30,7 +30,7 @@ export default function WaitingRoom({ route }) {
 
   const fetchGame = async (idGame) => {
     try{
-      const data = await fetch(`${url}/game/${idGame}` ,{
+      const data = await fetch(`${URL}/game/${idGame}` ,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export default function WaitingRoom({ route }) {
 
   const testStarted = async (interval) => {
     try{
-      const data = await fetch(`${url}/game/${idGame}` ,{
+      const data = await fetch(`${URL}/game/${idGame}` ,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export default function WaitingRoom({ route }) {
   
   
   const startGame = (idGame, username) => {
-    fetch(`${url}/game/${idGame}/play` ,{
+    fetch(`${URL}/game/${idGame}/play` ,{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
