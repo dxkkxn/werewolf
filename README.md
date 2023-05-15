@@ -23,14 +23,6 @@ If token is not valid returns 401 in all requests
 | 404  | NOT FOUND   |
 | 405  | NOT ALLOWED |
 
-1- Dans la fonction createGame, récupérez les attributs (pouvoir) probability et insérez-les dans la table powersProbabilities. Normalement, cette table contient idGame, pouvoir, probability, donc idGame et pouvoir doivent être des clés étrangères qui doivent exister.
 
-2- Dans les fonctions getGames et getGameWithId, il faudrait renvoyer les probabilités de chaque pouvoir s'ils existent.
-
-3- Dans la fonction startGame, il faudrait assigner tous les pouvoirs à insérer dans playerspowers, comme dans l'étape précédente.
-
-4- Pour le pouvoir "insomnie", c'est le plus simple : ajoutez simplement un nouveau cas dans le test if à la ligne 315 du fichier controllers/game.js. Si le joueur est humain, vivant et possède le pouvoir "insomnie", exécutez les actions correspondantes.
-
-5- Pour les pouvoirs "contamination" et "voyance", j'avais pensé ajouter une nouvelle route POST (/game/idGame/play/usePower). Dans le corps du message, il faudrait ajouter un attribut pour savoir quel pouvoir le joueur souhaite utiliser, ainsi qu'un attribut pour indiquer le joueur concerné. Vous devrez effectuer toutes les vérifications nécessaires (vérifier si le jeu est en cours, si c'est la nuit, etc.).
 
 À chaque étape, assurez-vous de vérifier que les tests passent et ajoutez un nouveau fichier de tests pour chaque partie testée.
