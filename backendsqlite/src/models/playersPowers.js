@@ -9,7 +9,7 @@ const playersPowers = db.define(
   { timestamps: false }
 );
 
-powers.belongsToMany(playersInGame, { foreignKey: 'power',  primaryKey: true, through: 'playersPowers' });
-playersInGame.belongsToMany(powers, { foreignKey: 'idPlayer', primaryKey: true, through: 'playersPowers' });
+powers.belongsToMany(playersInGame, { through: playersPowers, foreignKey: 'name' });
+playersInGame.belongsToMany(powers, { through: playersPowers, foreignKey: 'idPlayer' });
 
 module.exports = playersPowers;

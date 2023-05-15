@@ -1,8 +1,8 @@
 const userModel = require('../models/users.js');
 const gameModel = require('../models/games.js');
-const powerModel = require('../models/powers.js');
+const Powers = require('../models/powers.js');
 const playerModel = require('../models/players.js');
-const powersProbabilityModel = require('../models/powersProbabilities.js');
+const PowersProbabilities = require('../models/powersProbabilities.js');
 const playerInGameModel = require('../models/playersInGame.js');
 const playersPowers = require('../models/playersPowers.js');
 const messages = require('../models/messages.js');
@@ -28,6 +28,8 @@ const bcrypt = require('bcrypt');
   // await userModel.create({ username: 'pradamej' });
   // await tagsModel.create({ name: 'Javascript', userId: essalihn.id });
   //
+    const powers = ['contaminant', 'insomniaque', 'voyant', 'spiritiste'];
+    powers.forEach(async (power) => await Powers.create({ name: power }));
 
   try {
     const options = {
@@ -66,23 +68,27 @@ const bcrypt = require('bcrypt');
     const currentDate = new Date();
     const dateOneHourLater = new Date(currentDate.getTime() + (60 * 60 * 1000));
     const startingDate = dateOneHourLater//.toISOString().slice(0, 19).replace('T', ' ');
+    const getPower = await Powers.findOne({ where: { name: 'contaminant' } });
     await gameModel.create({
       creatorUsername: 'user5',
       dayDuration: 1,
       nightDuration: 1,
       startingDate
-    });
-    // ici on triche un peu : on sait que idGame = 0
+    })
+    // ici on triche un peu : on sait que idGame = 1
     // les  10 users rejoignent la partie
+    let player = null;
     for (let i = 0; i < 5; i++) {
       await playerModel.create({
         idGame: '1',
         username: `user${i + 1}`
       });
     }
-    // now user 5 can start
-    const powers = ['contaminant', 'insomniaque', 'voyant', 'spiritiste'];
-    powers.forEach(async (power) => await powerModel.create({ name: power }));
+    // assign contaminant to player 1
+    await PowersProbabilities.create({ idGame: 1, probability: 1, name: 'insomniaque' });
+    await PowersProbabilities.create({ idGame: 1, probability: 1, name: 'voyant' });
+    await PowersProbabilities.create({ idGame: 1, probability: 1, name: 'contaminant' });
+  // now user 5 can start
   } catch (error) { console.log(error); }
   // const data = await powerModel.findAll();
   // console.log(data);
